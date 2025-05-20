@@ -195,6 +195,7 @@
     <wpt lat="54.6007300" lon="-3.1373000">
         <name>Moot Hall</name>
     </wpt>
+    <trk>
         <name>Bob Graham Round – Leg 4</name>
         <trkseg>
             <trkpt lat="54.4556600" lon="-3.2622700"/>

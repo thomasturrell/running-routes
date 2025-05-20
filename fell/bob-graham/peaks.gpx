@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="Thomas Turrell-Croft">
+       <metadata>
+        <name>Peaks of the Bob Graham Round</name>
+        <desc></desc>
+        <bounds minlat="54.4474700" minlon="-3.3026000" maxlat="54.6707400" maxlon="-2.9917000"/>
+    </metadata>
    <wpt lat="54.65138" lon="-3.14773">
       <name>Skiddaw</name>
    </wpt>

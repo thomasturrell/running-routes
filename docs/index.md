@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Bob Graham Round GPX Files
+title: Running Routes GPX Files
 ---
 
 # Bob Graham Round – GPX Files

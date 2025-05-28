@@ -75,8 +75,7 @@ scripts/   # Python scripts to build GPX files and Markdown
 
 ## 🧾 License
 
-- Code in this repository is licensed under the MIT License.
-- Route data (GPX files) is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), unless otherwise noted.
+- Code in this repository is licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
 ---
 
@@ -85,4 +84,4 @@ scripts/   # Python scripts to build GPX files and Markdown
 Feel free to:
 - Report issues
 - Submit pull requests for new routes or improvements
-- Suggest additions via Discussions or Issues
+- Suggest additions via Issues

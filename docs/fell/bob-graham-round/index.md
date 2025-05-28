@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: page
 title: Bob Graham Round – GPX Files
 permalink: /fell/bob-graham-round/
 ---

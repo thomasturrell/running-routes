@@ -49,6 +49,7 @@ def build_track_only_gpx(gpx: gpxpy.gpx.GPX):
 def build_simplified_track_gpx(gpx: gpxpy.gpx.GPX) -> gpxpy.gpx.GPX:
     g = gpxpy.gpx.GPX()
     merged_track = gpxpy.gpx.GPXTrack()
+    merged_track.name = "Bob Graham Round (Simplified)"
     merged_segment = gpxpy.gpx.GPXTrackSegment()
     for track in gpx.tracks:
         for segment in track.segments:

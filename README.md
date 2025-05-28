@@ -1,42 +1,47 @@
-# Running Routes
-This repository contains a collection of .gpx files for different types of running, including:
+# 🏃 Running Routes
 
-* 🛣️ Road running – Fast, paved routes ideal for tempo runs, intervals, and race preparation
-* 🏞️ Trail running – Scenic off-road routes through forests, hills, and countryside paths
-* ⛰️ Fell running – Steep, rugged mountain routes with a focus on elevation and summits
+This repository contains the source data, scripts, and website content for a collection of running routes, including:
 
-All routes are provided in GPX format and can be used with GPS watches and mapping apps like Garmin, Suunto, Strava, Komoot, and OS Maps.
+- 🛣️ **Road running** – Fast, paved routes ideal for tempo runs, intervals, and race preparation.
+- 🏞️ **Trail running** – Scenic off-road routes through forests, hills, and countryside paths.
+- ⛰️ **Fell running** – Steep, rugged mountain routes with a focus on elevation and summits.
 
-# 🏔️ Running Routes – GPX Files
+All routes are provided in GPX format and can be used with GPS watches and mapping apps like Garmin Connect, Suunto, Strava, Komoot, and OS Maps.
 
-This folder contains the source `.gpx` and data files for a collection of classic running routes, starting with the **Bob Graham Round** in the English Lake District. More routes will be added over time.
+---
 
-## 📦 Where to Download GPX Files
+## 📥 Download GPX Files
 
-**The latest downloadable GPX files and live route previews are available on the project website:**
+The latest downloadable GPX files and live previews are available at the website:
 
 👉 [Running Routes Website](https://thomasturrell.github.io/running-routes/)
 
-You can download:
+The site includes:
 - GPX files for each leg or section of supported routes
-- Simplified (single-track) GPX files for most devices
-- Detailed (multi-track) GPX files for advanced use
+- Simplified (single-track) GPX files for compatibility
+- Detailed (multi-track) GPX files for analysis/editing
+- Preview maps for interactive exploration
 
-## 🗂️ Repository Structure
+---
 
-- `src/` — Source data for all routes (GPX, CSV, etc.)
-- `docs/` — Website content and generated GPX files for download
-- `scripts/` — Scripts to generate and process GPX files
+## 🏃‍♂️ Supported Routes
+
+| Name               | Type         | Region         | Status        |
+|--------------------|--------------|----------------|---------------|
+| Bob Graham Round   | Fell Running | Lake District  | ✅ Available   |
+| [Coming Soon]      | Road/Trail   | UK             | 🕒 Planned     |
+
+---
 
 ## ⚙️ How to Generate GPX Files
 
-To regenerate the downloadable GPX files, run the script from the project root:
+To regenerate the GPX files locally:
 
 ```bash
 python scripts/generate_gpx_files.py
 ```
 
-You need Python 3 and the `gpxpy` library. The recommended way is to use a virtual environment:
+### 🐍 Recommended Setup
 
 ```bash
 python3 -m venv .venv
@@ -44,13 +49,40 @@ source .venv/bin/activate
 pip install gpxpy
 ```
 
+This will create or update files in `docs/fell/bob-graham-round/` for GitHub Pages publishing.
+
+---
+
+## 🗂️ Repository Structure
+
+```
+src/       # Source data (GPX, CSV, planning files)
+docs/      # Jekyll website content & generated GPX downloads
+scripts/   # Python scripts to build GPX files and Markdown
+```
+
+---
+
 ## 🗺️ Data Sources & Attribution
 
-- **Route planning:** Ordnance Survey (OS) Maps online planner and other sources as noted per route. Routes follow rights of way and footpaths using OS’s routing engine. Minor variations may occur, especially on technical descents or open fell crossings.
-- **Summit data:** From [Hill Bagging](https://www.hill-bagging.co.uk), based on the [Database of British and Irish Hills (DoBIH)](https://www.hills-database.co.uk/). Summit data © DoBIH, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+- **Route planning**: Ordnance Survey Maps online planner. Routes follow footpaths and rights of way.
+- **Summit data**: [Hill Bagging](https://www.hill-bagging.co.uk), based on the [Database of British and Irish Hills (DoBIH)](https://www.hills-database.co.uk/).  
+  Summit data © DoBIH, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
-> 🧭 *Always compare with actual race lines, terrain conditions, and satellite imagery before relying on these files in the field.*
+> 🧭 *Always compare with race lines, current terrain conditions, and satellite imagery before relying on these files in the field.*
 
-## 📝 Notes
+---
 
-- For questions or contributions, open an issue or pull request on GitHub
+## 🧾 License
+
+- Code in this repository is licensed under the MIT License.
+- Route data (GPX files) is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), unless otherwise noted.
+
+---
+
+## 🧰 Contributing
+
+Feel free to:
+- Report issues
+- Submit pull requests for new routes or improvements
+- Suggest additions via Discussions or Issues

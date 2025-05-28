@@ -43,8 +43,17 @@ Download GPX files for individual legs or the full route below.
 - [**Simplified Route – Complete Round**](fell/bob-graham-round/generated/bob-graham-round-simplified.gpx)  
   A single-track GPX file of the full round. Compatible with most GPS watches and apps. Recommended for most users and devices.
 
-- [**Detailed Route – Complete Round (Multi-Track)**](fell/bob-graham-round/generated/bob-graham-round.gpx)  
+- [**Detailed Route – Complete Round (Multi-Track)**](fell/bob-graham-round/generated/bob-graham-round-detailed.gpx)  
   Includes all 42 peaks, divided into five separate tracks (one per leg). Best suited for advanced analysis, custom editing, or detailed planning.
+
+- [**Track Only – No Waypoints**](fell/bob-graham-round/generated/bob-graham-round-track.gpx)  
+  The full round as tracks only, with no waypoints.
+
+- [**Summits Only (Waypoints)**](fell/bob-graham-round/generated/bob-graham-round-summits.gpx)  
+  GPX file containing only summit waypoints.
+
+- [**Points of Interest (Waypoints)**](fell/bob-graham-round/generated/bob-graham-round-points-of-interest.gpx)  
+  GPX file containing other points of interest as waypoints.
 
 ## Data Sources & Attribution
 
@@ -57,7 +66,7 @@ Download GPX files for individual legs or the full route below.
 ## Route Preview
 
 <iframe 
-  src='https://gpx.studio/embed?options={"files":["https://thomasturrell.github.io/running-routes/fell/bob-graham-round/generated/bob-graham-round.gpx"]}'
+  src='https://gpx.studio/embed?options={"files":["https://thomasturrell.github.io/running-routes/fell/bob-graham-round/generated/bob-graham-round-detailed.gpx"]}'
   width="100%" 
   height="500" 
   style="border: 1px solid #ccc;" 

@@ -10,20 +10,6 @@ def load_gpx(path: Path) -> gpxpy.gpx.GPX:
         return gpxpy.parse(f)
 
 def write_gpx(gpx: gpxpy.gpx.GPX, path: Path):
-    name_map = {
-        "bob-graham-round-leg-1": "Leg 1 – Keswick to Threlkeld",
-        "bob-graham-round-leg-2": "Leg 2 – Threlkeld to Dunmail Raise",
-        "bob-graham-round-leg-3": "Leg 3 – Dunmail to Wasdale",
-        "bob-graham-round-leg-4": "Leg 4 – Wasdale to Honister",
-        "bob-graham-round-leg-5": "Leg 5 – Honister to Keswick",
-        "bob-graham-round-summits": "Bob Graham Round – Summits",
-        "bob-graham-round-points-of-interest": "Bob Graham Round – Points of Interest",
-        "bob-graham-round-track": "Bob Graham Round – Track Only",
-        "bob-graham-round-detailed": "Bob Graham Round – Detailed Route (Multi-Track)",
-        "bob-graham-round-simplified": "Bob Graham Round – Simplified Route (Single Track)",
-    }
-    stem = path.stem
-    gpx.name = name_map.get(stem, stem.replace('-', ' ').title())
     gpx.creator = "Thomas Turrell-Croft"
     path.write_text(gpx.to_xml())
     try:

@@ -52,6 +52,7 @@
     </wpt>
     <wpt lat="54.5308100" lon="-3.0254500">
         <name>Helvellyn Lower Man</name>
+        <sym>Summit</sym>
     </wpt>
     <wpt lat="54.5268600" lon="-3.0175100">
         <name>Helvellyn</name>

@@ -57,7 +57,7 @@ Download GPX files for individual legs or the full route below.
 ## Route Preview
 
 <iframe 
-  src="https://gpx.studio/embed.html?data=https://thomasturrell.github.io/running-routes/bob-graham-round/generated/bob-graham-round.gpx" 
+  src='https://gpx.studio/embed?options={"files":["https://thomasturrell.github.io/running-routes/bob-graham-round/generated/bob-graham-round.gpx"]}'
   width="100%" 
   height="500" 
   style="border: 1px solid #ccc;" 

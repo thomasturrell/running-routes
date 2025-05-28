@@ -1,90 +1,47 @@
-# 🏔️ Bob Graham Round – GPX Files
+# 🏔️ Running Routes – GPX Files
 
-This folder contains `.gpx` route files for the **Bob Graham Round**, a classic fell running challenge in the English Lake District. The route covers **42 peaks**, approximately **106 km** (66 miles) with around **8,200 m** of ascent — traditionally completed in under 24 hours.
+This folder contains the source `.gpx` and data files for a collection of classic running routes, starting with the **Bob Graham Round** in the English Lake District. More routes will be added over time.
 
-Routes are provided as:
-- A **full round** GPX file
-- Separate files for each of the five traditional legs
-- All tracks include summit waypoints and color styling
+## 📦 Where to Download GPX Files
 
----
+**The latest downloadable GPX files and live route previews are available on the project website:**
 
-## 📁 File Overview
+👉 [Running Routes Website](https://thomasturrell.github.io/running-routes/)
 
-| File Name                     | Description                                 |
-|-------------------------------|---------------------------------------------|
-| `bob-graham-round.gpx`        | Complete route with all 42 peaks            |
-| `bob-graham-leg-1.gpx`        | Leg 1: Keswick → Threlkeld (3 peaks)        |
-| `bob-graham-leg-2.gpx`        | Leg 2: Threlkeld → Dunmail Raise (12 peaks) |
-| `bob-graham-leg-3.gpx`        | Leg 3: Dunmail → Wasdale (15 peaks)         |
-| `bob-graham-leg-4.gpx`        | Leg 4: Wasdale → Honister (9 peaks)         |
-| `bob-graham-leg-5.gpx`        | Leg 5: Honister → Keswick (3 peaks)         |
+You can download:
+- GPX files for each leg or section of supported routes
+- Simplified (single-track) GPX files for most devices
+- Detailed (multi-track) GPX files for advanced use
 
----
+## 🗂️ Repository Structure
 
-## 🧭 Leg Details
+- `src/` — Source data for all routes (GPX, CSV, etc.)
+- `docs/` — Website content and generated GPX files for download
+- `scripts/` — Scripts to generate and process GPX files
 
-### 🏔️ Leg 1: Keswick to Threlkeld
-- **Peaks**: Skiddaw, Great Calva, Blencathra  
-Starts at Moot Hall and climbs Skiddaw, crosses to Great Calva, and ends with a steep descent from Blencathra to Threlkeld.
+## ⚙️ How to Generate GPX Files
 
----
+To regenerate the downloadable GPX files, run the script from the project root:
 
-### 🏔️ Leg 2: Threlkeld to Dunmail Raise
-- **Peaks**: 12 including Helvellyn and Fairfield  
-Traverses the Helvellyn ridge, offering long runnable sections and panoramic views.
+```bash
+python scripts/generate_gpx_files.py
+```
 
----
+You need Python 3 and the `gpxpy` library. The recommended way is to use a virtual environment:
 
-### 🏔️ Leg 3: Dunmail Raise to Wasdale
-- **Peaks**: 15 including Bowfell, Scafell Pike, and Scafell  
-The most mountainous and technical section of the round.
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install gpxpy
+```
 
----
+## 🗺️ Data Sources & Attribution
 
-### ⛰️ Leg 4: Wasdale to Honister Pass
-- **Peaks**: 9 including Pillar and Great Gable  
-Tough climbs and rugged descents across the Western Fells.
+- **Route planning:** Ordnance Survey (OS) Maps online planner and other sources as noted per route. Routes follow rights of way and footpaths using OS’s routing engine. Minor variations may occur, especially on technical descents or open fell crossings.
+- **Summit data:** From [Hill Bagging](https://www.hill-bagging.co.uk), based on the [Database of British and Irish Hills (DoBIH)](https://www.hills-database.co.uk/). Summit data © DoBIH, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
----
-
-### 🏔️ Leg 5: Honister Pass to Keswick
-- **Peaks**: Dale Head, Hindscarth, Robinson  
-A final push to the finish line at Moot Hall, Keswick.
-
----
-
-## 🗺️ Route Source
-
-These GPX tracks were created using the **Ordnance Survey (OS) Maps** online route planner. Routes are snapped to existing rights of way and footpaths using OS’s routing algorithm. While they closely follow the traditional Bob Graham Round line, some variations may occur — particularly on technical descents or open fell crossings.
-
-> 🧭 *Runners are advised to compare with race lines, terrain, and satellite imagery before use.*
-
----
-
-## 🗻 Summit Data Source
-
-Summit waypoints were derived from data provided by [**Hill Bagging**](https://www.hill-bagging.co.uk), based on the [**Database of British and Irish Hills (DoBIH)**](https://www.hills-database.co.uk/).
-
-> **Attribution**  
-> Summit data © Database of British and Irish Hills (DoBIH), available from [hill-bagging.co.uk](https://www.hill-bagging.co.uk) and licensed under [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/).
-
----
-
-## 📦 Usage
-
-You can load these GPX files into:
-- GPS watches (Garmin, Suunto, Coros)
-- Navigation apps (Strava, Komoot, OS Maps, GPX Studio)
-
-Each file includes:
-- Summit waypoints
-- Track segmenting by leg
-- Color styling
-
----
+> 🧭 *Always compare with actual race lines, terrain conditions, and satellite imagery before relying on these files in the field.*
 
 ## 📝 Notes
 
-- Descent lines (e.g. Halls Fell) follow common racing lines where possible
-- Intended for Bob Graham Round runners, pacers, and planners
+- For questions or contributions, open an issue or pull request on GitHub

@@ -1,5 +1,5 @@
 # Ignore all generated GPX files
-/docs/bob-graham-round/generated/
+/docs/fell/bob-graham-round/generated/
 
 # Ignore Python virtual environment
 /.venv/

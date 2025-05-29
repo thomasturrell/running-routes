@@ -1,5 +1,8 @@
 theme: minima
 
+repository: thomasturrell/running-routes
+edit_uri: edit/main/docs/
+
 nav_pages:
   - index.md
   - fell/bob-graham-round/index.md

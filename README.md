@@ -6,14 +6,10 @@ The site offers downloadable [GPX files](https://en.wikipedia.org/wiki/GPS_Excha
 
 👉 **[Visit the site](https://thomasturrell.github.io/running-routes/)**
 
----
-
 ## 🤝 Contributing
 
 We welcome community contributions!
 See the [contributing guidelines](CONTRIBUTING.md) for how to get started, or open [an issue](https://github.com/thomasturrell/running-routes/issues) or [pull request](https://github.com/thomasturrell/running-routes/pulls) to suggest changes.
-
----
 
 ## 🗺️ Attribution & Sources
 
@@ -21,10 +17,7 @@ See the [contributing guidelines](CONTRIBUTING.md) for how to get started, or op
 * Summit data: [Database of British and Irish Hills (DoBIH)](https://www.hills-database.co.uk/)
   Licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 
----
-
 ## 📄 License
 
 Code is licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
----

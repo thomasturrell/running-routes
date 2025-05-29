@@ -1,9 +1,9 @@
 ---
 layout: default
-title: Running Routes – GPX Files
+title: Running Routes
 ---
 
-# 🏃 Running Routes – GPX Files
+# 🏃 Running Routes
 
 GPX files for road, trail, and fell running.
 Each route page includes download options and notes on compatibility with devices and apps like Garmin Connect, Strava Maps, Komoot, GPX Studio and OS Maps.

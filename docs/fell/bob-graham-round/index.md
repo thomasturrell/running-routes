@@ -12,64 +12,56 @@ Multiple formats are available to suit different devices and use cases. If unsur
 
 > 🧭 *Always cross-reference your route with maps, weather conditions, and local guidance before using GPX files in the field.*
 
----
-
 ## 🏔 Individual Legs
 
-- [**Leg 1 – Keswick → Threlkeld**](generated/bob-graham-round-leg-1.gpx)  
-  [View ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Ffell%2Fbob-graham-round%2Fgenerated%2Fbob-graham-round-leg-1.gpx%22%5D#12.14/54.63575/-3.09576)  
-  **Peaks**: Skiddaw, Great Calva, Blencathra.  
-  Begins at Moot Hall, climbs Skiddaw, crosses to Great Calva, and finishes with a steep descent from Blencathra to Threlkeld.
+### **Leg 1 – Keswick → Threlkeld**
+- **Peaks:** Skiddaw, Great Calva, Blencathra
+- [Download GPX](generated/bob-graham-round-leg-1.gpx)
+- [View in GPX Studio ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Ffell%2Fbob-graham-round%2Fgenerated%2Fbob-graham-round-leg-1.gpx%22%5D#12.14/54.63575/-3.09576)
 
-- [**Leg 2 – Threlkeld → Dunmail Raise**](generated/bob-graham-round-leg-2.gpx)  
-  [View ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Ffell%2Fbob-graham-round%2Fgenerated%2Fbob-graham-round-leg-2.gpx%22%5D#12.14/54.63575/-3.09576)  
-  **Peaks**: 12, including Helvellyn and Fairfield.  
-  Traverses the Helvellyn ridge with long runnable sections and wide views over the Eastern Fells.
+### **Leg 2 – Threlkeld → Dunmail Raise**
+- **Peaks:** 12, including Helvellyn and Fairfield
+- [Download GPX](generated/bob-graham-round-leg-2.gpx)
+- [View in GPX Studio ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Ffell%2Fbob-graham-round%2Fgenerated%2Fbob-graham-round-leg-2.gpx%22%5D#12.14/54.63575/-3.09576)
 
-- [**Leg 3 – Dunmail → Wasdale**](generated/bob-graham-round-leg-3.gpx)  
-  [View ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Ffell%2Fbob-graham-round%2Fgenerated%2Fbob-graham-round-leg-3.gpx%22%5D#12.14/54.63575/-3.09576)  
-  **Peaks**: 15, including Bowfell, Scafell Pike, and Scafell.  
-  The most mountainous and technical section of the round, with high terrain and complex route-finding.
+### **Leg 3 – Dunmail → Wasdale**
+- **Peaks:** 15, including Bowfell, Scafell Pike, and Scafell
+- [Download GPX](generated/bob-graham-round-leg-3.gpx)
+- [View in GPX Studio ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Ffell%2Fbob-graham-round%2Fgenerated%2Fbob-graham-round-leg-3.gpx%22%5D#12.14/54.63575/-3.09576)
 
-- [**Leg 4 – Wasdale → Honister**](generated/bob-graham-round-leg-4.gpx)  
-  [View ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Ffell%2Fbob-graham-round%2Fgenerated%2Fbob-graham-round-leg-4.gpx%22%5D#12.14/54.63575/-3.09576)  
-  **Peaks**: 9, including Pillar and Great Gable.  
-  A rugged leg across the Western Fells, with steep climbs and dramatic scenery.
+### **Leg 4 – Wasdale → Honister**
+- **Peaks:** 9, including Pillar and Great Gable
+- [Download GPX](generated/bob-graham-round-leg-4.gpx)
+- [View in GPX Studio ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Ffell%2Fbob-graham-round%2Fgenerated%2Fbob-graham-round-leg-4.gpx%22%5D#12.14/54.63575/-3.09576)
 
-- [**Leg 5 – Honister → Keswick**](generated/bob-graham-round-leg-5.gpx)  
-  [View ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Ffell%2Fbob-graham-round%2Fgenerated%2Fbob-graham-round-leg-5.gpx%22%5D#12.14/54.63575/-3.09576)  
-  **Peaks**: Dale Head, Hindscarth, Robinson.  
-  A final push over three summits before the descent back to Moot Hall in Keswick.
-
----
+### **Leg 5 – Honister → Keswick**
+- **Peaks:** Dale Head, Hindscarth, Robinson
+- [Download GPX](generated/bob-graham-round-leg-5.gpx)
+- [View in GPX Studio ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Ffell%2Fbob-graham-round%2Fgenerated%2Fbob-graham-round-leg-5.gpx%22%5D#12.14/54.63575/-3.09576)
 
 ## 🔁 Complete Routes
 
-- [**Simplified Route (Single-Track)**](generated/bob-graham-round-simplified.gpx)  
-  [View ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Ffell%2Fbob-graham-round%2Fgenerated%2Fbob-graham-round-simplified.gpx%22%5D#12.14/54.63575/-3.09576)  
-  A single-track GPX file of the full round. Compatible with most GPS watches and apps. Compatible with most GPS devices. Recommended for general use.
+### **Simplified Route (Single-Track)**
+- [Download GPX](generated/bob-graham-round-simplified.gpx)
+- [View in GPX Studio ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Ffell%2Fbob-graham-round%2Fgenerated%2Fbob-graham-round-simplified.gpx%22%5D#12.14/54.63575/-3.09576)
 
-- [**Detailed Route (Multi-Track)**](generated/bob-graham-round-detailed.gpx)  
-  [View ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Ffell%2Fbob-graham-round%2Fgenerated%2Fbob-graham-round-detailed.gpx%22%5D#12.14/54.63575/-3.09576)  
-  Includes all 42 peaks and other points of interest, divided into five separate tracks (one per leg). Best suited for detailed planning in advanced apps.
+### **Detailed Route (Multi-Track)**
+- [Download GPX](generated/bob-graham-round-detailed.gpx)
+- [View in GPX Studio ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Ffell%2Fbob-graham-round%2Fgenerated%2Fbob-graham-round-detailed.gpx%22%5D#12.14/54.63575/-3.09576)
 
-- [**Route Only (Multi-Track)**](generated/bob-graham-round-track.gpx)  
-  [View ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Ffell%2Fbob-graham-round%2Fgenerated%2Fbob-graham-round-track.gpx%22%5D#12.14/54.63575/-3.09576)  
-  A multi-track GPX file of the full round, with no waypoints.
-
----
+### **Route Only (Multi-Track)**
+- [Download GPX](generated/bob-graham-round-track.gpx)
+- [View in GPX Studio ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Ffell%2Fbob-graham-round%2Fgenerated%2Fbob-graham-round-track.gpx%22%5D#12.14/54.63575/-3.09576)
 
 ## 📍 Waypoints Only
 
-- [**Summits**](generated/bob-graham-round-summits.gpx)  
-  [View ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Ffell%2Fbob-graham-round%2Fgenerated%2Fbob-graham-round-summits.gpx%22%5D#12.14/54.63575/-3.09576)  
-  GPX file containing only summit waypoints.
+### **Summits**
+- [Download GPX](generated/bob-graham-round-summits.gpx)
+- [View in GPX Studio ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Ffell%2Fbob-graham-round%2Fgenerated%2Fbob-graham-round-summits.gpx%22%5D#12.14/54.63575/-3.09576)
 
-- [**Points of Interest**](generated/bob-graham-round-points-of-interest.gpx)  
-  [View ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Ffell%2Fbob-graham-round%2Fgenerated%2Fbob-graham-round-points-of-interest.gpx%22%5D#12.14/54.63575/-3.09576)  
-  GPX file containing buildings, features, or other non-summit landmarks.
-
----
+### **Points of Interest**
+- [Download GPX](generated/bob-graham-round-points-of-interest.gpx)
+- [View in GPX Studio ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Ffell%2Fbob-graham-round%2Fgenerated%2Fbob-graham-round-points-of-interest.gpx%22%5D#12.14/54.63575/-3.09576)
 
 ## 🛰️ Interactive Route Preview
 

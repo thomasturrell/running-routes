@@ -5,43 +5,45 @@ title: Running Routes – GPX Files
 
 # 🏃 Running Routes – GPX Files
 
-Explore curated GPX files for a variety of road, trail, and fell running routes.
-
-Files are provided in multiple formats, with compatibility notes on each route page for devices and apps like Garmin, Suunto, Strava, Komoot, and OS Maps.
+GPX files for road, trail, and fell running.
+Each route page includes download options and notes on compatibility with devices and apps like Garmin Connect, Strava Maps, Komoot, GPX Studio and OS Maps.
 
 ---
 
 ## 📍 Available Routes
 
 ### ⛰️ Fell Running  
-Steep, rugged mountain routes focused on elevation and summits
+_Steep, rugged mountain routes focused on elevation and summits_
 
-#### 🏔 [Bob Graham Round](/running-routes/fell/bob-graham-round/)
-
+#### [Bob Graham Round](/running-routes/fell/bob-graham-round/)
 A legendary fell running challenge in England’s Lake District:  
-**42 peaks**, ~**106 km**, and over **8,200 m of ascent** — traditionally completed within 24 hours.
-
+**42 peaks**, ~**106 km**, and over **8,200 m of ascent** — traditionally completed within 24 hours.  
 [🔗 View GPX Files →](/running-routes/fell/bob-graham-round/)
+
+#### [Ramsay Round](/running-routes/fell/ramsay-round/)
+A Scottish mountain challenge in the Lochaber region:  
+**24 peaks**, ~**93 km**, and over **8,500 m of ascent** — traditionally completed within 24 hours.  
+[🔗 View GPX Files →](/running-routes/fell/ramsay-round/)
+
+#### [Paddy Buckley Round](/running-routes/fell/paddy-buckley-round/)
+A Welsh mountain challenge in Snowdonia:  
+**47 peaks**, ~**100 km**, and over **8,500 m of ascent** — traditionally completed within 24 hours.  
+[🔗 View GPX Files →](/running-routes/fell/paddy-buckley-round/)
 
 ---
 
 ### 🏞️ Trail Running  
-Scenic off-road routes through forests, hills, and countryside
+_Scenic off-road routes through forests, hills, and countryside_
 
-More routes coming soon…
+More courses coming soon…
 
 ---
 
 ### 🛣️ Road Running  
-Fast, paved routes for tempo runs, intervals, and race preparation
+_Fast, paved routes for tempo runs, intervals, and race preparation_
 
 More routes coming soon…
 
----
-
-> 🧭 *Always cross-reference with official route guidance, terrain conditions, and satellite imagery before relying on any GPX data in the field.*
-
----
 
 ## 🗺️ Data Sources & Attribution
 

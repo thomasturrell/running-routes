@@ -99,6 +99,9 @@ def extract_derivative_files(source_path: Path, output_dir: Path, prefix: str, n
 
 def main():
     for route in ROUTES:
+        if not route["source"].exists():
+            print(f"⚠️ Warning: Source file for route '{route['name']}' does not exist: {route['source']}")
+            continue
         print(f"\n🚀 Processing route: {route['name']}")
         extract_derivative_files(route["source"], route["output"], route["prefix"], route["name"])
 

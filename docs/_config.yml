@@ -1,17 +1,22 @@
-theme: minima
+remote_theme: jekyll/minima
 
-site:
-  minima:
-    skin: auto
-    nav_pages:
-      - fell/bob-graham-round/index.md
-      - fell/ramsey-round/index.md
-      - fell/paddy-buckley-round/index.md
-    hide_site_feed_link: true
-    social_links:
-      - title: Running Routes repository
-        icon: github
-        url: "https://github.com/thomasturrell/running-routes/"
+title: Running Routes
+author: Thomas Turrell-Croft
+description: A simple site using Minima theme
+
+minima:
+  skin: auto
+  nav_pages:
+    - fell/bob-graham-round/index.md
+    - fell/ramsey-round/index.md
+    - fell/paddy-buckley-round/index.md
+  hide_site_feed_link: true
+  social_links:
+    - title: Running Routes repository
+      icon: github
+      url: "https://github.com/thomasturrell/running-routes/"
+
+
 
 repository: thomasturrell/running-routes
 edit_uri: edit/main/docs/

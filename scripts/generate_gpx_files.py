@@ -67,10 +67,10 @@ def build_track_only_gpx(gpx: gpxpy.gpx.GPX):
     g.tracks = gpx.tracks
     return g
 
-def build_simplified_track_gpx(gpx: gpxpy.gpx.GPX) -> gpxpy.gpx.GPX:
+def build_simplified_track_gpx(gpx: gpxpy.gpx.GPX, name: str) -> gpxpy.gpx.GPX:
     g = gpxpy.gpx.GPX()
     merged_track = gpxpy.gpx.GPXTrack()
-    merged_track.name = "Simplified Track"
+    merged_track.name = f"{name} (Simplified)"
     merged_segment = gpxpy.gpx.GPXTrackSegment()
     for track in gpx.tracks:
         for segment in track.segments:
@@ -85,22 +85,22 @@ def export_individual_legs(gpx: gpxpy.gpx.GPX, output_dir: Path, prefix: str):
         leg_gpx.tracks.append(track)
         write_gpx(leg_gpx, output_dir / f"{prefix}-leg-{i}.gpx")
 
-def extract_derivative_files(source_path: Path, output_dir: Path, prefix: str):
+def extract_derivative_files(source_path: Path, output_dir: Path, prefix: str, name: str):
     output_dir.mkdir(parents=True, exist_ok=True)
     gpx = load_gpx(source_path)
 
     summits, poi = extract_summits_and_poi(gpx)
     write_gpx(build_summits_gpx(summits), output_dir / f"{prefix}-summits.gpx")
     write_gpx(build_poi_gpx(poi), output_dir / f"{prefix}-points-of-interest.gpx")
-    write_gpx(build_track_only_gpx(gpx), output_dir / f"{prefix}-track-only.gpx")
+    write_gpx(build_track_only_gpx(gpx), output_dir / f"{prefix}-track.gpx")
     write_gpx(gpx, output_dir / f"{prefix}-detailed.gpx")
-    write_gpx(build_simplified_track_gpx(gpx), output_dir / f"{prefix}-simplified.gpx")
+    write_gpx(build_simplified_track_gpx(gpx, name), output_dir / f"{prefix}-simplified.gpx")
     export_individual_legs(gpx, output_dir, prefix)
 
 def main():
     for route in ROUTES:
         print(f"\n🚀 Processing route: {route['name']}")
-        extract_derivative_files(route["source"], route["output"], route["prefix"])
+        extract_derivative_files(route["source"], route["output"], route["prefix"], route["name"])
 
     print("\n📦 All Routes Processed Successfully!")
     for file in written_files:

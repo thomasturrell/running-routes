@@ -24,20 +24,20 @@
       <rr:dobih_number>295</rr:dobih_number>
     </extensions>
   </wpt>
-  <wpt lat="56.79647" lon="-5.274549">
-    <ele>722.0</ele>
+  <wpt lat="56.745024" lon="-5.001888">
+    <ele>999.7</ele>
     <name>Sgùrr an Iubhair</name>
     <sym>Summit</sym>
     <extensions>
-      <rr:dobih_number>4513</rr:dobih_number>
+      <rr:dobih_number>308</rr:dobih_number>
     </extensions>
   </wpt>
-  <wpt lat="56.677905" lon="-4.991464">
-    <ele>941.9</ele>
+  <wpt lat="56.74173" lon="-4.98337">
+    <ele>1031.8</ele>
     <name>Am Bodach</name>
     <sym>Summit</sym>
     <extensions>
-      <rr:dobih_number>180</rr:dobih_number>
+      <rr:dobih_number>303</rr:dobih_number>
     </extensions>
   </wpt>
   <wpt lat="56.750756" lon="-4.968985">

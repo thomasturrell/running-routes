@@ -3,7 +3,6 @@ theme: minima
 minima:
   skin: auto
   nav_pages:
-    - index.md
     - fell/bob-graham-round/index.md
     - fell/ramsey-round/index.md
     - fell/paddy-buckley-round/index.md

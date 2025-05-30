@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:rr="http://thomasturrell.github.io/running-routes/schema/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 https://www.topografix.com/GPX/1/1/gpx.xsd http://thomasturrell.github.io/running-routes/schema/v1 https://thomasturrell.github.io/running-routes/schema/v1/gpx-extension.xsd" version="1.1" creator="GPXPy">
+  <wpt lat="56.799726"  lon="-5.067604">
+    <name>Ben Nevis Youth Hostel</name>
+  </wpt>
   <wpt lat="56.749866" lon="-5.072446">
     <ele>939.3</ele>
     <name>Mullach nan Coirean</name>
@@ -191,5 +194,8 @@
     <extensions>
       <rr:dobih_number>278</rr:dobih_number>
     </extensions>
+  </wpt>
+  <wpt lat="56.799726"  lon="-5.067604">
+    <name>Ben Nevis Youth Hostel</name>
   </wpt>
 </gpx>

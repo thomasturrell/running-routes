@@ -1,14 +1,10 @@
 ---
-layout: base
-title: Running Routes
+layout: home
+title: 🏃 Running Routes
 ---
-
-# 🏃 Running Routes
 
 GPX files for road, trail, and fell running.
 Each route page includes download options and notes on compatibility with devices and apps like Garmin Connect, Strava Maps, Komoot, GPX Studio and OS Maps.
-
----
 
 ## 📍 Available Routes
 
@@ -30,28 +26,21 @@ A Welsh mountain challenge in Snowdonia:
 **47 peaks**, ~**100 km**, and over **8,500 m of ascent** — traditionally completed within 24 hours.  
 [🔗 View GPX Files →](/running-routes/fell/paddy-buckley-round/)
 
----
-
 ### 🏞️ Trail Running  
 _Scenic off-road routes through forests, hills, and countryside_
 
 More courses coming soon…
-
----
 
 ### 🛣️ Road Running  
 _Fast, paved routes for tempo runs, intervals, and race preparation_
 
 More routes coming soon…
 
-
 ## 🗺️ Data Sources & Attribution
 
 - **Route planning:** Created using the [Ordnance Survey (OS) Maps](https://explore.osmaps.com/) online planner  
 - **Summit data:** From the [Database of British and Irish Hills (DoBIH)](https://www.hills-database.co.uk/)  
   Licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
-
----
 
 ## 🤝 Feedback & Contributions
 

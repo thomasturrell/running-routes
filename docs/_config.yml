@@ -8,7 +8,7 @@ minima:
   skin: auto
   nav_pages:
     - fell/bob-graham-round/index.md
-    - fell/ramsey-round/index.md
+    - fell/ramsay-round/index.md
     - fell/paddy-buckley-round/index.md
   hide_site_feed_link: true
   social_links:

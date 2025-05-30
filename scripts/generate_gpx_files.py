@@ -10,16 +10,19 @@ ROUTES = [
         "name": "Bob Graham Round",
         "source": Path("src/fell/bob-graham-round/bob-graham-round.gpx"),
         "output": Path("docs/fell/bob-graham-round/generated"),
+        "prefix": "bob-graham-round",
     },
     {
         "name": "Ramsay Round",
         "source": Path("src/fell/ramsay-round/ramsay-round.gpx"),
         "output": Path("docs/fell/ramsay-round/generated"),
+        "prefix": "ramsay-round",
     },
     {
         "name": "Paddy Buckley Round",
         "source": Path("src/fell/paddy-buckley-round/paddy-buckley-round.gpx"),
         "output": Path("docs/fell/paddy-buckley-round/generated"),
+        "prefix": "paddy-buckley-round",
     },
 ]
 
@@ -76,28 +79,28 @@ def build_simplified_track_gpx(gpx: gpxpy.gpx.GPX) -> gpxpy.gpx.GPX:
     g.tracks.append(merged_track)
     return g
 
-def export_individual_legs(gpx: gpxpy.gpx.GPX, output_dir: Path):
+def export_individual_legs(gpx: gpxpy.gpx.GPX, output_dir: Path, prefix: str):
     for i, track in enumerate(gpx.tracks, 1):
         leg_gpx = gpxpy.gpx.GPX()
         leg_gpx.tracks.append(track)
-        write_gpx(leg_gpx, output_dir / f"leg-{i}.gpx")
+        write_gpx(leg_gpx, output_dir / f"{prefix}-leg-{i}.gpx")
 
-def extract_derivative_files(source_path: Path, output_dir: Path):
+def extract_derivative_files(source_path: Path, output_dir: Path, prefix: str):
     output_dir.mkdir(parents=True, exist_ok=True)
     gpx = load_gpx(source_path)
 
     summits, poi = extract_summits_and_poi(gpx)
-    write_gpx(build_summits_gpx(summits), output_dir / "summits.gpx")
-    write_gpx(build_poi_gpx(poi), output_dir / "points-of-interest.gpx")
-    write_gpx(build_track_only_gpx(gpx), output_dir / "track-only.gpx")
-    write_gpx(gpx, output_dir / "detailed.gpx")
-    write_gpx(build_simplified_track_gpx(gpx), output_dir / "simplified.gpx")
-    export_individual_legs(gpx, output_dir)
+    write_gpx(build_summits_gpx(summits), output_dir / f"{prefix}-summits.gpx")
+    write_gpx(build_poi_gpx(poi), output_dir / f"{prefix}-points-of-interest.gpx")
+    write_gpx(build_track_only_gpx(gpx), output_dir / f"{prefix}-track-only.gpx")
+    write_gpx(gpx, output_dir / f"{prefix}-detailed.gpx")
+    write_gpx(build_simplified_track_gpx(gpx), output_dir / f"{prefix}-simplified.gpx")
+    export_individual_legs(gpx, output_dir, prefix)
 
 def main():
     for route in ROUTES:
         print(f"\n🚀 Processing route: {route['name']}")
-        extract_derivative_files(route["source"], route["output"])
+        extract_derivative_files(route["source"], route["output"], route["prefix"])
 
     print("\n📦 All Routes Processed Successfully!")
     for file in written_files:

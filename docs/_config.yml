@@ -3,10 +3,11 @@ theme: minima
 minima:
   skin: auto
   nav_pages:
-  - index.md
-  - fell/bob-graham-round/index.md
-  - fell/ramsey-round/index.md
-  - fell/paddy-buckley-round/index.md
+    - index.md
+    - fell/bob-graham-round/index.md
+    - fell/ramsey-round/index.md
+    - fell/paddy-buckley-round/index.md
+  hide_site_feed_link: true
 
 repository: thomasturrell/running-routes
 edit_uri: edit/main/docs/

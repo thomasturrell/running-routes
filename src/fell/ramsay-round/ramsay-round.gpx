@@ -8,8 +8,8 @@
       <rr:dobih_number>321</rr:dobih_number>
     </extensions>
   </wpt>
-  <wpt lat="0.0" lon="0.0">
-    <ele>0.0</ele>
+  <wpt lat="56.743706" lon="-5.030328">
+    <ele>999.7</ele>
     <name>Stob Bàn (Mamores)</name>
     <sym>Summit</sym>
     <extensions>
@@ -128,8 +128,8 @@
       <rr:dobih_number>290</rr:dobih_number>
     </extensions>
   </wpt>
-  <wpt lat="0.0" lon="0.0">
-    <ele>0.0</ele>
+  <wpt lat="56.810656" lon="-4.840877">
+    <ele>977.0</ele>
     <name>Stob Bàn (Grey Corries)</name>
     <sym>Summit</sym>
     <extensions>

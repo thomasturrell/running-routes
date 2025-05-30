@@ -1,6 +1,6 @@
 ---
 layout: home
-title: 🏃 Running Routes
+title: 🏃 Running Routes # Added as a heading by theme
 ---
 
 GPX files for road, trail, and fell running.

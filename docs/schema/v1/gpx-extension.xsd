@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://thomasturrell.github.io/running-routes/schema/v1"
+           xmlns:rr="http://thomasturrell.github.io/running-routes/schema/v1"
+           elementFormDefault="qualified">
+
+  <xs:element name="dobih_number" type="xs:integer"/>
+
+</xs:schema>

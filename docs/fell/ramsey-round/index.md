@@ -1,9 +1,9 @@
 ---
-layout: page
-title: Ramsey Round – GPX Files
+layout: base
+title: Ramsey Round
 permalink: /fell/ramsey-round/
 ---
 
-# Ramsey Round – GPX Files
+# Ramsey Round
 
 Coming soon...

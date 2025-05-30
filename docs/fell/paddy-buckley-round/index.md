@@ -1,10 +1,10 @@
 ---
-layout: page
-title: Paddy Buckley Round – GPX Files
+layout: base
+title: Paddy Buckley Round
 permalink: /fell/paddy-buckley-round/
 ---
 
-# Paddy Buckley Round – GPX Files
+# Paddy Buckley Round
 
 Coming soon...
 

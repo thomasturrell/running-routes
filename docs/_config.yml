@@ -1,12 +1,17 @@
 theme: minima
 
-minima:
-  skin: auto
-  nav_pages:
-    - fell/bob-graham-round/index.md
-    - fell/ramsey-round/index.md
-    - fell/paddy-buckley-round/index.md
-  hide_site_feed_link: true
+site:
+  minima:
+    skin: auto
+    nav_pages:
+      - fell/bob-graham-round/index.md
+      - fell/ramsey-round/index.md
+      - fell/paddy-buckley-round/index.md
+    hide_site_feed_link: true
+    social_links:
+      - title: Running Routes repository
+        icon: github
+        url: "https://github.com/thomasturrell/running-routes/"
 
 repository: thomasturrell/running-routes
 edit_uri: edit/main/docs/

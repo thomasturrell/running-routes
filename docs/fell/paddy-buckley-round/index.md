@@ -1,10 +1,8 @@
 ---
-layout: base
-title: Paddy Buckley Round
+layout: page
+title: Paddy Buckley Round # Added as a heading by theme
 permalink: /fell/paddy-buckley-round/
 ---
-
-# Paddy Buckley Round
 
 Coming soon...
 

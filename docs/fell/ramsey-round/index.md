@@ -1,9 +1,7 @@
 ---
-layout: base
-title: Ramsey Round
+layout: page
+title: Ramsey Round # Added as a heading by theme
 permalink: /fell/ramsey-round/
 ---
-
-# Ramsey Round
 
 Coming soon...

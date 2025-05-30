@@ -1,10 +1,8 @@
 ---
-layout: base
-title: Bob Graham Round
+layout: page
+title: Bob Graham Round # Added as a heading by theme
 permalink: /fell/bob-graham-round/
 ---
-
-# Bob Graham Round
 
 The **Bob Graham Round** is a legendary fell running challenge in England’s Lake District. It covers 42 peaks, approximately 106 km (66 miles), and around 8,200 m of ascent—traditionally completed in under 24 hours.
 

@@ -8,7 +8,8 @@ The **Bob Graham Round** is a legendary fell running challenge in England’s La
 
 Multiple formats are available to suit different devices and use cases. If unsure, start with the **Simplified Route**, which is compatible with most GPS watches and mobile apps (e.g. Garmin Connect, Strava).
 
-> 🧭 *Always cross-reference your route with maps, weather conditions, and local guidance before using GPX files in the field.*
+> ⚠️ **Important Disclaimer:**  
+> The GPX files provided on this site are intended for general guidance only. Always cross-reference your route with official maps, weather conditions, and local guidance before and during navigation. Errors or inaccuracies may exist, and reliance on these files is at your own risk. The site creators are not liable for any issues arising from the use of these files.
 
 ## 🏔 Individual Legs
 

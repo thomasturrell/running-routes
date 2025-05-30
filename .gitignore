@@ -1,6 +1,6 @@
 # Ignore all generated GPX files
 /docs/fell/bob-graham-round/generated/
-/docs/fell/ramsey-round/generated/
+/docs/fell/ramsay-round/generated/
 /docs/fell/paddy-buckley-round/generated/
 
 # Ignore Python virtual environment

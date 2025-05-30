@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:rr="http://thomasturrell.github.io/running-routes/schema/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 https://www.topografix.com/GPX/1/1/gpx.xsd http://thomasturrell.github.io/running-routes/schema/v1 https://thomasturrell.github.io/running-routes/schema/v1/gpx-extension.xsd" version="1.1" creator="GPXPy">
+  <wpt lat="56.749866" lon="-5.072446">
+    <ele>939.3</ele>
+    <name>Mullach nan Coirean</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>321</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="0.0" lon="0.0">
+    <ele>0.0</ele>
+    <name>Stob Bàn (Mamores)</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>309</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="56.75592" lon="-5.00369">
+    <ele>1099.0</ele>
+    <name>Sgùrr a' Mhàim</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>295</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="56.79647" lon="-5.274549">
+    <ele>722.0</ele>
+    <name>Sgùrr an Iubhair</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>4513</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="56.677905" lon="-4.991464">
+    <ele>941.9</ele>
+    <name>Am Bodach</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>180</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="56.750756" lon="-4.968985">
+    <ele>981.3</ele>
+    <name>Stob Coire a' Chàirn</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>313</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="56.759172" lon="-4.96623">
+    <ele>981.5</ele>
+    <name>An Gearanach</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>312</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="56.743699" lon="-4.939851">
+    <ele>1054.3</ele>
+    <name>Na Gruagaichean</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>301</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="56.754376" lon="-4.925796">
+    <ele>1130.0</ele>
+    <name>Binnein Mòr</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>287</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="56.766961" lon="-4.911161">
+    <ele>943.0</ele>
+    <name>Binnein Beag</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>320</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="56.750006" lon="-4.895435">
+    <ele>1010.0</ele>
+    <name>Sgùrr Eilde Mòr</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>305</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="56.78939" lon="-4.659977">
+    <ele>935.0</ele>
+    <name>Beinn na Lap</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>364</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="56.830077" lon="-4.66083">
+    <ele>1046.0</ele>
+    <name>Chno Dearg</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>351</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="56.831744" lon="-4.694934">
+    <ele>979.0</ele>
+    <name>Stob Coire Sgrìodain</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>356</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="56.823684" lon="-4.760199">
+    <ele>1105.0</ele>
+    <name>Stob a' Choire Mheadhoin</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>292</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="56.818199" lon="-4.77371">
+    <ele>1115.0</ele>
+    <name>Stob Coire Easain</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>290</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="0.0" lon="0.0">
+    <ele>0.0</ele>
+    <name>Stob Bàn (Grey Corries)</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>314</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="56.823786" lon="-4.849624">
+    <ele>1177.0</ele>
+    <name>Stob Choire Claurigh</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>285</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="56.810877" lon="-4.884907">
+    <ele>1116.0</ele>
+    <name>Stob Coire an Laoigh</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>289</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="56.80043" lon="-4.90396">
+    <ele>1094.0</ele>
+    <name>Sgùrr Choinnich Mòr</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>296</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="56.799998" lon="-4.954138">
+    <ele>1234.0</ele>
+    <name>Aonach Beag</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>279</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="56.812941" lon="-4.961712">
+    <ele>1220.4</ele>
+    <name>Aonach Mòr</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>281</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="56.805246" lon="-4.986616">
+    <ele>1220.0</ele>
+    <name>Carn Mòr Dearg</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>282</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="56.796891" lon="-5.003675">
+    <ele>1344.53</ele>
+    <name>Ben Nevis [Beinn Nibheis]</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>278</rr:dobih_number>
+    </extensions>
+  </wpt>
+</gpx>

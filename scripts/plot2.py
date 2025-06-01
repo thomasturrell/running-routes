@@ -14,7 +14,7 @@ Usage: python script.py --input INPUT.gpx --gpx-output OUTPUT.gpx [options]
 Options:
   --buffer FLOAT           Buffer around bounding box in degrees (default: 0.01)
   --max-points INT         Maximum number of waypoints (default: 50)
-  --max-distance FLOAT     Maximum allowed distance between waypoints in km (default: 5.0)
+  --max-distance FLOAT     Maximum allowed distance between waypoints in km (default: 20)
   --max-cache-age-days INT Maximum number of days before cached graph expires (default: 7)
   --force-refresh          Force refresh of cached graph even if not expired
 """)

@@ -11,7 +11,7 @@ def parse_arguments():
     parser.add_argument('--output', required=True, help='Path to save the final plot (not used yet)')
     parser.add_argument('--buffer', type=float, default=0.01, help='Buffer in degrees to expand the bounding box (default: 0.01)')
     parser.add_argument('--max-points', type=int, default=50, help='Maximum number of waypoints allowed (default: 50)')
-    parser.add_argument('--max-distance', type=float, default=5.0, help='Maximum allowed distance between waypoints in km (default: 5.0)')
+    parser.add_argument('--max-distance', type=float, default=20.0, help='Maximum allowed distance between waypoints in km (default: 20.0)')
     return parser.parse_args()
 
 

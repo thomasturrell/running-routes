@@ -113,8 +113,8 @@ def calculate_routes(graph, node_ids):
 
 def plot_and_save_route(graph, routes, output_path):
     print(f"[6/7] Plotting route and saving to: {output_path}")
-    fig, ax = ox.plot_graph_routes(graph, routes, route_linewidth=3, node_size=0, show=False, close=False)
-    fig.savefig(output_path)
+    fig, ax = ox.plot_graph_routes(graph, routes, route_linewidth=3, node_size=0, show=False, close=False, figsize=(16, 12))
+    fig.savefig(output_path, dpi=300)
     print("  ↳ Plot saved")
 
 def export_route_to_gpx(graph, routes, output_path_gpx):

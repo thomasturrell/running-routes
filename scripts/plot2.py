@@ -127,9 +127,18 @@ def export_route_to_gpx(graph, routes, output_path_gpx):
     gpx.tracks.append(track)
 
     for route in routes:
-        for node in route:
-            point = graph.nodes[node]
-            segment.points.append(gpxpy.gpx.GPXTrackPoint(point['y'], point['x']))
+        for u, v in zip(route[:-1], route[1:]):
+            edge_data = graph.get_edge_data(u, v)
+            if edge_data is None:
+                continue
+            # if multiple edges exist between u and v, take the first one
+            edge = edge_data[0] if isinstance(edge_data, dict) else edge_data
+            if 'geometry' in edge:
+                for x, y in edge['geometry'].coords:
+                    segment.points.append(gpxpy.gpx.GPXTrackPoint(y, x))
+            else:
+                segment.points.append(gpxpy.gpx.GPXTrackPoint(graph.nodes[u]['y'], graph.nodes[u]['x']))
+                segment.points.append(gpxpy.gpx.GPXTrackPoint(graph.nodes[v]['y'], graph.nodes[v]['x']))
 
     with open(output_path_gpx, 'w') as f:
         f.write(gpx.to_xml())

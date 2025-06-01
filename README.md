@@ -6,32 +6,27 @@ The site offers downloadable GPX files for road, trail, and fell running routes�
 
 👉 **[Visit the site](https://thomasturrell.github.io/running-routes/)**
 
+## 📍 Project Goal
+
 This project provides runners with high-quality GPX files tailored for fell, trail, and road running.
 
+### For fell runners:
 
-For fell runners:
-Include all summits and relevant points of interest (POIs)
+* Include **all summits** and relevant points of interest (POIs)
+* Calculate a **realistic route** using OpenStreetMap data
+* Output both a plotted map and a matching GPX file
 
-Calculate a realistic route using OpenStreetMap data
+The key goal is to ensure runners can be confident their route:
 
-Output both a plotted map and a matching GPX file
+* Hits every summit in the intended order
+* Follows public footpaths or known tracks
+* Contains no unnecessary deviations or detours
 
-Ensure the route:
+### For trail and road runners:
 
-Hits every summit in the intended order
-
-Follows public footpaths or known tracks, not straight lines
-
-Contains no unnecessary deviations or detours
-
-For trail and road runners:
-Provide clean, device-compatible GPX files for popular or curated routes
-
-Optimise for accuracy, simplicity, and compatibility with mapping tools
-
-Ensure tracks align with known paths or roads and avoid GPS errors or detours
-
-
+* Provide clean, device-compatible GPX files for popular or curated routes
+* Optimise for **accuracy, simplicity**, and **compatibility** with mapping tools
+* Ensure tracks align with known paths or roads and avoid GPS errors or detours
 
 ## 🤝 Contributing
 

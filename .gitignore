@@ -9,3 +9,7 @@
 # Ignore Python bytecode files
 __pycache__/
 *.pyc
+
+cache/
+
+.graph_cache/

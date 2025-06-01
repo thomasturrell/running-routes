@@ -117,10 +117,15 @@ def plot_and_save_route(graph, routes, output_path):
     fig.savefig(output_path, dpi=300)
     print("  ↳ Plot saved")
 
-def export_route_to_gpx(graph, routes, output_path_gpx):
+def export_route_to_gpx(graph, routes, waypoints, output_path_gpx):
     print(f"[7/7] Exporting route to GPX: {output_path_gpx}")
     import gpxpy.gpx
     gpx = gpxpy.gpx.GPX()
+
+    # Add input waypoints (e.g., summits)
+    for lat, lon, name in waypoints:
+        gpx.waypoints.append(gpxpy.gpx.GPXWaypoint(latitude=lat, longitude=lon, name=name))
+
     segment = gpxpy.gpx.GPXTrackSegment()
     track = gpxpy.gpx.GPXTrack()
     track.segments.append(segment)
@@ -131,7 +136,6 @@ def export_route_to_gpx(graph, routes, output_path_gpx):
             edge_data = graph.get_edge_data(u, v)
             if edge_data is None:
                 continue
-            # if multiple edges exist between u and v, take the first one
             edge = edge_data[0] if isinstance(edge_data, dict) else edge_data
             if 'geometry' in edge:
                 for x, y in edge['geometry'].coords:
@@ -152,8 +156,10 @@ def main():
     graph = download_osm_graph(north, south, east, west, args.max_cache_age_days, args.force_refresh)
     node_ids = snap_waypoints_to_graph(graph, waypoints)
     routes = calculate_routes(graph, node_ids)
-    plot_and_save_route(graph, routes, args.png_output)
-    export_route_to_gpx(graph, routes, args.gpx_output)
+
+    if args.png_output:
+        plot_and_save_route(graph, routes, args.png_output)
+    export_route_to_gpx(graph, routes, waypoints, args.gpx_output)
 
 if __name__ == '__main__':
     main()

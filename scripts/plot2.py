@@ -1,4 +1,6 @@
 import argparse
+import hashlib
+from pathlib import Path
 import sys
 import gpxpy
 import osmnx as ox
@@ -61,10 +63,25 @@ def calculate_bounding_box(waypoints, buffer):
 
 
 def download_osm_graph(north, south, east, west):
+    def bbox_hash(w, s, e, n):
+        return hashlib.md5(f"{w},{s},{e},{n}".encode()).hexdigest()
+
     print("[3/6] Downloading OSM data (walkable paths)...")
-    graph = ox.graph.graph_from_bbox(north, south, east, west, network_type='walk')
+    cache_dir = Path(".graph_cache")
+    cache_dir.mkdir(exist_ok=True)
+    hash_id = bbox_hash(west, south, east, north)
+    cache_file = cache_dir / f"graph_{hash_id}.graphml"
+
+    if cache_file.exists():
+        print(f"  ↳ Using cached graph from {cache_file}")
+        return ox.load_graphml(cache_file)
+
+    print("  ↳ No cache found. Downloading from OSM...")
+    graph = ox.graph.graph_from_bbox((west, south, east, north), network_type='walk')
+    ox.save_graphml(graph, filepath=cache_file)
     print("  ↳ Graph downloaded with", len(graph.nodes), "nodes and", len(graph.edges), "edges")
     return graph
+
 
 
 def main():

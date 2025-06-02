@@ -41,7 +41,7 @@ def parse_gpx(file_path):
     except gpxpy.gpx.GPXException as e:
         print(f"❌ Error parsing GPX: {e}")
         sys.exit(1)
-    waypoints = [(wpt.latitude, wpt.longitude, wpt.name) for wpt in gpx.waypoints]
+    waypoints = [(wpt.latitude, wpt.longitude, wpt.name, wpt.symbol) for wpt in gpx.waypoints]
     print(f"  ↳ {len(waypoints)} waypoints found")
     return waypoints
 
@@ -100,14 +100,38 @@ def download_osm_graph(north, south, east, west, max_cache_age_days, force_refre
 
 def snap_waypoints_to_graph(graph, waypoints):
     print("[4/6] Snapping waypoints to nearest graph nodes...")
-    return [ox.distance.nearest_nodes(graph, lon, lat) for lat, lon, _ in waypoints]
+    snapped_nodes = []
+    for lat, lon, name, sym in waypoints:
+        # Find the nearest node
+        nearest_node = ox.distance.nearest_nodes(graph, lon, lat)
+        # Get the new location of the snapped node
+        new_lat = graph.nodes[nearest_node]['y']
+        new_lon = graph.nodes[nearest_node]['x']
+        # Calculate the distance between the original and snapped location
+        distance_meters = geodesic((lat, lon), (new_lat, new_lon)).meters
+        # Print debug information
+        print(f"  ↳ Waypoint '{name}' moved:")
+        print(f"     - Original location: lat={lat}, lon={lon}")
+        print(f"     - Snapped location:  lat={new_lat}, lon={new_lon}")
+        print(f"     - Distance moved:    {distance_meters:.2f} meters")
+        # Check if the distance exceeds 5 meters
+        if distance_meters > 5:
+            print(f"  ⚠️ Distance exceeds 5 meters. Waypoint '{name}' will not be snapped.")
+            snapped_nodes.append((lat, lon))  # Append original coordinates
+        else:
+            snapped_nodes.append(nearest_node)
+    return snapped_nodes
 
 def calculate_routes(graph, node_ids):
     print("[5/6] Calculating routes between nodes...")
     import networkx as nx
     routes = []
     for i in range(len(node_ids) - 1):
-        route = nx.shortest_path(graph, node_ids[i], node_ids[i+1], weight='length')
+        try:
+            route = nx.shortest_path(graph, node_ids[i], node_ids[i+1], weight='length')
+        except nx.NetworkXNoPath:
+            print(f"  ⚠️ No path found between node {i+1} and {i+2}, inserting fallback route")
+            route = [node_ids[i], node_ids[i+1]]
         routes.append(route)
     return routes
 
@@ -123,8 +147,8 @@ def export_route_to_gpx(graph, routes, waypoints, output_path_gpx):
     gpx = gpxpy.gpx.GPX()
 
     # Add input waypoints (e.g., summits)
-    for lat, lon, name in waypoints:
-        gpx.waypoints.append(gpxpy.gpx.GPXWaypoint(latitude=lat, longitude=lon, name=name))
+    for lat, lon, name, sym in waypoints:
+        gpx.waypoints.append(gpxpy.gpx.GPXWaypoint(latitude=lat, longitude=lon, name=name, symbol=sym))
 
     segment = gpxpy.gpx.GPXTrackSegment()
     track = gpxpy.gpx.GPXTrack()
@@ -148,12 +172,45 @@ def export_route_to_gpx(graph, routes, waypoints, output_path_gpx):
         f.write(gpx.to_xml())
     print("  ↳ GPX file written")
 
+def create_fallback_connection_graph(waypoints):
+    print("[3.5/6] Creating fallback connection graph between waypoints...")
+    import networkx as nx
+    fallback_graph = nx.Graph()
+    for i in range(len(waypoints) - 1):
+        lat1, lon1, name1, _ = waypoints[i]
+        lat2, lon2, name2, _ = waypoints[i + 1]
+        # Add edge with high cost
+        fallback_graph.add_edge(
+            (lat1, lon1), (lat2, lon2),
+            weight=10000,  # High cost to discourage use
+            length=geodesic((lat1, lon1), (lat2, lon2)).meters
+        )
+        print(f"  ↳ Added fallback connection edge: {name1} → {name2} (cost: 10000)")
+    return fallback_graph
+
+def merge_graphs(osm_graph, fallback_graph):
+    print("[4/6] Merging fallback connection graph with OSM graph...")
+    for edge in fallback_graph.edges(data=True):
+        (lat1, lon1), (lat2, lon2), edge_data = edge
+        # Find nearest nodes in the OSM graph
+        node1 = ox.distance.nearest_nodes(osm_graph, lon1, lat1)
+        node2 = ox.distance.nearest_nodes(osm_graph, lon2, lat2)
+        # Add edge to OSM graph with high cost
+        osm_graph.add_edge(node1, node2, **edge_data)
+        print(f"  ↳ Added edge to OSM graph: {node1} → {node2} (cost: {edge_data['weight']})")
+    return osm_graph
+
 def main():
     args = parse_arguments()
     waypoints = parse_gpx(args.input)
     validate_waypoints(waypoints, args.max_points, args.max_distance)
     north, south, east, west = calculate_bounding_box(waypoints, args.buffer)
     graph = download_osm_graph(north, south, east, west, args.max_cache_age_days, args.force_refresh)
+
+    # Create and merge fallback connection graph
+    fallback_graph = create_fallback_connection_graph(waypoints)
+    graph = merge_graphs(graph, fallback_graph)
+
     node_ids = snap_waypoints_to_graph(graph, waypoints)
     routes = calculate_routes(graph, node_ids)
 

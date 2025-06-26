@@ -116,8 +116,11 @@ def snap_waypoints_to_graph(graph, waypoints):
         print(f"     - Distance moved:    {distance_meters:.2f} meters")
         # Check if the distance exceeds 5 meters
         if distance_meters > 5:
-            print(f"  ⚠️ Distance exceeds 5 meters. Waypoint '{name}' will not be snapped.")
-            snapped_nodes.append((lat, lon))  # Append original coordinates
+            print(f"  ⚠️ Distance exceeds 5 meters. Adding waypoint '{name}' as a new node.")
+            # Add the waypoint as a new node in the graph
+            new_node_id = max(graph.nodes) + 1  # Generate a unique node ID
+            graph.add_node(new_node_id, x=lon, y=lat)
+            snapped_nodes.append(new_node_id)
         else:
             snapped_nodes.append(nearest_node)
     return snapped_nodes

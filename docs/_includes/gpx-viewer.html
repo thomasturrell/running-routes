@@ -1,0 +1,29 @@
+<div id="map" style="height: 500px;"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-gpx@1.7.0/leaflet-gpx.min.js"></script>
+
+<script>
+  const map = L.map('map');
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  new L.GPX('{{ include.gpx_file }}', {
+    async: true,
+    marker_options: {
+      startIconUrl: null,
+      endIconUrl: null,
+      shadowUrl: null
+    },
+    polyline_options: {
+      color: '#ff6600',
+      weight: 4,
+      opacity: 0.75
+    }
+  }).on('loaded', function(e) {
+    map.fitBounds(e.target.getBounds());
+  }).addTo(map);
+</script>

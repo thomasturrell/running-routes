@@ -64,10 +64,4 @@ Multiple formats are available to suit different devices and use cases. If unsur
 
 ## 🛰️ Interactive Route Preview
 
-<iframe 
-  src='https://gpx.studio/embed?options={"files":["https://thomasturrell.github.io/running-routes/fell/bob-graham-round/generated/bob-graham-round-detailed.gpx"]}'
-  width="100%" 
-  height="500" 
-  style="border: 1px solid #ccc;" 
-  title="Bob Graham Round GPX Preview">
-</iframe>
+{% include gpx-viewer.html gpx_file="generated/bob-graham-round-detailed.gpx" %}

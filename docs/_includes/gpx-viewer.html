@@ -1,29 +1,31 @@
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/2.2.0/gpx.min.js" defer crossorigin=""></script>
+
 <div id="map" style="height: 500px;"></div>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet-gpx@1.7.0/leaflet-gpx.min.js"></script>
-
-<script>
+<script type="module">
   const map = L.map('map');
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-    attribution: '&copy; OpenStreetMap contributors'
+  L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'Map data &copy; <a href="http://www.osm.org">OpenStreetMap</a>'
   }).addTo(map);
 
-  new L.GPX('{{ include.gpx_file }}', {
+  // URL to your GPX file or the GPX itself as a XML string.
+  const url = '/fell/allermuir-hill-race/generated/allermuir-hill-race-simplified.gpx';
+  const options = {
     async: true,
-    marker_options: {
-      startIconUrl: null,
-      endIconUrl: null,
-      shadowUrl: null
-    },
-    polyline_options: {
-      color: '#ff6600',
-      weight: 4,
-      opacity: 0.75
-    }
-  }).on('loaded', function(e) {
+    polyline_options: { color: 'red' },
+  };
+
+  const gpx = new L.GPX(url, options).on('loaded', (e) => {
     map.fitBounds(e.target.getBounds());
   }).addTo(map);
+
 </script>
+

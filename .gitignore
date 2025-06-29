@@ -2,6 +2,10 @@
 /docs/fell/bob-graham-round/generated/
 /docs/fell/ramsay-round/generated/
 /docs/fell/paddy-buckley-round/generated/
+/docs/fell/allermuir-hill-race/generated/
+
+# Ignore all generated static files
+/docs/static/generated/
 
 # Ignore Python virtual environment
 /.venv/

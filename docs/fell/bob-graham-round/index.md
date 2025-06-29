@@ -8,6 +8,12 @@ The **Bob Graham Round** is a legendary fell running challenge in England’s La
 
 Multiple formats are available to suit different devices and use cases. If unsure, start with the **Simplified Route**, which is compatible with most GPS watches and mobile apps (e.g. Garmin Connect, Strava).
 
+## 🛰️ Interactive Route Preview
+
+{% include gpx-viewer.html gpx_file="generated/bob-graham-round-detailed.gpx" %}
+
+## Downloads
+
 > ⚠️ **Important Disclaimer:**  
 > The GPX files provided on this site are intended for general guidance only. Always cross-reference your route with official maps, weather conditions, and local guidance before and during navigation. Errors or inaccuracies may exist, and reliance on these files is at your own risk. The site creators are not liable for any issues arising from the use of these files.
 
@@ -62,6 +68,4 @@ Multiple formats are available to suit different devices and use cases. If unsur
 - [Download GPX](generated/bob-graham-round-points-of-interest.gpx)
 - [View in GPX Studio ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Ffell%2Fbob-graham-round%2Fgenerated%2Fbob-graham-round-points-of-interest.gpx%22%5D#12.14/54.63575/-3.09576)
 
-## 🛰️ Interactive Route Preview
 
-{% include gpx-viewer.html gpx_file="generated/bob-graham-round-detailed.gpx" %}

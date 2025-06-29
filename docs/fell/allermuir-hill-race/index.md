@@ -10,7 +10,12 @@ The **Allermuir Hill Race** is a short, steep fell race held annually in the Pen
 - **Ascent:** ~400 m  
 - **Start/Finish:** Lothianburn  
 - **Terrain:** Grassy trails and open hillside  
-- **Features:** No course marking or prizes; runners are expected to be self-reliant and aware of the route
+
+## 🛰️ Interactive Route Preview
+
+{% include gpx-viewer.html gpx_file="generated/allermuir-hill-race-detailed.gpx" %}
+
+## Downloads
 
 > ⚠️ **Important Disclaimer:**  
 > The GPX files provided are intended for general guidance only. Always cross-reference with official maps, route instructions, and local weather conditions. Use of these files is at your own risk.
@@ -18,6 +23,3 @@ The **Allermuir Hill Race** is a short, steep fell race held annually in the Pen
 ## 📄 Route & GPX
 
 - 📥 [Download GPX file for Allermuir Hill Race](generated/allermuir-hill-race.gpx)  
-## 🛰️ Interactive Route Preview
-
-{% include gpx-viewer.html gpx_file="generated/allermuir-hill-race-detailed.gpx" %}

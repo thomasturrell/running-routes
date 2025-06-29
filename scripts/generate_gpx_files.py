@@ -24,6 +24,12 @@ ROUTES = [
         "output": Path("docs/fell/paddy-buckley-round/generated"),
         "prefix": "paddy-buckley-round",
     },
+    {
+        "name": "Allermuir Hill Race",
+        "source": Path("src/fell/allermuir-hill-race/allermuir-hill-race.gpx"),
+        "output": Path("docs/fell/allermuir-hill-race/generated"),
+        "prefix": "allermuir-hill-race",
+    }
 ]
 
 def load_gpx(path: Path) -> gpxpy.gpx.GPX:

@@ -17,7 +17,8 @@ minima:
       icon: github
       url: "https://github.com/thomasturrell/running-routes/"
 
-
-
 repository: thomasturrell/running-routes
 edit_uri: edit/main/docs/
+
+#baseurl: "/running-routes"
+#url: "https://thomasturrell.github.io"

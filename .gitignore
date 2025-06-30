@@ -1,5 +1,5 @@
 # Ignore all generated assets files
-/docs/assets/generated/
+/docs/assets/gpx/
 
 # Ignore Python virtual environment
 /.venv/

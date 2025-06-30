@@ -10,7 +10,7 @@ Multiple formats are available to suit different devices and use cases. If unsur
 
 ## 🛰️ Interactive Route Preview
 
-{% include gpx-viewer.html gpx_file="generated/ramsay-round-detailed.gpx" %}
+{% include gpx-viewer.html map_id="map1" gpx_file="/assets/generated/fell/ramsay-round/ramsay-round-detailed.gpx" %}
 
 ## Downloads
 
@@ -21,39 +21,39 @@ Multiple formats are available to suit different devices and use cases. If unsur
 
 ### Leg 1 – Glen Nevis → Loch Treig
 - **Peaks:** Ben Nevis, Carn Mor Dearg, Aonachs
-- [Download GPX](generated/ramsay-round-leg-1.gpx)
-- [View in GPX Studio ↗](https://gpx.studio/app?files=["https://thomasturrell.github.io/running-routes/fell/ramsay-round/generated/ramsay-round-leg-1.gpx"])
+- [Download GPX](/assets/generated/fell/ramsay-round/ramsay-round-leg-1.gpx)
+- [View in GPX Studio ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Fassets%2Fgenerated%2Ffell%2Framsay-round%2Framsay-round-leg-1.gpx%22%5D)
 
 ### Leg 2 – Loch Treig → Stob Coire Easain
 - **Peaks:** Sgurr Choinnich Mor, Stob Coire Easain
-- [Download GPX](generated/ramsay-round-leg-2.gpx)
-- [View in GPX Studio ↗](https://gpx.studio/app?files=["https://thomasturrell.github.io/running-routes/fell/ramsay-round/generated/ramsay-round-leg-2.gpx"])
+- [Download GPX](/assets/generated/fell/ramsay-round/ramsay-round-leg-2.gpx)
+- [View in GPX Studio ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Fassets%2Fgenerated%2Ffell%2Framsay-round%2Framsay-round-leg-2.gpx%22%5D)
 
 ### Leg 3 – Stob Coire Easain → Glen Nevis
 - **Peaks:** Grey Corries, Mamores, Mullach nan Coirean
-- [Download GPX](generated/ramsay-round-leg-3.gpx)
-- [View in GPX Studio ↗](https://gpx.studio/app?files=["https://thomasturrell.github.io/running-routes/fell/ramsay-round/generated/ramsay-round-leg-3.gpx"])
+- [Download GPX](/assets/generated/fell/ramsay-round/ramsay-round-leg-3.gpx)
+- [View in GPX Studio ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Fassets%2Fgenerated%2Ffell%2Framsay-round%2Framsay-round-leg-3.gpx%22%5D)
 
 ## 🔁 Complete Routes
 
 ### Simplified Route (Single-Track)
-- [Download GPX](generated/ramsay-round-simplified.gpx)
-- [View in GPX Studio ↗](https://gpx.studio/app?files=["https://thomasturrell.github.io/running-routes/fell/ramsay-round/generated/ramsay-round-simplified.gpx"])
+- [Download GPX](/assets/generated/fell/ramsay-round/ramsay-round-simplified.gpx)
+- [View in GPX Studio ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Fassets%2Fgenerated%2Ffell%2Framsay-round%2Framsay-round-simplified.gpx%22%5D)
 
 ### Detailed Route (Multi-Track)
-- [Download GPX](generated/ramsay-round-detailed.gpx)
-- [View in GPX Studio ↗](https://gpx.studio/app?files=["https://thomasturrell.github.io/running-routes/fell/ramsay-round/generated/ramsay-round-detailed.gpx"])
+- [Download GPX](/assets/generated/fell/ramsay-round/ramsay-round-detailed.gpx)
+- [View in GPX Studio ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Fassets%2Fgenerated%2Ffell%2Framsay-round%2Framsay-round-detailed.gpx%22%5D)
 
 ### Route Only (Multi-Track)
-- [Download GPX](generated/ramsay-round-track.gpx)
-- [View in GPX Studio ↗](https://gpx.studio/app?files=["https://thomasturrell.github.io/running-routes/fell/ramsay-round/generated/ramsay-round-track.gpx"])
+- [Download GPX](/assets/generated/fell/ramsay-round/ramsay-round-track.gpx)
+- [View in GPX Studio ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Fassets%2Fgenerated%2Ffell%2Framsay-round%2Framsay-round-track.gpx%22%5D)
 
 ## 📍 Waypoints Only
 
 ### Summits
-- [Download GPX](generated/ramsay-round-summits.gpx)
-- [View in GPX Studio ↗](https://gpx.studio/app?files=["https://thomasturrell.github.io/running-routes/fell/ramsay-round/generated/ramsay-round-summits.gpx"])
+- [Download GPX](/assets/generated/fell/ramsay-round/ramsay-round-summits.gpx)
+- [View in GPX Studio ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Fassets%2Fgenerated%2Ffell%2Framsay-round%2Framsay-round-summits.gpx%22%5D)
 
 ### Points of Interest
-- [Download GPX](generated/ramsay-round-points-of-interest.gpx)
-- [View in GPX Studio ↗](https://gpx.studio/app?files=["https://thomasturrell.github.io/running-routes/fell/ramsay-round/generated/ramsay-round-points-of-interest.gpx"])
+- [Download GPX](/assets/generated/fell/ramsay-round/ramsay-round-points-of-interest.gpx)
+- [View in GPX Studio ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Fassets%2Fgenerated%2Ffell%2Framsay-round%2Framsay-round-leg-points-of-interest.gpx%22%5D)

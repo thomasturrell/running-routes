@@ -13,7 +13,7 @@ The **Allermuir Hill Race** is a short, steep fell race held annually in the Pen
 
 ## 🛰️ Interactive Route Preview
 
-{% include gpx-viewer.html gpx_file="generated/allermuir-hill-race-detailed.gpx" %}
+{% include gpx-viewer.html map_id="map1" gpx_file="/assets/generated/fell/allermuir-hill-race-detailed.gpx" %}
 
 ## Downloads
 
@@ -22,4 +22,4 @@ The **Allermuir Hill Race** is a short, steep fell race held annually in the Pen
 
 ## 📄 Route & GPX
 
-- 📥 [Download GPX file for Allermuir Hill Race](generated/allermuir-hill-race.gpx)  
+- 📥 [Download GPX file for Allermuir Hill Race](/assets/generated/fell/allermuir-hill-race.gpx)  

@@ -10,20 +10,22 @@
   integrity="sha512-i9cfK7mcbURqnNfNFYqNhB4/Ae5xAgrrGFPgRnVB5Ws6Xac3BbYqFwtMbyf3QZW8Nq+F7gcWGsM0HUyoA/RVIw==" 
   crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-<div class="gpx-map" id="map" style="height: 500px;"></div>
+<div class="gpx-map" id="{{ include.map_id }}" style="height: 500px;"></div>
 
 <script type="module">
   window.addEventListener('DOMContentLoaded', () => {
     if (!window.L) return;
 
-    const map = L.map('map');
+    const mapId = '{{ include.map_id }}';
+    const gpxUrl = '{{ include.gpx_file }}';
+
+    const map = L.map(mapId);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
 
-    const gpxUrl = '{{ include.gpx_file }}';
     new L.GPX(gpxUrl, {
       async: true,
       polyline_options: { color: 'red' }

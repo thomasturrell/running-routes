@@ -1,11 +1,5 @@
-# Ignore all generated GPX files
-/docs/fell/bob-graham-round/generated/
-/docs/fell/ramsay-round/generated/
-/docs/fell/paddy-buckley-round/generated/
-/docs/fell/allermuir-hill-race/generated/
-
-# Ignore all generated static files
-/docs/static/generated/
+# Ignore all generated assets files
+/docs/assets/generated/
 
 # Ignore Python virtual environment
 /.venv/

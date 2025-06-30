@@ -56,4 +56,4 @@ Multiple formats are available to suit different devices and use cases. If unsur
 
 ### Points of Interest
 - [Download GPX](/assets/generated/fell/ramsay-round/ramsay-round-points-of-interest.gpx)
-- [View in GPX Studio ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Fassets%2Fgenerated%2Ffell%2Framsay-round%2Framsay-round-leg-points-of-interest.gpx%22%5D)
+- [View in GPX Studio ↗](https://gpx.studio/app?files=%5B%22https%3A%2F%2Fthomasturrell.github.io%2Frunning-routes%2Fassets%2Fgenerated%2Ffell%2Framsay-round%2Framsay-round-points-of-interest.gpx%22%5D)

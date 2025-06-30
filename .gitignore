@@ -1,7 +1,5 @@
-# Ignore all generated GPX files
-/docs/fell/bob-graham-round/generated/
-/docs/fell/ramsay-round/generated/
-/docs/fell/paddy-buckley-round/generated/
+# Ignore all generated assets files
+/docs/assets/generated/
 
 # Ignore Python virtual environment
 /.venv/
@@ -13,3 +11,11 @@ __pycache__/
 cache/
 
 .graph_cache/
+
+# Ignore Jekyll build artifacts
+/docs/vendor/
+/docs/_site/
+/docs/.bundle/
+/docs/.sass-cache/
+/docs/.jekyll-cache/
+/docs/*.gem

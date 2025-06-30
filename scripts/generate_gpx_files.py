@@ -9,21 +9,27 @@ ROUTES = [
     {
         "name": "Bob Graham Round",
         "source": Path("src/fell/bob-graham-round/bob-graham-round.gpx"),
-        "output": Path("docs/fell/bob-graham-round/generated"),
+        "output": Path("docs/assets/generated/fell/bob-graham-round"),
         "prefix": "bob-graham-round",
     },
     {
         "name": "Ramsay Round",
         "source": Path("src/fell/ramsay-round/ramsay-round.gpx"),
-        "output": Path("docs/fell/ramsay-round/generated"),
+        "output": Path("docs/assets/generated/fell/ramsay-round"),
         "prefix": "ramsay-round",
     },
     {
         "name": "Paddy Buckley Round",
         "source": Path("src/fell/paddy-buckley-round/paddy-buckley-round.gpx"),
-        "output": Path("docs/fell/paddy-buckley-round/generated"),
+        "output": Path("docs/assets/generated/fell/paddy-buckley-round"),
         "prefix": "paddy-buckley-round",
     },
+    {
+        "name": "Allermuir Hill Race",
+        "source": Path("src/fell/allermuir-hill-race/allermuir-hill-race.gpx"),
+        "output": Path("docs/assets/generated/fell/allermuir-hill-race"),
+        "prefix": "allermuir-hill-race",
+    }
 ]
 
 def load_gpx(path: Path) -> gpxpy.gpx.GPX:

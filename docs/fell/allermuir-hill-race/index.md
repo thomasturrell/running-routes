@@ -24,17 +24,13 @@ Multiple formats are available to suit different devices and use cases. If unsur
 
 ## 🔁 Complete Routes
 
-### Simplified Route (Single-Track)
+### Simplified Route
 - [Download GPX](../../assets/gpx/fell/allermuir-hill-race/allermuir-hill-race-simplified.gpx)  
 - [View in GPX Studio ↗](https://gpx.studio/app?files=["https://thomasturrell.github.io/running-routes/assets/gpx/fell/allermuir-hill-race/allermuir-hill-race-simplified.gpx"])
 
-### Detailed Route (Multi-Track)
+### Detailed Route
 - [Download GPX](../../assets/gpx/fell/allermuir-hill-race/allermuir-hill-race-detailed.gpx)  
 - [View in GPX Studio ↗](https://gpx.studio/app?files=["https://thomasturrell.github.io/running-routes/assets/gpx/fell/allermuir-hill-race/allermuir-hill-race-detailed.gpx"])
-
-### Route Only (Multi-Track)
-- [Download GPX](../../assets/gpx/fell/allermuir-hill-race/allermuir-hill-race-track.gpx)  
-- [View in GPX Studio ↗](https://gpx.studio/app?files=["https://thomasturrell.github.io/running-routes/assets/gpx/fell/allermuir-hill-race/allermuir-hill-race-track.gpx"])
 
 ## 📍 Waypoints Only
 

@@ -218,9 +218,7 @@ def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0):
             print("  ↳ Skipping due to inability to check threshold")
             continue
             
-        # If we get here, waypoint is within threshold
-        filtered_waypoints.append((lat, lon, name, sym))
-        
+        # If we get here, waypoint is within threshold for edge snapping
         try:
             edge_data = graph.get_edge_data(u, v)[key]
 
@@ -272,14 +270,25 @@ def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0):
             print(f" edge split: {weight1:.1f} m + {weight2:.1f} m = {total_length:.1f} m")
 
             snapped_nodes.append(new_node_id)
+            filtered_waypoints.append((lat, lon, name, sym))
 
         except Exception as e:           
             print(f"⚠️ Failed snapping waypoint '{name}' — {e}")
             print("  ↳ Falling back to nearest node snapping")
 
-            # Fallback to nearest node
+            # Fallback to nearest node with distance validation
             nearest_node = ox.distance.nearest_nodes(graph, lon, lat)
+            nearest_node_coords = (graph.nodes[nearest_node]['y'], graph.nodes[nearest_node]['x'])
+            fallback_distance = geodesic((lat, lon), nearest_node_coords).meters
+
+            if fallback_distance > snap_threshold:
+                print(f"⚠️ Fallback node for waypoint '{name}' is {fallback_distance:.1f}m away (>{snap_threshold}m threshold) - skipping")
+                skipped_waypoints.append((name, fallback_distance))
+                continue
+
+            print(f"  ↳ Using fallback node {nearest_node} at {fallback_distance:.1f}m distance")
             snapped_nodes.append(nearest_node)
+            filtered_waypoints.append((lat, lon, name, sym))
 
     if skipped_waypoints:
         print(f"\n⚠️ Summary: {len(skipped_waypoints)} waypoint(s) were skipped (beyond {snap_threshold}m threshold):")

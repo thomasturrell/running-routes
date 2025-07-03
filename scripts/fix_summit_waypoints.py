@@ -1,11 +1,11 @@
-"""
+'''
 fix_summit_waypoints.py
 
 This script enriches GPX files by updating summit waypoints with accurate coordinates, elevation, and DoBIH (Database of British and Irish Hills) numbers using data from the hills-database.co.uk CSV file.
 
 Features:
 - Downloads and extracts hill data from a remote CSV file.
-- Matches summit waypoints in GPX files with hill data based on name or DoBIH number.
+- Matches summit waypoints in GPX files with hill data based on DoBIH number.
 - Updates waypoint latitude, longitude, elevation, and adds a custom extension for DoBIH numbers.
 - Saves the enriched GPX file with updated summit information.
 
@@ -21,8 +21,7 @@ Dependencies:
 
 Output:
 - A new GPX file with enriched summit waypoints saved alongside the input file, with "_enriched" appended to the filename.
-
-"""
+'''
 
 import argparse
 import requests
@@ -38,7 +37,6 @@ import xml.etree.ElementTree as ET
 HILL_ZIP_URL = "https://www.hills-database.co.uk/hillcsv.zip"
 CUSTOM_NS = "http://thomasturrell.github.io/running-routes/schema/v1"
 CUSTOM_PREFIX = "rr"
-
 
 def download_and_extract_csv(download_url, extract_to):
     """
@@ -68,7 +66,6 @@ def download_and_extract_csv(download_url, extract_to):
 
     raise FileNotFoundError("CSV file not found in the zip archive.")
 
-
 def load_hill_data(csv_path):
     """
     Loads hill data from the extracted CSV file.
@@ -81,9 +78,7 @@ def load_hill_data(csv_path):
     """
     print("Loading hill data from CSV...")
     df = pd.read_csv(csv_path, low_memory=False)
-    df = df[['Number', 'Name', 'Latitude', 'Longitude', 'Metres']].dropna()
-    return df
-
+    return df[['Number', 'Name', 'Latitude', 'Longitude', 'Metres']].dropna()
 
 def get_custom_dobih_number(waypoint):
     """
@@ -105,7 +100,6 @@ def get_custom_dobih_number(waypoint):
         except ET.ParseError:
             pass
     return None
-
 
 def enrich_gpx_with_hill_data(gpx_path, hill_df):
     """
@@ -130,17 +124,13 @@ def enrich_gpx_with_hill_data(gpx_path, hill_df):
         if waypoint.symbol == 'Summit':
             hill_id = get_custom_dobih_number(waypoint)
 
-            # Match by DoBIH ID only
             if hill_id and hill_id.isdigit():
                 match = hill_df[hill_df['Number'] == int(hill_id)]
                 if not match.empty:
                     matched_row = match.iloc[0]
-
-                    # Update waypoint with matched hill data
                     waypoint.latitude = matched_row['Latitude']
                     waypoint.longitude = matched_row['Longitude']
                     waypoint.elevation = matched_row['Metres']
-
                     updated += 1
                 else:
                     warnings.append(f"ID {hill_id} not found in hill database.")
@@ -164,7 +154,6 @@ def enrich_gpx_with_hill_data(gpx_path, hill_df):
 
     print(f"Enriched GPX saved to: {output_path}")
 
-
 def main():
     """
     Main function to parse arguments and execute the script.
@@ -180,7 +169,6 @@ def main():
     csv_path = download_and_extract_csv(HILL_ZIP_URL, working_dir)
     hill_df = load_hill_data(csv_path)
     enrich_gpx_with_hill_data(args.gpx_path, hill_df)
-
 
 if __name__ == "__main__":
     main()

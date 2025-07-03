@@ -18,7 +18,7 @@ Usage:
     python plot2.py --input INPUT.gpx --gpx-output OUTPUT.gpx [options]
 
 Options:
-    --buffer FLOAT           Buffer around bounding box in degrees (default: 0.01)
+    --buffer FLOAT           Buffer around bounding box in degrees (default: 0.05)
     --max-points INT         Maximum number of waypoints (default: 50)
     --max-distance FLOAT     Maximum allowed distance between waypoints in km (default: 20)
     --max-cache-age-days INT Maximum number of days before cached graph expires (default: 7)
@@ -28,11 +28,17 @@ Options:
 import argparse
 import sys
 import gpxpy
+
+from networkx import MultiDiGraph
+
 import osmnx as ox
 from geopy.distance import geodesic
 import hashlib
 from pathlib import Path
 
+#import logging
+#logging.basicConfig(level=logging.INFO)
+#logger = logging.getLogger(__name__)
 
 def parse_arguments():
     """
@@ -48,7 +54,7 @@ def parse_arguments():
     parser.add_argument('--input', required=True, help='Path to input GPX file')
     parser.add_argument('--png-output', help='Path to save the final plot (e.g., route.png)')
     parser.add_argument('--gpx-output', required=True, help='Path to save the calculated route as a GPX file')
-    parser.add_argument('--buffer', type=float, default=0.01, help='Buffer in degrees to expand the bounding box (default: 0.01)')
+    parser.add_argument('--buffer', type=float, default=0.05, help='Buffer in degrees to expand the bounding box (default: 0.05)')
     parser.add_argument('--max-points', type=int, default=50, help='Maximum number of waypoints allowed (default: 50)')
     parser.add_argument('--max-distance', type=float, default=20, help='Maximum allowed distance between waypoints in km (default: 20)')
     parser.add_argument('--max-cache-age-days', type=int, default=7, help='Max age of cached graph in days (default: 7)')
@@ -145,7 +151,8 @@ def download_osm_graph(north, south, east, west, max_cache_age_days, force_refre
     """
     def bbox_hash(w, s, e, n):
         return hashlib.md5(f"{w},{s},{e},{n}".encode()).hexdigest()
-
+    
+    print("[3/6] Downloading OSM data (walkable paths)...")
     cache_dir = Path(".graph_cache")
     cache_dir.mkdir(exist_ok=True)
     hash_id = bbox_hash(west, south, east, north)
@@ -160,17 +167,20 @@ def download_osm_graph(north, south, east, west, max_cache_age_days, force_refre
             print(f"  ↳ Using cached graph from {cache_file}")
             return ox.load_graphml(cache_file)
 
-    print("[3/6] Downloading OSM data (walkable paths)...")
     print("  ↳ No cache found. Downloading from OSM...")
-    graph = ox.graph.graph_from_bbox((west, south, east, north), network_type='walk')
+    graph = ox.graph.graph_from_bbox((west, south, east, north))
     ox.save_graphml(graph, filepath=cache_file)
     print("  ↳ Graph downloaded with", len(graph.nodes), "nodes and", len(graph.edges), "edges")
+    print(f"Graph has {len(graph.nodes)} nodes and {len(graph.edges)} edges.")
+    import networkx as nx
+    if not nx.is_connected(graph.to_undirected()):
+        print("⚠️ The graph is not fully connected. Some nodes may be isolated.")
     return graph
-
 
 def snap_waypoints_to_graph(graph, waypoints):
     """
-    Snap waypoints to the nearest nodes in the OSM graph.
+    Snap waypoints to the nearest edge in the OSM graph by inserting a new node at the projection point.
+    Splits the original edge into two with accurate geometry and weights.
 
     Args:
         graph (networkx.Graph): The OSM graph.
@@ -179,32 +189,77 @@ def snap_waypoints_to_graph(graph, waypoints):
     Returns:
         list: List of snapped node IDs.
     """
-    print("[4/6] Snapping waypoints to nearest graph nodes...")
-    snapped_nodes = []
-    for lat, lon, name, sym in waypoints:
-        # Find the nearest node
-        nearest_node = ox.distance.nearest_nodes(graph, lon, lat)
-        # Get the new location of the snapped node
-        new_lat = graph.nodes[nearest_node]['y']
-        new_lon = graph.nodes[nearest_node]['x']
-        # Calculate the distance between the original and snapped location
-        distance_meters = geodesic((lat, lon), (new_lat, new_lon)).meters
-        # Print debug information
-        print(f"  ↳ Waypoint '{name}' moved:")
-        print(f"     - Original location: lat={lat}, lon={lon}")
-        print(f"     - Snapped location:  lat={new_lat}, lon={new_lon}")
-        print(f"     - Distance moved:    {distance_meters:.2f} meters")
-        # Check if the distance exceeds 5 meters
-        if distance_meters > 5:
-            print(f"  ⚠️ Distance exceeds 5 meters. Adding waypoint '{name}' as a new node.")
-            # Add the waypoint as a new node in the graph
-            new_node_id = max(graph.nodes) + 1  # Generate a unique node ID
-            graph.add_node(new_node_id, x=lon, y=lat)
-            snapped_nodes.append(new_node_id)
-        else:
-            snapped_nodes.append(nearest_node)
-    return snapped_nodes
+    print("[4/6] Snapping waypoints to nearest graph edges...")
+    import shapely.geometry
+    from shapely.ops import split
+    import networkx as nx
 
+    snapped_nodes = []
+    next_node_id = max(graph.nodes) + 1
+
+    for lat, lon, name, sym in waypoints:
+        try:
+            u, v, key = ox.distance.nearest_edges(graph, lon, lat, return_dist=False)
+            edge_data = graph.get_edge_data(u, v)[key]
+
+            # Get geometry
+            if 'geometry' in edge_data:
+                line = edge_data['geometry']
+            else:
+                point_u = shapely.geometry.Point((graph.nodes[u]['x'], graph.nodes[u]['y']))
+                point_v = shapely.geometry.Point((graph.nodes[v]['x'], graph.nodes[v]['y']))
+                line = shapely.geometry.LineString([point_u, point_v])
+
+            total_length = line.length
+            if total_length == 0:
+                raise ValueError(f"Zero-length edge: {u} → {v}")
+
+            # Project the waypoint onto the edge geometry
+            point = shapely.geometry.Point((lon, lat))
+            projected_point = line.interpolate(line.project(point))
+            proj_lon, proj_lat = projected_point.x, projected_point.y
+
+            # Split geometry at projection point
+            split_result = split(line, projected_point)
+
+            # Extract only LineStrings from the result
+            split_lines = [geom for geom in split_result.geoms if isinstance(geom, shapely.geometry.LineString)]
+
+            if len(split_lines) != 2:
+                raise ValueError(f"Expected 2 LineStrings after split, got {len(split_lines)} — likely projected at edge endpoint")
+
+            geom1, geom2 = split_lines
+
+            geom1, geom2 = split_result[0], split_result[1]
+            weight1 = geom1.length
+            weight2 = geom2.length
+
+            # Insert the new node
+            new_node_id = next_node_id
+            next_node_id += 1
+            graph.add_node(new_node_id, x=proj_lon, y=proj_lat)
+
+            # Remove old edge and insert two new ones
+            graph.remove_edge(u, v, key=key)
+            graph.add_edge(u, new_node_id, length=weight1, weight=weight1, geometry=geom1)
+            graph.add_edge(new_node_id, v, length=weight2, weight=weight2, geometry=geom2)
+
+            print(f"waypoint: {name} (lat={lat:.6f}, lon={lon:.6f})")
+            print(f" projected to edge {u} → {v}")
+            print(f" inserted node {new_node_id} at lat={proj_lat:.6f}, lon={proj_lon:.6f}")
+            print(f" edge split: {weight1:.1f} m + {weight2:.1f} m = {total_length:.1f} m")
+
+            snapped_nodes.append(new_node_id)
+
+        except Exception as e:
+            print(f"⚠️ Failed snapping waypoint '{name}' — {e}")
+            print("  ↳ Falling back to nearest node snapping")
+
+            # Fallback to nearest node
+            nearest_node = ox.distance.nearest_nodes(graph, lon, lat)
+            snapped_nodes.append(nearest_node)
+
+    return snapped_nodes
 
 def calculate_routes(graph, node_ids):
     """
@@ -346,8 +401,8 @@ def main():
     graph = download_osm_graph(north, south, east, west, args.max_cache_age_days, args.force_refresh)
 
     # Create and merge fallback connection graph
-    fallback_graph = create_fallback_connection_graph(waypoints)
-    graph = merge_graphs(graph, fallback_graph)
+    #fallback_graph = create_fallback_connection_graph(waypoints)
+    #graph = merge_graphs(graph, fallback_graph)
 
     node_ids = snap_waypoints_to_graph(graph, waypoints)
     routes = calculate_routes(graph, node_ids)

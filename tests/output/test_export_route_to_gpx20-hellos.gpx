@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="gpx.py -- https://github.com/tkrajina/gpxpy">
+  <wpt lat="55.003" lon="-3.0">
+    <name>Exact match (WP 0)</name>
+    <sym>Waypoint</sym>
+  </wpt>
+  <wpt lat="55.00298" lon="-2.99902">
+    <name>Near node (WP 5)</name>
+    <sym>Waypoint</sym>
+  </wpt>
+  <trk>
+    <trkseg>
+      <trkpt lat="55.003" lon="-3.0">
+      </trkpt>
+      <trkpt lat="55.003" lon="-2.999">
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>

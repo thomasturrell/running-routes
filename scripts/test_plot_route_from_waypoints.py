@@ -263,3 +263,28 @@ def test_export_route_to_gpx(tmp_path, mock_graph, waypoints):
         assert "<gpx" in gpx_content
         assert "<wpt" in gpx_content
         assert "<trkpt" in gpx_content
+
+
+def test_snap_waypoints_fallback_threshold():
+    """Test that fallback snapping respects the distance threshold."""
+    # Create a simple graph with one edge
+    graph = nx.MultiDiGraph()
+    graph.add_node(1, x=-3.0, y=55.0)
+    graph.add_node(2, x=-2.999, y=55.0)
+    graph.add_edge(1, 2, key=0, weight=100, length=100, 
+                   geometry=LineString([(-3.0, 55.0), (-2.999, 55.0)]))
+    graph.graph['crs'] = 'EPSG:4326'
+    
+    # Waypoints designed to trigger fallback behavior
+    waypoints = [
+        (55.0, -3.00002, "Close fallback", "Waypoint"),    # Very close to node 1
+        (55.0, -2.9, "Far fallback", "Waypoint"),          # Should be far from any node
+    ]
+    
+    # Test with 100m threshold (to allow the close one through)
+    snapped_nodes, filtered_waypoints = snap_waypoints_to_graph(graph, waypoints, snap_threshold=100.0)
+    
+    # The close waypoint should be snapped via fallback, far one should be skipped
+    assert len(snapped_nodes) == 1
+    assert len(filtered_waypoints) == 1
+    assert filtered_waypoints[0][2] == "Close fallback"  # Name of the waypoint

@@ -34,11 +34,19 @@ jobs:
         with:
           python-version: 3.x
 
-      - name: Install gpxpy
-        run: pip install gpxpy
+      - name: Install dependencies
+        run: pip install gpxpy osmnx networkx geopy matplotlib
 
       - name: Generate GPX files
         run: python3 scripts/generate_gpx_files.py
+
+      - name: Generate Allermuir Hill Race route from waypoints
+        run: |
+          mkdir -p docs/assets/images
+          python3 scripts/plot_route_from_waypoints.py \
+            --input src/fell/allermuir-hill-race/allermuir-hill-race-waypoints.gpx \
+            --gpx-output src/fell/allermuir-hill-race/allermuir-hill-race.gpx \
+            --png-output docs/assets/images/allermuir-hill-race.png
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

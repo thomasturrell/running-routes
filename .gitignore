@@ -19,3 +19,7 @@ cache/
 /docs/.sass-cache/
 /docs/.jekyll-cache/
 /docs/*.gem
+
+# Test and temporary files
+/tmp/
+.pytest_cache/

@@ -59,6 +59,7 @@ def parse_arguments():
     parser.add_argument('--max-distance', type=float, default=20, help='Maximum allowed distance between waypoints in km (default: 20)')
     parser.add_argument('--max-cache-age-days', type=int, default=7, help='Max age of cached graph in days (default: 7)')
     parser.add_argument('--force-refresh', action='store_true', help='Force refresh of cached graph even if cache is valid')
+    parser.add_argument('--snap-threshold', type=float, default=5.0, help='Maximum distance in meters for snapping waypoints to paths (default: 5.0)')
     return parser.parse_args()
 
 
@@ -177,29 +178,50 @@ def download_osm_graph(north, south, east, west, max_cache_age_days, force_refre
         print("⚠️ The graph is not fully connected. Some nodes may be isolated.")
     return graph
 
-def snap_waypoints_to_graph(graph, waypoints):
+def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0):
     """
     Snap waypoints to the nearest edge in the OSM graph by inserting a new node at the projection point.
     Splits the original edge into two with accurate geometry and weights.
+    Only snaps waypoints within the specified distance threshold.
 
     Args:
         graph (networkx.Graph): The OSM graph.
         waypoints (list): List of waypoints.
+        snap_threshold (float): Maximum distance in meters for snapping waypoints to paths.
 
     Returns:
-        list: List of snapped node IDs.
+        tuple: (snapped_node_ids, filtered_waypoints) - only for waypoints within threshold.
     """
-    print("[4/6] Snapping waypoints to nearest graph edges...")
+    print(f"[4/6] Snapping waypoints to nearest graph edges (threshold: {snap_threshold}m)...")
     import shapely.geometry
     from shapely.ops import split
     import networkx as nx
 
     snapped_nodes = []
+    filtered_waypoints = []
+    skipped_waypoints = []
     next_node_id = max(graph.nodes) + 1
 
     for lat, lon, name, sym in waypoints:
+        # First check distance threshold
         try:
-            u, v, key = ox.distance.nearest_edges(graph, lon, lat, return_dist=False)
+            edge_info, distance = ox.distance.nearest_edges(graph, lon, lat, return_dist=True)
+            u, v, key = edge_info
+            
+            # Check if waypoint is within threshold
+            if distance > snap_threshold:
+                print(f"⚠️ Waypoint '{name}' is {distance:.1f}m from nearest path (>{snap_threshold}m threshold) - skipping")
+                skipped_waypoints.append((name, distance))
+                continue
+        except Exception as e:
+            print(f"⚠️ Failed getting distance for waypoint '{name}' — {e}")
+            print("  ↳ Skipping due to inability to check threshold")
+            continue
+            
+        # If we get here, waypoint is within threshold
+        filtered_waypoints.append((lat, lon, name, sym))
+        
+        try:
             edge_data = graph.get_edge_data(u, v)[key]
 
             # Get geometry
@@ -244,14 +266,14 @@ def snap_waypoints_to_graph(graph, waypoints):
             graph.add_edge(u, new_node_id, length=weight1, weight=weight1, geometry=geom1)
             graph.add_edge(new_node_id, v, length=weight2, weight=weight2, geometry=geom2)
 
-            print(f"waypoint: {name} (lat={lat:.6f}, lon={lon:.6f})")
+            print(f"waypoint: {name} (lat={lat:.6f}, lon={lon:.6f}) - distance: {distance:.1f}m")
             print(f" projected to edge {u} → {v}")
             print(f" inserted node {new_node_id} at lat={proj_lat:.6f}, lon={proj_lon:.6f}")
             print(f" edge split: {weight1:.1f} m + {weight2:.1f} m = {total_length:.1f} m")
 
             snapped_nodes.append(new_node_id)
 
-        except Exception as e:
+        except Exception as e:           
             print(f"⚠️ Failed snapping waypoint '{name}' — {e}")
             print("  ↳ Falling back to nearest node snapping")
 
@@ -259,7 +281,12 @@ def snap_waypoints_to_graph(graph, waypoints):
             nearest_node = ox.distance.nearest_nodes(graph, lon, lat)
             snapped_nodes.append(nearest_node)
 
-    return snapped_nodes
+    if skipped_waypoints:
+        print(f"\n⚠️ Summary: {len(skipped_waypoints)} waypoint(s) were skipped (beyond {snap_threshold}m threshold):")
+        for name, distance in skipped_waypoints:
+            print(f"  - {name}: {distance:.1f}m")
+
+    return snapped_nodes, filtered_waypoints
 
 def calculate_routes(graph, node_ids):
     """
@@ -404,12 +431,12 @@ def main():
     #fallback_graph = create_fallback_connection_graph(waypoints)
     #graph = merge_graphs(graph, fallback_graph)
 
-    node_ids = snap_waypoints_to_graph(graph, waypoints)
+    node_ids, filtered_waypoints = snap_waypoints_to_graph(graph, waypoints, args.snap_threshold)
     routes = calculate_routes(graph, node_ids)
 
     if args.png_output:
         plot_and_save_route(graph, routes, args.png_output)
-    export_route_to_gpx(graph, routes, waypoints, args.gpx_output)
+    export_route_to_gpx(graph, routes, filtered_waypoints, args.gpx_output)
 
 
 if __name__ == '__main__':

@@ -14,7 +14,8 @@ from infer_new_paths_from_gpx import (
     parse_gpx_tracks,
     calculate_bounding_box,
     identify_new_path_segments,
-    export_new_paths_to_gpx
+    export_new_paths_to_gpx,
+    export_new_paths_to_osm
 )
 
 
@@ -148,6 +149,116 @@ def test_empty_gpx_handling():
             parse_gpx_tracks(gpx_file)
     finally:
         os.unlink(gpx_file)
+
+
+def test_export_new_paths_to_osm():
+    """Test OSM XML export functionality."""
+    # Test data - simple path with 3 points
+    new_segments = [
+        [(55.950000, -3.200000), (55.950100, -3.199900), (55.950200, -3.199800)]
+    ]
+    
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.osm', delete=False) as f:
+        output_path = f.name
+    
+    try:
+        # Test export
+        success = export_new_paths_to_osm(new_segments, output_path, verbose=False)
+        assert success is True
+        
+        # Check file exists and has content
+        assert os.path.exists(output_path)
+        
+        with open(output_path, 'r') as f:
+            content = f.read()
+        
+        # Verify XML structure
+        assert '<?xml version="1.0" encoding="UTF-8"?>' in content
+        assert '<osm version="0.6"' in content
+        assert 'generator="infer_new_paths_from_gpx.py"' in content
+        
+        # Check for nodes (should have 3 nodes)
+        assert content.count('<node id="-') == 3
+        assert 'lat="55.9500000"' in content
+        assert 'lat="55.9501000"' in content  
+        assert 'lat="55.9502000"' in content
+        assert 'lon="-3.2000000"' in content
+        assert 'lon="-3.1999000"' in content
+        assert 'lon="-3.1998000"' in content
+        
+        # Check for way
+        assert '<way id="-1"' in content
+        assert '<nd ref="-1"' in content
+        assert '<nd ref="-2"' in content
+        assert '<nd ref="-3"' in content
+        
+        # Check for proper OSM tags
+        assert '<tag k="highway" v="path"' in content
+        assert '<tag k="source" v="GPX"' in content
+        assert '<tag k="note" v="Potential new path inferred from GPX track segment 1"' in content
+        assert '<tag k="fixme"' in content
+        
+    finally:
+        os.unlink(output_path)
+
+
+def test_export_new_paths_to_osm_multiple_segments():
+    """Test OSM XML export with multiple path segments."""
+    # Test data - two separate path segments
+    new_segments = [
+        [(55.950000, -3.200000), (55.950100, -3.199900)],  # First segment
+        [(55.960000, -3.180000), (55.960100, -3.179900), (55.960200, -3.179800)]  # Second segment
+    ]
+    
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.osm', delete=False) as f:
+        output_path = f.name
+    
+    try:
+        success = export_new_paths_to_osm(new_segments, output_path, verbose=True)
+        assert success is True
+        
+        with open(output_path, 'r') as f:
+            content = f.read()
+        
+        # Should have 5 nodes total (2 + 3)
+        assert content.count('<node id="-') == 5
+        
+        # Should have 2 ways
+        assert content.count('<way id="-') == 2
+        assert '<way id="-1"' in content
+        assert '<way id="-2"' in content
+        
+        # Check both segments have proper tags
+        assert content.count('<tag k="highway" v="path"') == 2
+        assert 'segment 1' in content
+        assert 'segment 2' in content
+        
+    finally:
+        os.unlink(output_path)
+
+
+def test_export_new_paths_to_osm_empty():
+    """Test OSM XML export with no segments."""
+    new_segments = []
+    
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.osm', delete=False) as f:
+        output_path = f.name
+    
+    try:
+        success = export_new_paths_to_osm(new_segments, output_path, verbose=False)
+        assert success is True
+        
+        with open(output_path, 'r') as f:
+            content = f.read()
+        
+        # Should have basic OSM structure but no nodes or ways
+        assert '<?xml version="1.0" encoding="UTF-8"?>' in content
+        assert '<osm version="0.6"' in content
+        assert '<node' not in content
+        assert '<way' not in content
+        
+    finally:
+        os.unlink(output_path)
 
 
 if __name__ == "__main__":

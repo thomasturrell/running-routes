@@ -11,12 +11,14 @@ Features:
 - Compares GPX track points with nearby OSM paths using distance calculations.
 - Applies configurable tolerance thresholds to account for GPS inaccuracies.
 - Identifies track segments that are significantly away from known OSM paths.
-- Outputs new, unmapped route segments as GPX files.
+- Outputs new, unmapped route segments as GPX or OSM XML files.
 
 Usage:
     python infer_new_paths_from_gpx.py --input INPUT.gpx --output OUTPUT.gpx [options]
+    python infer_new_paths_from_gpx.py --input INPUT.gpx --output OUTPUT.osm --format osm [options]
 
 Options:
+    --format gpx|osm         Output format: gpx (default) or osm (OpenStreetMap XML)
     --tolerance FLOAT        Distance tolerance in meters for GPS inaccuracies (default: 5.0)
     --min-segment-length INT Minimum number of consecutive points to form a new segment (default: 3)
     --buffer FLOAT           Buffer around bounding box in degrees (default: 0.01)
@@ -37,6 +39,7 @@ from shapely.ops import nearest_points
 import hashlib
 from pathlib import Path
 from datetime import datetime, timedelta
+import xml.etree.ElementTree as ET
 
 
 def parse_arguments():
@@ -52,7 +55,9 @@ def parse_arguments():
     
     parser = argparse.ArgumentParser(description="Infer new paths from GPX files by comparing with OSM data")
     parser.add_argument('--input', required=True, help='Path to input GPX file')
-    parser.add_argument('--output', required=True, help='Path to save the new paths GPX file')
+    parser.add_argument('--output', required=True, help='Path to save the new paths file')
+    parser.add_argument('--format', choices=['gpx', 'osm'], default='gpx',
+                       help='Output format: gpx (default) or osm (OpenStreetMap XML)')
     parser.add_argument('--tolerance', type=float, default=5.0, 
                        help='Distance tolerance in meters for GPS inaccuracies (default: 5.0)')
     parser.add_argument('--min-segment-length', type=int, default=3,
@@ -354,7 +359,7 @@ def export_new_paths_to_gpx(new_segments, output_path, verbose=False):
         verbose (bool): Enable verbose output.
     """
     if verbose:
-        print(f"[6/6] Exporting {len(new_segments)} new path segments to: {output_path}")
+        print(f"[6/6] Exporting {len(new_segments)} new path segments to GPX: {output_path}")
     
     gpx = gpxpy.gpx.GPX()
     gpx.creator = "infer_new_paths_from_gpx.py"
@@ -382,6 +387,104 @@ def export_new_paths_to_gpx(new_segments, output_path, verbose=False):
         return True
     except Exception as e:
         print(f"❌ Error writing GPX file: {e}")
+        return False
+
+
+def export_new_paths_to_osm(new_segments, output_path, verbose=False):
+    """
+    Export new path segments to an OSM XML file.
+
+    Args:
+        new_segments (list): List of new path segments.
+        output_path (str): Path to save the OSM XML file.
+        verbose (bool): Enable verbose output.
+    """
+    if verbose:
+        print(f"[6/6] Exporting {len(new_segments)} new path segments to OSM XML: {output_path}")
+    
+    # Create root OSM element with required attributes
+    osm_root = ET.Element("osm")
+    osm_root.set("version", "0.6")
+    osm_root.set("generator", "infer_new_paths_from_gpx.py")
+    osm_root.set("copyright", "OpenStreetMap and contributors")
+    osm_root.set("attribution", "http://www.openstreetmap.org/copyright")
+    osm_root.set("license", "http://opendatacommons.org/licenses/odbl/1.0/")
+    
+    # Start with negative IDs for new elements (OSM convention for proposed features)
+    node_id = -1
+    way_id = -1
+    
+    # Store all nodes and ways
+    all_nodes = {}
+    
+    for segment_idx, segment_points in enumerate(new_segments):
+        # Create nodes for this segment
+        segment_node_ids = []
+        
+        for lat, lon in segment_points:
+            # Create node element
+            node = ET.SubElement(osm_root, "node")
+            node.set("id", str(node_id))
+            node.set("version", "1")
+            node.set("lat", f"{lat:.7f}")
+            node.set("lon", f"{lon:.7f}")
+            
+            # Add node to tracking
+            all_nodes[node_id] = (lat, lon)
+            segment_node_ids.append(node_id)
+            node_id -= 1
+        
+        # Create way for this segment
+        way = ET.SubElement(osm_root, "way")
+        way.set("id", str(way_id))
+        way.set("version", "1")
+        
+        # Add node references to the way
+        for nid in segment_node_ids:
+            nd = ET.SubElement(way, "nd")
+            nd.set("ref", str(nid))
+        
+        # Add tags to identify this as a path
+        # Using highway=path as it's the most general tag for unmapped paths
+        tag_highway = ET.SubElement(way, "tag")
+        tag_highway.set("k", "highway")
+        tag_highway.set("v", "path")
+        
+        # Add source tag to indicate this was inferred from GPX
+        tag_source = ET.SubElement(way, "tag")
+        tag_source.set("k", "source")
+        tag_source.set("v", "GPX")
+        
+        # Add note tag to help reviewers
+        tag_note = ET.SubElement(way, "tag")
+        tag_note.set("k", "note")
+        tag_note.set("v", f"Potential new path inferred from GPX track segment {segment_idx + 1}")
+        
+        # Add fixme tag to encourage review
+        tag_fixme = ET.SubElement(way, "tag")
+        tag_fixme.set("k", "fixme")
+        tag_fixme.set("v", "Please verify this path exists and add appropriate tags (surface, access, etc.)")
+        
+        way_id -= 1
+    
+    # Write to file with proper XML formatting
+    try:
+        # Create tree and format for pretty printing
+        tree = ET.ElementTree(osm_root)
+        ET.indent(tree, space="  ", level=0)
+        
+        with open(output_path, 'wb') as f:
+            f.write(b'<?xml version="1.0" encoding="UTF-8"?>\n')
+            tree.write(f, encoding='utf-8', xml_declaration=False)
+        
+        if verbose:
+            total_nodes = sum(len(segment) for segment in new_segments)
+            print(f"  ↳ Successfully exported {total_nodes} nodes and {len(new_segments)} ways to {output_path}")
+            print(f"  ↳ File ready for review and upload to OpenStreetMap")
+        
+        return True
+    except Exception as e:
+        print(f"❌ Error writing OSM XML file: {e}")
         return False
 
 
@@ -416,21 +519,38 @@ def main():
     
     # Step 6: Export results
     if new_segments:
-        success = export_new_paths_to_gpx(new_segments, args.output, args.verbose)
+        if args.format == 'gpx':
+            success = export_new_paths_to_gpx(new_segments, args.output, args.verbose)
+        else:  # osm format
+            success = export_new_paths_to_osm(new_segments, args.output, args.verbose)
+        
         if success:
             total_points = sum(len(segment) for segment in new_segments)
             print(f"✅ Found {len(new_segments)} new path segments with {total_points} total points")
             print(f"   Saved to: {args.output}")
+            if args.format == 'osm':
+                print("   💡 Review the OSM file before uploading to OpenStreetMap")
         else:
             sys.exit(1)
     else:
         print("ℹ️  No new paths found - all track points are within tolerance of existing OSM paths")
-        # Create empty GPX file for consistency
-        empty_gpx = gpxpy.gpx.GPX()
-        empty_gpx.creator = "infer_new_paths_from_gpx.py"
-        with open(args.output, 'w') as f:
-            f.write(empty_gpx.to_xml())
-        print(f"   Created empty GPX file: {args.output}")
+        # Create empty file for consistency
+        if args.format == 'gpx':
+            empty_gpx = gpxpy.gpx.GPX()
+            empty_gpx.creator = "infer_new_paths_from_gpx.py"
+            with open(args.output, 'w') as f:
+                f.write(empty_gpx.to_xml())
+            print(f"   Created empty GPX file: {args.output}")
+        else:  # osm format
+            # Create empty OSM file
+            osm_root = ET.Element("osm")
+            osm_root.set("version", "0.6")
+            osm_root.set("generator", "infer_new_paths_from_gpx.py")
+            tree = ET.ElementTree(osm_root)
+            with open(args.output, 'wb') as f:
+                f.write(b'<?xml version="1.0" encoding="UTF-8"?>\n')
+                tree.write(f, encoding='utf-8', xml_declaration=False)
+            print(f"   Created empty OSM file: {args.output}")
 
 
 if __name__ == '__main__':

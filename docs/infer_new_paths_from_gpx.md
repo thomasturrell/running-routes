@@ -9,14 +9,20 @@ This script processes GPX files to identify track segments that are not already 
 - **Distance Analysis**: Calculates distances between GPX track points and the nearest OSM paths
 - **GPS Accuracy Tolerance**: Applies configurable thresholds to account for GPS inaccuracies and avoid false positives
 - **Intelligent Filtering**: Identifies continuous path segments that are significantly away from known OSM paths
-- **GPX Output**: Exports identified new path segments as GPX files for easy visualization and contribution to OSM
+- **Multiple Export Formats**: Exports identified new path segments as GPX files for visualization or OSM XML for direct contribution to OpenStreetMap
 
 ## Usage
 
-### Basic Usage
+### Basic Usage (GPX Output)
 
 ```bash
 python scripts/infer_new_paths_from_gpx.py --input route.gpx --output new_paths.gpx
+```
+
+### Export as OpenStreetMap XML
+
+```bash
+python scripts/infer_new_paths_from_gpx.py --input route.gpx --output new_paths.osm --format osm
 ```
 
 ### Advanced Usage
@@ -24,7 +30,8 @@ python scripts/infer_new_paths_from_gpx.py --input route.gpx --output new_paths.
 ```bash
 python scripts/infer_new_paths_from_gpx.py \
   --input route.gpx \
-  --output new_paths.gpx \
+  --output new_paths.osm \
+  --format osm \
   --tolerance 10.0 \
   --min-segment-length 5 \
   --buffer 0.02 \
@@ -46,7 +53,8 @@ python scripts/infer_new_paths_from_gpx.py \
 | Parameter | Default | Description |
 |-----------|---------|-------------|
 | `--input` | Required | Path to input GPX file |
-| `--output` | Required | Path to save the new paths GPX file |
+| `--output` | Required | Path to save the new paths file |
+| `--format` | gpx | Output format: `gpx` (default) or `osm` (OpenStreetMap XML) |
 | `--tolerance` | 5.0 | Distance tolerance in meters for GPS inaccuracies |
 | `--min-segment-length` | 3 | Minimum number of consecutive points to form a new segment |
 | `--buffer` | 0.01 | Buffer in degrees to expand the bounding box for OSM data download |
@@ -64,7 +72,29 @@ python scripts/infer_new_paths_from_gpx.py \
 5. **Apply Tolerance**: Identify points that are more than the tolerance distance from any OSM path
 6. **Segment Identification**: Group consecutive "distant" points into segments
 7. **Filter by Minimum Length**: Only keep segments with enough points to be meaningful
-8. **Export Results**: Save the identified new path segments as a GPX file
+8. **Export Results**: Save the identified new path segments in the chosen format (GPX or OSM XML)
+
+## Output Formats
+
+### GPX Format
+
+The default output format is GPX, which creates a standard GPS Exchange file containing the discovered path segments as tracks. This format is ideal for:
+- Viewing in GPS software and mapping applications
+- Importing into route planning tools
+- Sharing with other users for verification
+
+### OSM XML Format
+
+When using `--format osm`, the script outputs an OpenStreetMap XML file containing:
+- **Nodes**: Individual GPS points with precise latitude/longitude coordinates
+- **Ways**: Path segments connecting the nodes with appropriate OSM tags
+- **Tags**: Standard OSM attributes including:
+  - `highway=path` - Identifies the feature as a walking path
+  - `source=GPX` - Indicates the data source
+  - `note` - Description of the inferred path segment
+  - `fixme` - Reminder to verify and add additional tags
+
+The OSM XML format is designed for direct import into OSM editing tools like JOSM or iD editor, making it easy to contribute the discovered paths to OpenStreetMap.
 
 ## Tolerance Guidelines
 
@@ -102,7 +132,20 @@ python scripts/infer_new_paths_from_gpx.py \
   --verbose
 ```
 
-### Example 2: Urban Route Analysis
+### Example 2: Export for OSM Contribution
+
+```bash
+# Generate OSM XML file ready for upload to OpenStreetMap
+python scripts/infer_new_paths_from_gpx.py \
+  --input src/fell/ramsay-round/ramsay-round.gpx \
+  --output new_mountain_paths.osm \
+  --format osm \
+  --tolerance 15.0 \
+  --min-segment-length 5 \
+  --verbose
+```
+
+### Example 3: Urban Route Analysis
 
 ```bash
 # Analyze urban running route with tighter tolerance
@@ -116,11 +159,19 @@ python scripts/infer_new_paths_from_gpx.py \
 
 ## Integration with OSM Contribution Workflow
 
-1. **Run the Analysis**: Use this script to identify potential new paths
+### Using GPX Output
+1. **Run the Analysis**: Use this script to identify potential new paths (GPX output)
 2. **Validate the Results**: Manually review the output GPX file in a mapping application
 3. **Ground Truth**: Visit the identified locations to verify the paths exist
 4. **Contribute to OSM**: Use OSM editors like JOSM or iD to add verified paths to OpenStreetMap
 5. **Update Local Cache**: Use `--force-refresh` to get updated OSM data including your contributions
+
+### Using OSM XML Output
+1. **Run the Analysis**: Use `--format osm` to generate OSM XML directly
+2. **Review in JOSM**: Open the OSM file in JOSM to inspect the proposed paths
+3. **Ground Truth**: Verify the paths exist in the field
+4. **Edit and Upload**: Modify tags as needed (surface, access, etc.) and upload to OSM
+5. **Update Local Cache**: Use `--force-refresh` to refresh your local OSM data
 
 ## Dependencies
 

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="Thomas Turrell-Croft">
+  <wpt lat="55.892861" lon="-3.203444">
+    <name>Start</name>
+    <sym>Flag</sym>
+  </wpt>
+  <wpt lat="55.8915" lon="-3.216973">
+    <name>Mandatory Route</name>
+    <sym>Waypoint</sym>
+  </wpt>
+  <wpt lat="55.886883" lon="-3.222382">
+    <name>Mandatory Route</name>
+    <sym>Waypoint</sym>
+  </wpt>
+  <wpt lat="55.8825" lon="-3.21407">
+    <name>The subsidiary summit of Caerketton Hill</name>
+    <sym>Waypoint</sym>
+  </wpt>
+  <wpt lat="55.88507" lon="-3.22694">
+    <name>The Jonny Reynolds sunflower bench</name>
+    <sym>Waypoint</sym>
+  </wpt>
+  <wpt lat="55.8915" lon="-3.216973">
+    <name>Mandatory Route</name>
+    <sym>Waypoint</sym>
+  </wpt>
+  <wpt lat="55.892861" lon="-3.203444">
+    <name>Finish</name>
+    <sym>Flag</sym>
+  </wpt>
+</gpx>

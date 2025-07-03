@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="Thomas Turrell-Croft">
+  <wpt lat="54.60073" lon="-3.1373">
+    <name>Moot Hall</name>
+    <sym>Info</sym>
+  </wpt>
+  <wpt lat="54.61863" lon="-3.04713">
+    <name>Road Crossing (Threlkeld)</name>
+    <sym>Info</sym>
+  </wpt>
+  <wpt lat="54.4953" lon="-3.04024">
+    <name>Road Crossing (Dunmail Raise)</name>
+    <sym>Info</sym>
+  </wpt>
+  <wpt lat="54.45566" lon="-3.26227">
+    <name>Road Crossing (Wasdale Campsite)</name>
+    <sym>Info</sym>
+  </wpt>
+  <wpt lat="54.51146" lon="-3.19918">
+    <name>Road Crossing	(Honister Pass)</name>
+    <sym>Info</sym>
+  </wpt>
+  <wpt lat="54.60073" lon="-3.1373">
+    <name>Moot Hall</name>
+    <sym>Info</sym>
+  </wpt>
+</gpx>

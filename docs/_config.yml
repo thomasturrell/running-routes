@@ -4,6 +4,9 @@ title: Running Routes
 author: Thomas Turrell-Croft
 description: A simple site using Minima theme
 
+# Analytics
+google_analytics: # Set your Google Analytics tracking ID here
+
 minima:
   skin: auto
   nav_pages:
@@ -19,6 +22,15 @@ minima:
 
 repository: thomasturrell/running-routes
 edit_uri: edit/main/docs/
+
+# Performance optimizations
+sass:
+  style: compressed
+
+# Cache control
+plugins:
+  - jekyll-sitemap
+  - jekyll-feed
 
 #baseurl: "/running-routes"
 #url: "https://thomasturrell.github.io"

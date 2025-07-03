@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:rr="http://thomasturrell.github.io/running-routes/schema/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 https://www.topografix.com/GPX/1/1/gpx.xsd http://thomasturrell.github.io/running-routes/schema/v1 https://thomasturrell.github.io/running-routes/schema/v1/gpx-extension.xsd" version="1.1" creator="Thomas Turrell-Croft">
+  <metadata>
+    <name>Allermuir Hill Race</name>
+    <desc>A short, steep 7 km fell race with ~400 m of ascent, held annually in the Pentland Hills near Edinburgh. Starting and finishing at Lothianburn, the route climbs Caerketton and Allermui</desc>
+    <author>
+      <name>Thomas Turrell-Croft</name>
+    </author>
+  </metadata>
+  <wpt lat="55.892861" lon="-3.203444">
+    <name>Start</name>
+    <sym>Flag</sym>
+  </wpt>
+  <wpt lat="55.8825" lon="-3.21407">
+    <name>The subsidiary summit of Caerketton Hill</name>
+    <sym>Waypoint</sym>
+  </wpt>
+  <wpt lat="55.882658" lon="-3.223567">
+    <ele>478.0</ele>
+    <name>Caerketton Hill</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>13780</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="55.88507" lon="-3.22694">
+    <ele>999.7</ele>
+    <name>The Jonny Reynolds sunflower bench</name>
+    <sym>Waypoint</sym>
+  </wpt>
+  <wpt lat="55.882495" lon="-3.237183">
+    <ele>493.0</ele>
+    <name>Allermuir Hill</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>1816</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="55.892861" lon="-3.203444">
+    <name>Finish</name>
+    <sym>Flag</sym>
+  </wpt>
+</gpx>

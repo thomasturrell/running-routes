@@ -1,0 +1,23 @@
+# Core dependencies
+gpxpy>=1.6.0
+
+# Elevation processing enhancements
+requests>=2.31.0
+numpy>=1.24.0
+scipy>=1.10.0
+
+# Strava API integration
+python-dotenv>=1.0.0
+
+# Optional: Visualization and analysis
+matplotlib>=3.7.0
+plotly>=5.0.0
+
+# Optional: Advanced geo processing
+geopy>=2.3.0
+osmnx>=1.6.0
+networkx>=3.0
+
+# Development and testing
+pytest>=7.0.0
+pytest-cov>=4.0.0

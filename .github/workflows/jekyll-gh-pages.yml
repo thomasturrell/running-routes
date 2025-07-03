@@ -37,6 +37,9 @@ jobs:
       - name: Install dependencies
         run: pip install gpxpy osmnx networkx geopy matplotlib
 
+      - name: Install scikit-learn
+        run: pip install scikit-learn
+
       - name: Generate GPX files
         run: python3 scripts/generate_gpx_files.py
 

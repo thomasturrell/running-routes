@@ -42,7 +42,7 @@ from pathlib import Path
 
 def parse_arguments():
     """
-    Parse command-line arguments for the script.
+    Parse command-line arguments.
 
     Returns:
         argparse.Namespace: Parsed arguments.

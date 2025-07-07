@@ -38,6 +38,22 @@ HILL_ZIP_URL = "https://www.hills-database.co.uk/hillcsv.zip"
 CUSTOM_NS = "http://thomasturrell.github.io/running-routes/schema/v1"
 CUSTOM_PREFIX = "rr"
 
+def parse_arguments():
+    """
+    Parse command-line arguments.
+
+    Returns:
+        argparse.Namespace: Parsed arguments.
+    """
+    parser = argparse.ArgumentParser(description="Enrich GPX summit waypoints with hill data.")
+    parser.add_argument('--input', required=True, help='Path to input GPX file')
+    parser.add_argument(
+        '--output',
+        help='Path to save the enriched GPX file. Defaults to appending _enriched to the input file name.',
+        default=None
+    )
+    return parser.parse_args()
+
 def download_and_extract_csv(download_url, extract_to):
     """
     Downloads and extracts the hill database CSV file from the given URL.
@@ -202,7 +218,7 @@ def enrich_gpx_with_hill_data(gpx_path, hill_df, output_path):
 
 def main():
     """
-    Main function to parse arguments and execute the script.
+    Main entry point of the script.
     """
     parser = argparse.ArgumentParser(description="Enrich GPX summit waypoints with hill data.")
     parser.add_argument("input", help="Path to the input GPX file")
@@ -214,8 +230,14 @@ def main():
 
     csv_path = download_and_extract_csv(HILL_ZIP_URL, working_dir)
     hill_df = load_hill_data(csv_path)
-    enrich_gpx_with_hill_data(args.input, hill_df, 
-                               os.path.splitext(args.input)[0] + "_enriched.gpx")
+
+    # Determine the output path
+    if args.output:
+        output_path = args.output
+    else:
+        output_path = os.path.splitext(args.gpx_path)[0] + '_enriched.gpx'
+
+    enrich_gpx_with_hill_data(args.input, hill_df, output_path)
 
 if __name__ == "__main__":
     main()

@@ -28,7 +28,7 @@ A Welsh mountain challenge in Snowdonia:
 
 #### [Wicklow Round](/running-routes/fell/wicklow-round/)
 An Irish mountain challenge in the Wicklow Mountains:  
-**26 peaks**, ~**100 km**, and over **6,000 m of ascent** — traditionally completed within 24 hours.
+**26 peaks**, ~**100 km**, and over **6,000 m of ascent** — traditionally completed within 24 hours.  
 [🔗 View GPX Files →](/running-routes/fell/wicklow-round/)
 
 ### 🏞️ Trail Running  

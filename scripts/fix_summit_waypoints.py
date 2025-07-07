@@ -24,6 +24,7 @@ Output:
 '''
 
 import argparse
+import sys
 import requests
 import zipfile
 import pandas as pd
@@ -45,6 +46,9 @@ def parse_arguments():
     Returns:
         argparse.Namespace: Parsed arguments.
     """
+    if len(sys.argv) == 1:
+        print(__doc__)
+        sys.exit(0)
     parser = argparse.ArgumentParser(description="Enrich GPX summit waypoints with hill data.")
     parser.add_argument('--input', required=True, help='Path to input GPX file')
     parser.add_argument(

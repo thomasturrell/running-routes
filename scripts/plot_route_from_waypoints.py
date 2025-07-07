@@ -1,5 +1,5 @@
 """
-plot2.py
+plot_route_from_waypoint.py
 
 This script processes a GPX file containing waypoints, calculates routes between them using OpenStreetMap (OSM) data, 
 and generates a new GPX file with the calculated route. It also supports plotting the route and overlaying fallback 
@@ -28,17 +28,10 @@ Options:
 import argparse
 import sys
 import gpxpy
-
-from networkx import MultiDiGraph
-
 import osmnx as ox
 from geopy.distance import geodesic
 import hashlib
 from pathlib import Path
-
-#import logging
-#logging.basicConfig(level=logging.INFO)
-#logger = logging.getLogger(__name__)
 
 def parse_arguments():
     """
@@ -63,9 +56,9 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def parse_gpx(file_path):
+def extract_waypoints(file_path):
     """
-    Parse a GPX file to extract waypoints.
+    Extracts waypoints from a GPX file.
 
     Args:
         file_path (str): Path to the GPX file.
@@ -73,7 +66,7 @@ def parse_gpx(file_path):
     Returns:
         list: List of waypoints as tuples (latitude, longitude, name, symbol).
     """
-    print("[1/6] Parsing GPX file:", file_path)
+    print("[1/6] Extracting waypoints from:", file_path)
     try:
         with open(file_path, 'r') as gpx_file:
             gpx = gpxpy.parse(gpx_file)
@@ -93,22 +86,29 @@ def validate_waypoints(waypoints, max_points, max_distance):
     Validate waypoints for maximum count and distance constraints.
 
     Args:
-        waypoints (list): List of waypoints.
+        waypoints (list): List of waypoints as tuples (latitude, longitude, name, symbol).
         max_points (int): Maximum allowed number of waypoints.
         max_distance (float): Maximum allowed distance between consecutive waypoints in km.
 
     Raises:
         SystemExit: If validation fails.
     """
-    if len(waypoints) > max_points:
-        print(f"❌ Too many waypoints ({len(waypoints)} > {max_points}). Use --max-points to override.")
+    # Filter out waypoints with missing latitude or longitude
+    valid_waypoints = [wpt for wpt in waypoints if wpt[0] is not None and wpt[1] is not None]
+
+    if len(valid_waypoints) < len(waypoints):
+        print(f"❌ Some waypoints are missing latitude or longitude.")
+        sys.exit(1)
+
+    if len(valid_waypoints) > max_points:
+        print(f"❌ Too many waypoints ({len(valid_waypoints)} > {max_points}). Use --max-points to override.")
         sys.exit(1)
 
     def haversine_km(p1, p2):
         return geodesic((p1[0], p1[1]), (p2[0], p2[1])).km
 
-    for i in range(len(waypoints) - 1):
-        dist = haversine_km(waypoints[i], waypoints[i + 1])
+    for i in range(len(valid_waypoints) - 1):
+        dist = haversine_km(valid_waypoints[i], valid_waypoints[i + 1])
         if dist > max_distance:
             print(f"❌ Distance between waypoint {i+1} and {i+2} is {dist:.2f} km, exceeding limit of {max_distance} km")
             sys.exit(1)

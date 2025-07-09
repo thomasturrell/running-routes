@@ -29,6 +29,12 @@ ROUTES = [
         "source": Path("src/fell/allermuir-hill-race/allermuir-hill-race.gpx"),
         "output": Path("docs/assets/gpx/fell/allermuir-hill-race"),
         "prefix": "allermuir-hill-race",
+    },
+    {
+        "name": "Wicklow Round",
+        "source": Path("src/fell/wicklow-round/wicklow-round.gpx"),
+        "output": Path("docs/assets/gpx/fell/wicklow-round"),
+        "prefix": "wicklow-round",
     }
 ]
 

@@ -50,12 +50,36 @@ As with all classic rounds, the Wicklow Round requires:
 - Understanding of local weather patterns
 - Proper support crew coordination
 
-## GPX Files and Downloads
+Multiple formats are available to suit different devices and use cases. If unsure, start with the **Simplified Route**, which is compatible with most GPS watches and mobile apps (e.g. Garmin Connect, Strava).
 
-> **Note:** GPX files and detailed route information for the Wicklow Round are currently being prepared and will be available soon. Please check back for updates.
+## 🛰️ Interactive Route Preview
+
+{% include gpx-viewer.html map_id="map1" gpx_file="../../assets/gpx/fell/wicklow-round/wicklow-round-detailed.gpx" %}
+
+## Downloads
 
 > ⚠️ **Important Disclaimer:**  
 > The GPX files provided on this site are intended for general guidance only. Always cross-reference your route with official maps, weather conditions, and local guidance before and during navigation. Errors or inaccuracies may exist, and reliance on these files is at your own risk. The site creators are not liable for any issues arising from the use of these files.
+
+## 🔁 Complete Routes
+
+### Simplified Route
+- [Download GPX](../../assets/gpx/fell/wicklow-round/wicklow-round-simplified.gpx)  
+- [View in GPX Studio ↗](https://gpx.studio/app?files=["https://thomasturrell.github.io/running-routes/assets/gpx/fell/wicklow-round/wicklow-round-simplified.gpx"])
+
+### Detailed Route
+- [Download GPX](../../assets/gpx/fell/wicklow-round/wicklow-round-detailed.gpx)  
+- [View in GPX Studio ↗](https://gpx.studio/app?files=["https://thomasturrell.github.io/running-routes/assets/gpx/fell/wicklow-round/wicklow-round-detailed.gpx"])
+
+## 📍 Waypoints Only
+
+### Summits
+- [Download GPX](../../assets/gpx/fell/wicklow-round/wicklow-round-summits.gpx)  
+- [View in GPX Studio ↗](https://gpx.studio/app?files=["https://thomasturrell.github.io/running-routes/assets/gpx/fell/wicklow-round/wicklow-round-summits.gpx"])
+
+### Points of Interest
+- [Download GPX](../../assets/gpx/fell/wicklow-round/wicklow-round-points-of-interest.gpx)  
+- [View in GPX Studio ↗](https://gpx.studio/app?files=["https://thomasturrell.github.io/running-routes/assets/gpx/fell/wicklow-round/wicklow-round-points-of-interest.gpx"])
 
 ## Resources
 

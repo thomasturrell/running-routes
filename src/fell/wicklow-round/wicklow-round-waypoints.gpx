@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1"
+  xmlns:rr="http://thomasturrell.github.io/running-routes/schema/v1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 https://www.topografix.com/GPX/1/1/gpx.xsd http://thomasturrell.github.io/running-routes/schema/v1 https://thomasturrell.github.io/running-routes/schema/v1/gpx-extension.xsd" version="1.1" creator="Thomas Turrell-Croft">
+  <metadata>
+    <n>Wicklow Round</n>
+    <desc>An Irish fell running challenge in the Wicklow Mountains covering 26 peaks, approximately 100km with 6,000m of ascent, traditionally completed in under 24 hours.</desc>
+    <author>
+      <n>Thomas Turrell-Croft</n>
+    </author>
+  </metadata>
+  <wpt lat="52.9905" lon="-6.4835">
+    <n>Start/Finish - Glenmalure</n>
+    <sym>Flag</sym>
+  </wpt>
+
+  <wpt lat="52.9663" lon="-6.4463">
+    <ele>925.0</ele>
+    <n>Lugnaquilla</n>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>21634</rr:dobih_number>
+    </extensions>
+  </wpt>
+
+  <wpt lat="53.0808" lon="-6.3347">
+    <ele>847.0</ele>
+    <n>Mullaghcleevaun</n>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>24070</rr:dobih_number>
+    </extensions>
+  </wpt>
+
+  <wpt lat="53.0753" lon="-6.2558">
+    <ele>817.0</ele>
+    <n>Tonelagee</n>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>32584</rr:dobih_number>
+    </extensions>
+  </wpt>
+
+  <wpt lat="53.2408" lon="-6.3542">
+    <ele>757.0</ele>
+    <n>Kippure</n>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20195</rr:dobih_number>
+    </extensions>
+  </wpt>
+
+  <wpt lat="53.1175" lon="-6.1647">
+    <ele>725.0</ele>
+    <n>Djouce</n>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>8651</rr:dobih_number>
+    </extensions>
+  </wpt>
+
+  <wpt lat="53.0928" lon="-6.1833">
+    <ele>641.0</ele>
+    <n>Scarr</n>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>29485</rr:dobih_number>
+    </extensions>
+  </wpt>
+
+  <wpt lat="53.0100" lon="-6.3700">
+    <ele>849.0</ele>
+    <n>Mullaghcleevaun East Top</n>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>24071</rr:dobih_number>
+    </extensions>
+  </wpt>
+
+  <wpt lat="53.0531" lon="-6.2775">
+    <ele>759.0</ele>
+    <n>Corrig</n>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>6797</rr:dobih_number>
+    </extensions>
+  </wpt>
+
+  <wpt lat="53.1256" lon="-6.1958">
+    <ele>682.0</ele>
+    <n>War Hill</n>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>34308</rr:dobih_number>
+    </extensions>
+  </wpt>
+
+  <wpt lat="53.1042" lon="-6.2292">
+    <ele>630.0</ele>
+    <n>Paddock Hill</n>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>25681</rr:dobih_number>
+    </extensions>
+  </wpt>
+
+  <wpt lat="53.0508" lon="-6.3908">
+    <n>Glendalough Valley</n>
+    <sym>Waypoint</sym>
+  </wpt>
+
+  <wpt lat="53.1397" lon="-6.2833">
+    <n>Sally Gap</n>
+    <sym>Waypoint</sym>
+  </wpt>
+
+  <wpt lat="53.0642" lon="-6.1475">
+    <n>Powerscourt Waterfall</n>
+    <sym>Waypoint</sym>
+  </wpt>
+
+  <wpt lat="52.9905" lon="-6.4835">
+    <n>Finish - Glenmalure</n>
+    <sym>Flag</sym>
+  </wpt>
+</gpx>

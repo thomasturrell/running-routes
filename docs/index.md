@@ -26,6 +26,11 @@ A Welsh mountain challenge in Snowdonia:
 **47 peaks**, ~**100 km**, and over **8,500 m of ascent** — traditionally completed within 24 hours.  
 [🔗 View GPX Files →](/running-routes/fell/paddy-buckley-round/)
 
+#### [Wicklow Round](/running-routes/fell/wicklow-round/)
+An Irish mountain challenge in the Wicklow Mountains:  
+Coming soon...  
+[🔗 View GPX Files →](/running-routes/fell/wicklow-round/)
+
 ### 🏞️ Trail Running  
 _Scenic off-road routes through forests, hills, and countryside_
 

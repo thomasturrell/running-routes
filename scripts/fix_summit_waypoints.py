@@ -131,6 +131,7 @@ def enrich_gpx_with_hill_data(gpx_path, hill_df):
                     waypoint.latitude = matched_row['Latitude']
                     waypoint.longitude = matched_row['Longitude']
                     waypoint.elevation = matched_row['Metres']
+                    waypoint.name = matched_row['Name']
                     updated += 1
                 else:
                     warnings.append(f"ID {hill_id} not found in hill database.")

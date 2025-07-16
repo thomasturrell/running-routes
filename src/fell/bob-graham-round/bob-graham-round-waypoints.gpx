@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:rr="http://thomasturrell.github.io/running-routes/schema/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 https://www.topografix.com/GPX/1/1/gpx.xsd http://thomasturrell.github.io/running-routes/schema/v1 https://thomasturrell.github.io/running-routes/schema/v1/gpx-extension.xsd" version="1.1" creator="Thomas Turrell-Croft">
+  <metadata>
+    <name>Bob Graham Round</name>
+    <desc>Five-leg route covering 42 summits of the Bob Graham Round.</desc>
+    <author>
+      <name>Thomas Turrell-Croft</name>
+    </author>
+  </metadata>
+  <wpt lat="54.60073" lon="-3.1373">
+    <name>Moot Hall</name>
+    <sym>Flag</sym>
+  </wpt>
+  <wpt lat="54.651391" lon="-3.147761">
+    <ele>930.4</ele>
+    <name>Skiddaw</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2319</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.67077" lon="-3.101074">
+    <ele>691.0</ele>
+    <name>Great Calva</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2331</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.639949" lon="-3.049789">
+    <ele>867.8</ele>
+    <name>Blencathra - Hallsfell Top</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2320</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.61863" lon="-3.04713">
+    <name>Road Crossing (Threlkeld)</name>
+  </wpt>
+  <wpt lat="54.593661" lon="-3.032362">
+    <ele>726.0</ele>
+    <name>Clough Head</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2547</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.575689" lon="-3.019377">
+    <ele>857.0</ele>
+    <name>Great Dodd</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2525</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.566917" lon="-3.028995">
+    <ele>789.0</ele>
+    <name>Watson's Dodd</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2534</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.561128" lon="-3.017405">
+    <ele>843.7</ele>
+    <name>Stybarrow Dodd</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2526</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.547718" lon="-3.017473">
+    <ele>882.7</ele>
+    <name>Raise</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2520</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.540904" lon="-3.025063">
+    <ele>863.2</ele>
+    <name>White Side</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2523</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.530827" lon="-3.025352">
+    <ele>924.5</ele>
+    <name>Helvellyn Lower Man</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2516</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.527001" lon="-3.017514">
+    <ele>949.8</ele>
+    <name>Helvellyn</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2515</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.518993" lon="-3.015446">
+    <ele>891.3</ele>
+    <name>Nethermost Pike</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2517</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.508693" lon="-3.011175">
+    <ele>858.5</ele>
+    <name>Dollywaggon Pike</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2524</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.497054" lon="-2.991648">
+    <ele>873.3</ele>
+    <name>Fairfield</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2521</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.494857" lon="-3.014027">
+    <ele>736.8</ele>
+    <name>Seat Sandal</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2545</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.4953" lon="-3.04024">
+    <name>Road Crossing (Dunmail Raise)</name>
+  </wpt>
+  <wpt lat="54.491159" lon="-3.052179">
+    <ele>553.0</ele>
+    <name>Steel Fell [Dead Pike - Steel Fell]</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2466</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.484231" lon="-3.079493">
+    <ele>537.0</ele>
+    <name>Calf Crag</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2472</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.475962" lon="-3.111268">
+    <ele>762.5</ele>
+    <name>High Raise [High White Stones]</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2396</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.470362" lon="-3.102552">
+    <ele>736.0</ele>
+    <name>Sergeant Man</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2407</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.462189" lon="-3.112653">
+    <ele>723.0</ele>
+    <name>Thunacar Knott</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2413</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.456898" lon="-3.109455">
+    <ele>735.3</ele>
+    <name>Harrison Stickle</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2406</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.456393" lon="-3.121381">
+    <ele>708.4</ele>
+    <name>Pike of Stickle</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2417</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.457935" lon="-3.159804">
+    <ele>651.0</ele>
+    <name>Rossett Pike</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2437</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.447816" lon="-3.166242">
+    <ele>902.9</ele>
+    <name>Bowfell</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2365</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.457172" lon="-3.179219">
+    <ele>885.0</ele>
+    <name>Esk Pike</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2369</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.46494" lon="-3.194548">
+    <ele>909.5</ele>
+    <name>Great End</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2364</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.455577" lon="-3.199705">
+    <ele>930.9</ele>
+    <name>Ill Crag</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2362</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.457348" lon="-3.206899">
+    <ele>935.3</ele>
+    <name>Broad Crag</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2363</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.454263" lon="-3.211682">
+    <ele>978.07</ele>
+    <name>Scafell Pike</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2359</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.447498" lon="-3.224731">
+    <ele>963.9</ele>
+    <name>Scafell</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2360</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.45566" lon="-3.26227">
+    <name>Road Crossing (Wasdale Campsite)</name>
+  </wpt>
+  <wpt lat="54.464889" lon="-3.27686">
+    <ele>628.7</ele>
+    <name>Yewbarrow</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2450</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.483922" lon="-3.289879">
+    <ele>826.0</ele>
+    <name>Red Pike (Wasdale)</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2378</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.493389" lon="-3.302174">
+    <ele>819.0</ele>
+    <name>Steeple</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2379</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.497479" lon="-3.281134">
+    <ele>892.4</ele>
+    <name>Pillar</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2368</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.483323" lon="-3.244123">
+    <ele>802.0</ele>
+    <name>Kirk Fell</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2383</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.482084" lon="-3.219296">
+    <ele>898.8</ele>
+    <name>Great Gable</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2367</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.485699" lon="-3.213769">
+    <ele>799.9</ele>
+    <name>Green Gable</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2384</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.496479" lon="-3.214274">
+    <ele>715.0</ele>
+    <name>Brandreth</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2416</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.502362" lon="-3.210186">
+    <ele>697.0</ele>
+    <name>Grey Knotts</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2424</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.51146" lon="-3.19918">
+    <name>Road Crossing	(Honister Pass)</name>
+  </wpt>
+  <wpt lat="54.527238" lon="-3.202284">
+    <ele>754.0</ele>
+    <name>Dale Head</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2400</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.537828" lon="-3.213755">
+    <ele>727.0</ele>
+    <name>Hindscarth</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2411</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.540794" lon="-3.235082">
+    <ele>737.6</ele>
+    <name>Robinson</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2405</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="54.60073" lon="-3.1373">
+    <name>Moot Hall</name>
+  </wpt>
+</gpx>

@@ -13,7 +13,7 @@ Usage:
     python fix_summit_waypoints.py <path_to_gpx_file>
 
 Example:
-    python fix_summit_waypoints.py input.gpx
+    python fix_summit_waypoints.py input=input.gpx
 
 Dependencies:
 - Python libraries: argparse, requests, zipfile, pandas, gpxpy, xml.etree.ElementTree
@@ -101,16 +101,41 @@ def get_custom_dobih_number(waypoint):
             pass
     return None
 
-def enrich_gpx_with_hill_data(gpx_path, hill_df):
+def find_summits_by_name(hill_df, waypoint_name, max_results=5):
+    """
+    Find summits by name in the hill database.
+
+    Args:
+        hill_df (pandas.DataFrame): DataFrame containing hill data.
+        waypoint_name (str): Name of the waypoint to search for.
+        max_results (int): Maximum number of results to return.
+
+    Returns:
+        pandas.DataFrame: DataFrame containing matching summits.
+    """
+    if not waypoint_name:
+        return pd.DataFrame()
+    
+    # Case-insensitive partial match search
+    matches = hill_df[hill_df['Name'].str.contains(waypoint_name, case=False, na=False, regex=False)]
+    
+    # If no partial matches, try exact match
+    if matches.empty:
+        matches = hill_df[hill_df['Name'].str.lower() == waypoint_name.lower()]
+    
+    return matches.head(max_results)
+
+def enrich_gpx_with_hill_data(gpx_path, hill_df, output_path):
     """
     Enriches summit waypoints in a GPX file with hill data.
 
     Args:
         gpx_path (str): Path to the input GPX file.
         hill_df (pandas.DataFrame): DataFrame containing hill data.
+        output_path (str): Path to save the enriched GPX file.
 
     Output:
-        Saves an enriched GPX file with "_enriched" appended to the filename.
+        Saves an enriched GPX file with updated summit information.
     """
     print(f"Processing GPX file: {gpx_path}")
 
@@ -125,19 +150,40 @@ def enrich_gpx_with_hill_data(gpx_path, hill_df):
             hill_id = get_custom_dobih_number(waypoint)
 
             if hill_id and hill_id.isdigit():
+                # DoBIH ID found, try to match by ID
                 match = hill_df[hill_df['Number'] == int(hill_id)]
                 if not match.empty:
                     matched_row = match.iloc[0]
                     waypoint.latitude = matched_row['Latitude']
                     waypoint.longitude = matched_row['Longitude']
                     waypoint.elevation = matched_row['Metres']
+                    waypoint.name = matched_row['Name']
                     updated += 1
                 else:
                     warnings.append(f"ID {hill_id} not found in hill database.")
             else:
-                warnings.append(f"Waypoint '{waypoint.name}' does not have a valid DoBIH ID.")
+                # No valid DoBIH ID, try to lookup by name
+                if waypoint.name:
+                    print(f"\n🔍 Looking up summit by name: '{waypoint.name}'")
+                    name_matches = find_summits_by_name(hill_df, waypoint.name)
+                    
+                    if not name_matches.empty:
+                        print(f"Found {len(name_matches)} possible match(es):")
+                        print("-" * 80)
+                        for idx, row in name_matches.iterrows():
+                            print(f"ID: {row['Number']:>6} | Name: {row['Name']:<30} | "
+                                  f"Lat: {row['Latitude']:>8.4f} | Lon: {row['Longitude']:>9.4f} | "
+                                  f"Height: {row['Metres']:>4.0f}m")
+                        print("-" * 80)
+                        print(f"💡 Add a DoBIH ID extension to waypoint '{waypoint.name}' using one of the IDs above.")
+                        print("   Example: <extensions><rr:dobih_number xmlns:rr=\"http://thomasturrell.github.io/running-routes/schema/v1\">12345</rr:dobih_number></extensions>")
+                    else:
+                        print(f"❌ No summits found matching name: '{waypoint.name}'")
+                        
+                    warnings.append(f"Waypoint '{waypoint.name}' has no DoBIH ID - see suggestions above.")
+                else:
+                    warnings.append(f"Waypoint has no name and no DoBIH ID.")
 
-    output_path = os.path.splitext(gpx_path)[0] + '_enriched.gpx'
     with open(output_path, 'w', encoding='utf-8') as f:
         gpx_output = gpx.to_xml()
         gpx_output = gpx_output.replace(
@@ -146,20 +192,20 @@ def enrich_gpx_with_hill_data(gpx_path, hill_df):
         )
         f.write(gpx_output)
 
-    print(f"Updated {updated} summit(s) with coordinates and elevation.")
+    print(f"\n✅ Updated {updated} summit(s) with coordinates and elevation.")
     if warnings:
-        print("\nWARNING: The following summit(s) were not found or lacked valid IDs:")
+        print("\n⚠️  SUMMARY - The following summit(s) were not updated:")
         for warning in warnings:
             print(f" - {warning}")
 
-    print(f"Enriched GPX saved to: {output_path}")
+    print(f"\n📁 Enriched GPX saved to: {output_path}")
 
 def main():
     """
     Main function to parse arguments and execute the script.
     """
     parser = argparse.ArgumentParser(description="Enrich GPX summit waypoints with hill data.")
-    parser.add_argument("gpx_path", help="Path to the input GPX file")
+    parser.add_argument("input", help="Path to the input GPX file")
     args = parser.parse_args()
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -168,7 +214,8 @@ def main():
 
     csv_path = download_and_extract_csv(HILL_ZIP_URL, working_dir)
     hill_df = load_hill_data(csv_path)
-    enrich_gpx_with_hill_data(args.gpx_path, hill_df)
+    enrich_gpx_with_hill_data(args.input, hill_df, 
+                               os.path.splitext(args.input)[0] + "_enriched.gpx")
 
 if __name__ == "__main__":
     main()

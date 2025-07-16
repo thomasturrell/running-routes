@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:rr="http://thomasturrell.github.io/running-routes/schema/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 https://www.topografix.com/GPX/1/1/gpx.xsd http://thomasturrell.github.io/running-routes/schema/v1 https://thomasturrell.github.io/running-routes/schema/v1/gpx-extension.xsd" version="1.1" creator="Thomas Turrell-Croft">
+  <metadata>
+    <desc>An Irish fell running challenge in the Wicklow Mountains covering 26 peaks, approximately 100km with 6,000m of ascent, traditionally completed in under 24 hours.</desc>
+  </metadata>
+  <wpt lat="53.178201" lon="-6.332091">
+    <ele>757.0</ele>
+    <name>Kippure [Cipiur]</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20060</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.130227" lon="-6.323431">
+    <ele>682.4</ele>
+    <name>Carrigvore [An Charraig Mhor]</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20113</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.124195" lon="-6.350242">
+    <ele>719.0</ele>
+    <name>Gravale [Droibheal]</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20083</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.113969" lon="-6.367227">
+    <ele>720.8</ele>
+    <name>Duff Hill [An Cnoc Dubh]</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20082</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.10026" lon="-6.384692">
+    <ele>795.9</ele>
+    <name>Mullaghcleevaun East Top</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20041</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.103594" lon="-6.406696">
+    <ele>846.7</ele>
+    <name>Mullaghcleevaun</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20017</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.102071" lon="-6.458465">
+    <ele>703.0</ele>
+    <name>Moanbane [Moin Bhan]</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20092</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.091485" lon="-6.473771">
+    <ele>698.0</ele>
+    <name>Silsean</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20097</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.01693" lon="-6.481508">
+    <ele>701.0</ele>
+    <name>Table Mountain</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20572</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.005255" lon="-6.476815">
+    <ele>758.0</ele>
+    <name>Camenabologue</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20059</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="52.967153" lon="-6.464603">
+    <ele>924.7</ele>
+    <name>Lugnaquilla [Log na Coille]</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20012</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="52.960621" lon="-6.441246">
+    <ele>794.6</ele>
+    <name>Corrigasleggaun [Carraig na Sliogan]</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20039</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="52.985151" lon="-6.373951">
+    <ele>660.7</ele>
+    <name>Mullacor [Mullach Mhor]</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20149</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="52.998259" lon="-6.33409">
+    <ele>476.1</ele>
+    <name>Derrybawn Mountain</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>21284</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.02282" lon="-6.388928">
+    <ele>698.6</ele>
+    <name>Camaderry</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20096</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.054258" lon="-6.38258">
+    <ele>815.8</ele>
+    <name>Tonelagee</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20028</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.055894" lon="-6.311508">
+    <ele>640.0</ele>
+    <name>Scarr</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20177</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.0876" lon="-6.293997">
+    <ele>532.4</ele>
+    <name>Knocknacloghoge</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20726</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.105091" lon="-6.283584">
+    <ele>593.3</ele>
+    <name>Luggala [Fancy Mountain] [Log an La]</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20585</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.13081" lon="-6.239901">
+    <ele>725.5</ele>
+    <name>Djouce</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20078</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.139977" lon="-6.253993">
+    <ele>684.8</ele>
+    <name>War Hill</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20110</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.160558" lon="-6.267979">
+    <ele>642.0</ele>
+    <name>Tonduff</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20173</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.202139" lon="-6.239584">
+    <ele>553.5</ele>
+    <name>Prince William's Seat</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20708</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.205616" lon="-6.259752">
+    <ele>555.3</ele>
+    <name>Knocknagun</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>20707</rr:dobih_number>
+    </extensions>
+  </wpt>
+</gpx>

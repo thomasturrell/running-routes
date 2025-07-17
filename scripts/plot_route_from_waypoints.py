@@ -29,10 +29,16 @@ import argparse
 import sys
 import os
 import gpxpy
+import xml.etree.ElementTree as ET
 import osmnx as ox
 from geopy.distance import geodesic
 import hashlib
 from pathlib import Path
+
+from plot_route_from_waypoints_chat import Waypoint
+
+CUSTOM_NS = "http://thomasturrell.github.io/running-routes/schema/v1"
+ET.register_namespace('rr', CUSTOM_NS)
 
 def parse_arguments():
     """
@@ -124,6 +130,27 @@ def validate_arguments(args):
         print(f"❌ Error: Snap threshold must be non-negative: {args.snap_threshold}")
         sys.exit(1)
 
+def get_custom_section(waypoint):
+    """
+    Extract the custom section from the waypoint's extensions.
+
+    Args:
+        waypoint (gpxpy.gpx.GPXWaypoint): The waypoint to extract the section from.
+
+    Returns:
+        str or None: The section if found, otherwise None.
+    """
+    if waypoint.extensions:
+        try:
+            ext_xml = ''.join(ET.tostring(e, encoding='unicode') for e in waypoint.extensions)
+            root = ET.fromstring(f"<extensions>{ext_xml}</extensions>")
+            section_elem = root.find(f".//{{{CUSTOM_NS}}}section")
+            if section_elem is not None:
+                return section_elem.text.strip()
+        except ET.ParseError:
+            pass
+        return None
+
 def extract_waypoints(input: str, max_waypoints: int, max_distance: float):
     """
     Extract waypoints from a GPX file.
@@ -134,15 +161,17 @@ def extract_waypoints(input: str, max_waypoints: int, max_distance: float):
     Returns:
         List[Waypoint]: List of Waypoint objects extracted from the GPX file.
     """
-    # Validate GPX file can be parsed and extract waypoints for further validation
     try:
         with open(input, 'r') as gpx_file:
             gpx = gpxpy.parse(gpx_file)
-        waypoints = [(wpt.latitude, wpt.longitude, wpt.name, wpt.symbol, wpt.extensions) for wpt in gpx.waypoints]
+
+        waypoints = []
+        for waypoint in gpx.waypoints:
+            section = get_custom_section(waypoint)
+
+            waypoints.append((waypoint.latitude, waypoint.longitude, waypoint.name, waypoint.symbol, section))
+
         print(f"✅ Input GPX file validated: {input} ({len(waypoints)} waypoints found)")
-        # prints out all waypoints found
-        for i, wpt in enumerate(waypoints, start=1):
-            print(f"  ↳ Waypoint {i}: {wpt}")
 
     except FileNotFoundError:
         print(f"❌ Error: Cannot read GPX file: {input}")

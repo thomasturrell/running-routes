@@ -19,7 +19,7 @@ Usage:
 
 Options:
     --buffer FLOAT           Buffer around bounding box in degrees (default: 0.05)
-    --max-points INT         Maximum number of waypoints (default: 50)
+    --max-waypoints INT         Maximum number of waypoints (default: 50)
     --max-distance FLOAT     Maximum allowed distance between waypoints in km (default: 20)
     --max-cache-age-days INT Maximum number of days before cached graph expires (default: 7)
     --force-refresh          Force refresh of cached graph even if not expired
@@ -53,7 +53,7 @@ def parse_arguments():
         default=None
     )
     parser.add_argument('--bounding-box-buffer', type=float, default=0.05, help='Buffer in degrees to expand the bounding box (default: 0.05)')
-    parser.add_argument('--max-points', type=int, default=50, help='Maximum number of waypoints allowed (default: 50)')
+    parser.add_argument('--max-waypoints', type=int, default=50, help='Maximum number of waypoints allowed (default: 50)')
     parser.add_argument('--max-distance', type=float, default=20, help='Maximum allowed distance between waypoints in km (default: 20)')
     parser.add_argument('--max-cache-age-days', type=int, default=7, help='Max age of cached graph in days (default: 7)')
     parser.add_argument('--force-refresh', action='store_true', help='Force refresh of cached graph even if cache is valid')
@@ -107,9 +107,9 @@ def validate_arguments(args):
     if args.bounding_box_buffer < 0:
         print(f"❌ Error: Bounding box buffer must be non-negative: {args.bounding_box_buffer}")
         sys.exit(1)
-    
-    if args.max_points <= 0:
-        print(f"❌ Error: Max points must be positive: {args.max_points}")
+
+    if args.max_waypoints <= 0:
+        print(f"❌ Error: Max waypoints must be positive: {args.max_waypoints}")
         sys.exit(1)
     
     if args.max_distance <= 0:
@@ -124,7 +124,7 @@ def validate_arguments(args):
         print(f"❌ Error: Snap threshold must be non-negative: {args.snap_threshold}")
         sys.exit(1)
 
-def extract_waypoints(input: str, max_points: int, max_distance: float):
+def extract_waypoints(input: str, max_waypoints: int, max_distance: float):
     """
     Extract waypoints from a GPX file.
 
@@ -155,11 +155,11 @@ def extract_waypoints(input: str, max_points: int, max_distance: float):
         sys.exit(1)
     
     # Validate waypoints constraints
-    validate_waypoints(waypoints, max_points, max_distance)
+    validate_waypoints(waypoints, max_waypoints, max_distance)
 
     return waypoints
 
-def validate_waypoints(waypoints, max_points, max_distance):
+def validate_waypoints(waypoints, max_waypoints, max_distance):
     """
     Validate waypoints for maximum count and distance constraints.
 
@@ -178,8 +178,8 @@ def validate_waypoints(waypoints, max_points, max_distance):
         print(f"❌ Some waypoints are missing latitude or longitude.")
         sys.exit(1)
 
-    if len(valid_waypoints) > max_points:
-        print(f"❌ Too many waypoints ({len(valid_waypoints)} > {max_points}). Use --max-points to override.")
+    if len(valid_waypoints) > max_waypoints:
+        print(f"❌ Too many waypoints ({len(valid_waypoints)} > {max_waypoints}). Use --max-waypoints to override.")
         sys.exit(1)
 
     def haversine_km(p1, p2):
@@ -282,7 +282,7 @@ def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0):
     skipped_waypoints = []
     next_node_id = max(graph.nodes) + 1
 
-    for lat, lon, name, sym in waypoints:
+    for lat, lon, name, sym, extensions in waypoints:
         # First check distance threshold
         try:
             edge_info, distance = ox.distance.nearest_edges(graph, lon, lat, return_dist=True)
@@ -510,7 +510,7 @@ def main():
     args = parse_arguments()
     validate_arguments(args)
 
-    waypoints = extract_waypoints(args.input, args.max_points, args.max_distance)
+    waypoints = extract_waypoints(args.input, args.max_waypoints, args.max_distance)
 
     north, south, east, west = calculate_bounding_box(waypoints, args.bounding_box_buffer)
     graph = download_osm_graph(north, south, east, west, args.max_cache_age_days, args.force_refresh)

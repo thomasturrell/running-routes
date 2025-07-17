@@ -67,7 +67,7 @@ def parse_arguments():
     
     return args
 
-def validate_inputs(args):
+def validate_arguments(args):
     """
     Validate all input files and arguments.
     
@@ -103,25 +103,6 @@ def validate_inputs(args):
         if os.path.exists(args.output):
             print(f"⚠️  Warning: Output file already exists and will be overwritten: {args.output}")
     
-    # Validate GPX file can be parsed and extract waypoints for further validation
-    try:
-        with open(args.input, 'r') as gpx_file:
-            gpx = gpxpy.parse(gpx_file)
-        waypoints = [(wpt.latitude, wpt.longitude, wpt.name, wpt.symbol) for wpt in gpx.waypoints]
-        print(f"✅ Input GPX file validated: {args.input} ({len(waypoints)} waypoints found)")
-    except FileNotFoundError:
-        print(f"❌ Error: Cannot read GPX file: {args.input}")
-        sys.exit(1)
-    except gpxpy.gpx.GPXException as e:
-        print(f"❌ Error: Invalid GPX file format: {e}")
-        sys.exit(1)
-    except Exception as e:
-        print(f"❌ Error: Unexpected error reading GPX file: {e}")
-        sys.exit(1)
-    
-    # Validate waypoints constraints
-    validate_waypoints(waypoints, args.max_points, args.max_distance)
-    
     # Validate numeric arguments
     if args.bounding_box_buffer < 0:
         print(f"❌ Error: Bounding box buffer must be non-negative: {args.bounding_box_buffer}")
@@ -142,27 +123,40 @@ def validate_inputs(args):
     if args.snap_threshold < 0:
         print(f"❌ Error: Snap threshold must be non-negative: {args.snap_threshold}")
         sys.exit(1)
-    
-    return waypoints
 
-def extract_waypoints(file_path):
+def extract_waypoints(input: str, max_points: int, max_distance: float):
     """
-    Extracts waypoints from a GPX file.
-    Note: File validation is now handled in validate_inputs()
+    Extract waypoints from a GPX file.
 
     Args:
-        file_path (str): Path to the GPX file.
+        gpx_file (str): Path to the GPX file.
 
     Returns:
-        list: List of waypoints as tuples (latitude, longitude, name, symbol).
+        List[Waypoint]: List of Waypoint objects extracted from the GPX file.
     """
-    print("[1/6] Extracting waypoints from:", file_path)
+    # Validate GPX file can be parsed and extract waypoints for further validation
+    try:
+        with open(input, 'r') as gpx_file:
+            gpx = gpxpy.parse(gpx_file)
+        waypoints = [(wpt.latitude, wpt.longitude, wpt.name, wpt.symbol, wpt.extensions) for wpt in gpx.waypoints]
+        print(f"✅ Input GPX file validated: {input} ({len(waypoints)} waypoints found)")
+        # prints out all waypoints found
+        for i, wpt in enumerate(waypoints, start=1):
+            print(f"  ↳ Waypoint {i}: {wpt}")
+
+    except FileNotFoundError:
+        print(f"❌ Error: Cannot read GPX file: {input}")
+        sys.exit(1)
+    except gpxpy.gpx.GPXException as e:
+        print(f"❌ Error: Invalid GPX file format: {e}")
+        sys.exit(1)
+    except Exception as e:
+        print(f"❌ Error: Unexpected error reading GPX file: {e}")
+        sys.exit(1)
     
-    with open(file_path, 'r') as gpx_file:
-        gpx = gpxpy.parse(gpx_file)
-    
-    waypoints = [(wpt.latitude, wpt.longitude, wpt.name, wpt.symbol) for wpt in gpx.waypoints]
-    print(f"  ↳ {len(waypoints)} waypoints found")
+    # Validate waypoints constraints
+    validate_waypoints(waypoints, max_points, max_distance)
+
     return waypoints
 
 def validate_waypoints(waypoints, max_points, max_distance):
@@ -197,11 +191,9 @@ def validate_waypoints(waypoints, max_points, max_distance):
             print(f"❌ Distance between waypoint {i+1} and {i+2} is {dist:.2f} km, exceeding limit of {max_distance} km")
             sys.exit(1)
 
-
 def calculate_bounding_box(waypoints, buffer):
     """
     Calculate a bounding box around the waypoints with a buffer.
-    Note: Input validation is now handled in validate_inputs()
 
     Args:
         waypoints (list): List of waypoints.
@@ -210,7 +202,7 @@ def calculate_bounding_box(waypoints, buffer):
     Returns:
         tuple: Bounding box as (north, south, east, west).
     """
-    print(f"[2/6] Calculating bounding box with buffer: {buffer}°")
+    print(f"Calculating bounding box with buffer: {buffer}°")
     
     if not waypoints:
         raise ValueError("No waypoints provided")
@@ -225,7 +217,6 @@ def calculate_bounding_box(waypoints, buffer):
 
     print(f"  ↳ Bounding box (lat, lon): North={north}, South={south}, East={east}, West={west}")
     return north, south, east, west
-
 
 def download_osm_graph(north, south, east, west, max_cache_age_days, force_refresh):
     """
@@ -242,7 +233,7 @@ def download_osm_graph(north, south, east, west, max_cache_age_days, force_refre
     def bbox_hash(w, s, e, n):
         return hashlib.md5(f"{w},{s},{e},{n}".encode()).hexdigest()
     
-    print("[3/6] Downloading OSM data (walkable paths)...")
+    print("Downloading OSM data")
     cache_dir = Path(".graph_cache")
     cache_dir.mkdir(exist_ok=True)
     hash_id = bbox_hash(west, south, east, north)
@@ -409,7 +400,6 @@ def calculate_routes(graph, node_ids):
         routes.append(route)
     return routes
 
-
 def plot_and_save_route(graph, routes, output_path):
     """
     Plot the route on a map and save it to a file.
@@ -423,7 +413,6 @@ def plot_and_save_route(graph, routes, output_path):
     fig, ax = ox.plot_graph_routes(graph, routes, route_linewidth=3, node_size=0, show=False, close=False, figsize=(16, 12))
     fig.savefig(output_path, dpi=300)
     print("  ↳ Plot saved")
-
 
 def export_route_to_gpx(graph, routes, waypoints, output_path_gpx):
     """
@@ -464,7 +453,6 @@ def export_route_to_gpx(graph, routes, waypoints, output_path_gpx):
     with open(output_path_gpx, 'w') as f:
         f.write(gpx.to_xml())
     print("  ↳ GPX file written")
-
 
 def create_fallback_connection_graph(waypoints):
     """
@@ -520,10 +508,10 @@ def main():
     Main entry point of the script.
     """
     args = parse_arguments()
-    
-    waypoints = validate_inputs(args)
-    
-    # Now we can proceed with the main logic, knowing all inputs are valid
+    validate_arguments(args)
+
+    waypoints = extract_waypoints(args.input, args.max_points, args.max_distance)
+
     north, south, east, west = calculate_bounding_box(waypoints, args.bounding_box_buffer)
     graph = download_osm_graph(north, south, east, west, args.max_cache_age_days, args.force_refresh)
 

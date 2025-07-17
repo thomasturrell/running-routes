@@ -27,6 +27,7 @@ Options:
 
 import argparse
 import sys
+import os
 import gpxpy
 import osmnx as ox
 from geopy.distance import geodesic
@@ -38,27 +39,116 @@ def parse_arguments():
     Parse command-line arguments.
 
     Returns:
-        argparse.Namespace: Parsed arguments.
+        argparse.Namespace: Parsed arguments with output path determined.
     """
     if len(sys.argv) == 1:
         print(__doc__)
         sys.exit(0)
+    
     parser = argparse.ArgumentParser(description="Route between GPX waypoints using OpenStreetMap")
-    parser.add_argument('--input', required=True, help='Path to input GPX file')
-    parser.add_argument('--png-output', help='Path to save the final plot (e.g., route.png)')
-    parser.add_argument('--gpx-output', required=True, help='Path to save the calculated route as a GPX file')
-    parser.add_argument('--buffer', type=float, default=0.05, help='Buffer in degrees to expand the bounding box (default: 0.05)')
+    parser.add_argument('input', help='Path to input GPX file')
+    parser.add_argument(
+        '--output',
+        help='Path to save the calculated route as a GPX file. Defaults to appending _route to the input file name.',
+        default=None
+    )
+    parser.add_argument('--bounding-box-buffer', type=float, default=0.05, help='Buffer in degrees to expand the bounding box (default: 0.05)')
     parser.add_argument('--max-points', type=int, default=50, help='Maximum number of waypoints allowed (default: 50)')
     parser.add_argument('--max-distance', type=float, default=20, help='Maximum allowed distance between waypoints in km (default: 20)')
     parser.add_argument('--max-cache-age-days', type=int, default=7, help='Max age of cached graph in days (default: 7)')
     parser.add_argument('--force-refresh', action='store_true', help='Force refresh of cached graph even if cache is valid')
     parser.add_argument('--snap-threshold', type=float, default=5.0, help='Maximum distance in meters for snapping waypoints to paths (default: 5.0)')
-    return parser.parse_args()
+    
+    args = parser.parse_args()
+    
+    # Determine the output path if not provided
+    if args.output is None:
+        args.output = os.path.splitext(args.input)[0] + '_route.gpx'
+    
+    return args
 
+def validate_inputs(args):
+    """
+    Validate all input files and arguments.
+    
+    Args:
+        args (argparse.Namespace): Parsed command-line arguments.
+        
+    Raises:
+        SystemExit: If any validation fails.
+    """
+    # Validate input GPX file exists
+    if not os.path.exists(args.input):
+        print(f"❌ Error: Input GPX file not found: {args.input}")
+        sys.exit(1)
+    
+    # Validate input is actually a file (not a directory)
+    if not os.path.isfile(args.input):
+        print(f"❌ Error: Input path is not a file: {args.input}")
+        sys.exit(1)
+    
+    # Validate GPX file extension
+    if not args.input.lower().endswith('.gpx'):
+        print(f"❌ Error: Input file must be a GPX file: {args.input}")
+        sys.exit(1)
+    
+    # Validate output directory exists (if output path is specified)
+    if args.output:
+        output_dir = os.path.dirname(args.output)
+        if output_dir and not os.path.exists(output_dir):
+            print(f"❌ Error: Output directory does not exist: {output_dir}")
+            sys.exit(1)
+        
+        # Check if output file already exists and warn user
+        if os.path.exists(args.output):
+            print(f"⚠️  Warning: Output file already exists and will be overwritten: {args.output}")
+    
+    # Validate GPX file can be parsed and extract waypoints for further validation
+    try:
+        with open(args.input, 'r') as gpx_file:
+            gpx = gpxpy.parse(gpx_file)
+        waypoints = [(wpt.latitude, wpt.longitude, wpt.name, wpt.symbol) for wpt in gpx.waypoints]
+        print(f"✅ Input GPX file validated: {args.input} ({len(waypoints)} waypoints found)")
+    except FileNotFoundError:
+        print(f"❌ Error: Cannot read GPX file: {args.input}")
+        sys.exit(1)
+    except gpxpy.gpx.GPXException as e:
+        print(f"❌ Error: Invalid GPX file format: {e}")
+        sys.exit(1)
+    except Exception as e:
+        print(f"❌ Error: Unexpected error reading GPX file: {e}")
+        sys.exit(1)
+    
+    # Validate waypoints constraints
+    validate_waypoints(waypoints, args.max_points, args.max_distance)
+    
+    # Validate numeric arguments
+    if args.bounding_box_buffer < 0:
+        print(f"❌ Error: Bounding box buffer must be non-negative: {args.bounding_box_buffer}")
+        sys.exit(1)
+    
+    if args.max_points <= 0:
+        print(f"❌ Error: Max points must be positive: {args.max_points}")
+        sys.exit(1)
+    
+    if args.max_distance <= 0:
+        print(f"❌ Error: Max distance must be positive: {args.max_distance}")
+        sys.exit(1)
+    
+    if args.max_cache_age_days < 0:
+        print(f"❌ Error: Max cache age must be non-negative: {args.max_cache_age_days}")
+        sys.exit(1)
+    
+    if args.snap_threshold < 0:
+        print(f"❌ Error: Snap threshold must be non-negative: {args.snap_threshold}")
+        sys.exit(1)
+    
+    return waypoints
 
 def extract_waypoints(file_path):
     """
     Extracts waypoints from a GPX file.
+    Note: File validation is now handled in validate_inputs()
 
     Args:
         file_path (str): Path to the GPX file.
@@ -67,19 +157,13 @@ def extract_waypoints(file_path):
         list: List of waypoints as tuples (latitude, longitude, name, symbol).
     """
     print("[1/6] Extracting waypoints from:", file_path)
-    try:
-        with open(file_path, 'r') as gpx_file:
-            gpx = gpxpy.parse(gpx_file)
-    except (FileNotFoundError, IOError) as e:
-        print(f"❌ Error reading file: {e}")
-        sys.exit(1)
-    except gpxpy.gpx.GPXException as e:
-        print(f"❌ Error parsing GPX: {e}")
-        sys.exit(1)
+    
+    with open(file_path, 'r') as gpx_file:
+        gpx = gpxpy.parse(gpx_file)
+    
     waypoints = [(wpt.latitude, wpt.longitude, wpt.name, wpt.symbol) for wpt in gpx.waypoints]
     print(f"  ↳ {len(waypoints)} waypoints found")
     return waypoints
-
 
 def validate_waypoints(waypoints, max_points, max_distance):
     """
@@ -117,6 +201,7 @@ def validate_waypoints(waypoints, max_points, max_distance):
 def calculate_bounding_box(waypoints, buffer):
     """
     Calculate a bounding box around the waypoints with a buffer.
+    Note: Input validation is now handled in validate_inputs()
 
     Args:
         waypoints (list): List of waypoints.
@@ -126,6 +211,10 @@ def calculate_bounding_box(waypoints, buffer):
         tuple: Bounding box as (north, south, east, west).
     """
     print(f"[2/6] Calculating bounding box with buffer: {buffer}°")
+    
+    if not waypoints:
+        raise ValueError("No waypoints provided")
+    
     lats = [w[0] for w in waypoints]
     lons = [w[1] for w in waypoints]
 
@@ -431,21 +520,17 @@ def main():
     Main entry point of the script.
     """
     args = parse_arguments()
-    waypoints = parse_gpx(args.input)
-    validate_waypoints(waypoints, args.max_points, args.max_distance)
-    north, south, east, west = calculate_bounding_box(waypoints, args.buffer)
+    
+    waypoints = validate_inputs(args)
+    
+    # Now we can proceed with the main logic, knowing all inputs are valid
+    north, south, east, west = calculate_bounding_box(waypoints, args.bounding_box_buffer)
     graph = download_osm_graph(north, south, east, west, args.max_cache_age_days, args.force_refresh)
-
-    # Create and merge fallback connection graph
-    #fallback_graph = create_fallback_connection_graph(waypoints)
-    #graph = merge_graphs(graph, fallback_graph)
 
     node_ids, filtered_waypoints = snap_waypoints_to_graph(graph, waypoints, args.snap_threshold)
     routes = calculate_routes(graph, node_ids)
 
-    if args.png_output:
-        plot_and_save_route(graph, routes, args.png_output)
-    export_route_to_gpx(graph, routes, filtered_waypoints, args.gpx_output)
+    export_route_to_gpx(graph, routes, filtered_waypoints, args.output)
 
 
 if __name__ == '__main__':

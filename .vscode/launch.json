@@ -5,25 +5,118 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python Debugger: Plot Route - Bob Graham Round",
+            "name": "Plot Route - Allermuir Hill Race",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/plot_route_from_waypoints.py",
+            "console": "integratedTerminal",
+            "args": [
+                "${workspaceFolder}/src/fell/allermuir-hill-race/allermuir-hill-race-waypoints.gpx",
+                "--output", "${workspaceFolder}/src/fell/allermuir-hill-race/allermuir-hill-race.gpx",
+                "--max-waypoints", "100",
+                "--snap-threshold", "100.0",
+            ]
+        },
+        {
+            "name": "Plot Route - Bob Graham Round",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/scripts/plot_route_from_waypoints.py",
             "console": "integratedTerminal",
             "args": [
                 "${workspaceFolder}/src/fell/bob-graham-round/bob-graham-round-waypoints.gpx",
-                "--max-waypoints", "60",
+                "--output", "${workspaceFolder}/src/fell/bob-graham-round/bob-graham-round.gpx",
+                "--max-waypoints", "100",
                 "--snap-threshold", "100.0",
             ]
         },
         {
-            "name": "Python Debugger: Fix Summit Waypoints",
+            "name": "Plot Route - Paddy Buckley Round",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/plot_route_from_waypoints.py",
+            "console": "integratedTerminal",
+            "args": [
+                "${workspaceFolder}/src/fell/paddy-buckley-round/paddy-buckley-round-waypoints.gpx",
+                "--output", "${workspaceFolder}/src/fell/paddy-buckley-round/paddy-buckley-round.gpx",
+                "--max-waypoints", "100",
+                "--snap-threshold", "100.0",
+            ]
+        },
+        {
+            "name": "Plot Route - Ramsay Round",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/plot_route_from_waypoints.py",
+            "console": "integratedTerminal",
+            "args": [
+                "${workspaceFolder}/src/fell/ramsay-round/ramsay-round-waypoints.gpx",
+                "--output", "${workspaceFolder}/src/fell/ramsay-round/ramsay-round.gpx",
+                "--max-waypoints", "100",
+                "--snap-threshold", "100.0",
+            ]
+        },
+        {
+            "name": "Plot Route - Wicklow Round",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/plot_route_from_waypoints.py",
+            "console": "integratedTerminal",
+            "args": [
+                "${workspaceFolder}/src/fell/wicklow-round/wicklow-round-waypoints.gpx",
+                "--output", "${workspaceFolder}/src/fell/wicklow-round/wicklow-round.gpx",
+                "--max-waypoints", "100",
+                "--snap-threshold", "100.0"
+            ]
+        },
+        {
+            "name": "Fix Summit Waypoints - Allermuir Hill Race",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/fix_summit_waypoints.py",
+            "console": "integratedTerminal",
+            "args": [
+                "${workspaceFolder}/src/fell/allermuir-hill-race/allermuir-hill-race-waypoints.gpx"
+            ]
+        },        
+        {
+            "name": "Fix Summit Waypoints - Bob Graham Round",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/scripts/fix_summit_waypoints.py",
             "console": "integratedTerminal",
             "args": [
                 "${workspaceFolder}/src/fell/bob-graham-round/bob-graham-round-waypoints.gpx"
+            ]
+        },
+        {
+            "name": "Fix Summit Waypoints - Paddy Buckley Round", 
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/fix_summit_waypoints.py",
+            "console": "integratedTerminal",
+            "args": [
+                "${workspaceFolder}/src/fell/paddy-buckley-round/paddy-buckley-round-waypoints.gpx"
+            ]
+        },
+        {
+            "name": "Fix Summit Waypoints - Ramsay Round", 
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/fix_summit_waypoints.py",
+            "console": "integratedTerminal",
+            "args": [
+                "${workspaceFolder}/src/fell/ramsay-round/ramsay-round-waypoints.gpx"
+            ]
+        },
+        {
+            "name": "Fix Summit Waypoints - Wicklow Round",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/fix_summit_waypoints.py",
+            "console": "integratedTerminal",
+            "args": [
+                "${workspaceFolder}/src/fell/wicklow-round/wicklow-round-waypoints.gpx"
             ]
         },
         {

@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:rr="http://thomasturrell.github.io/running-routes/schema/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 https://www.topografix.com/GPX/1/1/gpx.xsd http://thomasturrell.github.io/running-routes/schema/v1 https://thomasturrell.github.io/running-routes/schema/v1/gpx-extension.xsd" version="1.1" creator="Thomas Turrell-Croft">
+  <metadata>
+    <name>Paddy Buckley Round</name>
+    <author>
+      <name>Thomas Turrell-Croft</name>
+    </author>
+  </metadata>
+  <wpt lat="53.11693" lon="-4.11944">
+    <name>Llanberis</name>
+    <sym>Flag</sym>
+  </wpt>  
+  <wpt lat="53.13096" lon="-4.08874">
+    <name>Elidir Fach</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="53.130647" lon="-4.076431">
+    <ele>924.0</ele>
+    <name>Elidir Fawr</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>1975</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.136253" lon="-4.059583">
+    <ele>813.0</ele>
+    <name>Mynydd Perfedd</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>1986</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.10472" lon="-3.976462">
+    <ele>805.0</ele>
+    <name>Y Foel Goch</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>1988</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.115691" lon="-4.047079">
+    <ele>947.0</ele>
+    <name>Y Garn</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>1972</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.10147" lon="-4.029164">
+    <ele>1000.9</ele>
+    <name>Glyder Fawr</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>1967</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.104815" lon="-4.008407">
+    <ele>994.3</ele>
+    <name>Glyder Fach</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>1968</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.114898" lon="-3.997491">
+    <ele>917.5</ele>
+    <name>Tryfan</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>1977</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.12317" lon="-4.01962">
+    <name>Ogwen Cottage</name>
+    <sym>Flag</sym>
+  </wpt>
+  <wpt lat="53.137656" lon="-4.010641">
+    <ele>978.0</ele>
+    <name>Pen yr Ole Wen</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>1969</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.147738" lon="-4.000839">
+    <ele>1044.0</ele>
+    <name>Carnedd Dafydd</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>1966</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.160168" lon="-3.970333">
+    <ele>1064.0</ele>
+    <name>Carnedd Llewelyn</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>1965</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.148604" lon="-3.948598">
+    <ele>832.6</ele>
+    <name>Pen yr Helgi Du</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>1982</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.14226" lon="-3.920754">
+    <ele>798.6</ele>
+    <name>Pen Llithrig y Wrach</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>1989</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.10608" lon="-3.91125">
+    <name>Capel Curig</name>
+    <sym>Flag</sym>
+  </wpt>
+  <wpt lat="53.073185" lon="-3.934069">
+    <ele>872.2</ele>
+    <name>Moel Siabod</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>1980</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.069283" lon="-3.972988">
+    <ele>548.0</ele>
+    <name>Clogwyn Bwlch-y-maen</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>7504</rr:dobih_number>
+    </extensions>    
+  </wpt>
+  <wpt lat="53.064063" lon="-3.977048">
+    <ele>591.0</ele>
+    <name>Carnedd y Cribau</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>3341</rr:dobih_number>
+    </extensions>        
+  </wpt>
+  <wpt lat="53.040078" lon="-3.996311">
+    <ele>550.0</ele>
+    <name>Cerrig Cochion</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>7503</rr:dobih_number>
+    </extensions>       
+  </wpt>
+  <wpt lat="53.033687" lon="-3.99791">
+    <ele>608.9</ele>
+    <name>Moel Meirch</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2034</rr:dobih_number>
+    </extensions>      
+  </wpt>
+  <wpt lat="53.01952" lon="-3.993379">
+    <ele>659.0</ele>
+    <name>Ysgafell Wen Far North Top</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2020</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.017409" lon="-3.993833">
+    <ele>669.4</ele>
+    <name>Ysgafell Wen North Top</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2017</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.013767" lon="-3.988477">
+    <ele>672.2</ele>
+    <name>Ysgafell Wen</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2016</rr:dobih_number>
+    </extensions>    
+  </wpt>
+  <wpt lat="53.00957" lon="-3.981383">
+    <ele>676.0</ele>
+    <name>Moel Druman</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2014</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.008185" lon="-3.966234">
+    <ele>697.9</ele>
+    <name>Allt-fawr</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2006</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="52.9969" lon="-3.98987">
+    <name>Bwlch Cwmorthin</name>
+    <sym>Flag</sym>
+  </wpt>
+  <wpt lat="52.995032" lon="-3.983518">
+    <ele>590.5</ele>
+    <name>Foel Ddu</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>7870</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="52.989764" lon="-3.979731">
+    <ele>648.0</ele>
+    <name>Moel-yr-hydd</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2021</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="52.974536" lon="-3.996223">
+    <ele>712.0</ele>
+    <name>Moelwyn Bach</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2003</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="52.979552" lon="-3.997363">
+    <ele>689.9</ele>
+    <name>Craigysgafn</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2010</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="52.984252" lon="-4.000142">
+    <ele>770.0</ele>
+    <name>Moelwyn Mawr</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>1994</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="52.99968" lon="-4.019871">
+    <ele>690.9</ele>
+    <name>Cnicht</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2009</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="52.99508" lon="-4.09559">
+    <name>Aberglaslyn</name>
+    <sym>Flag</sym>
+  </wpt>
+  <wpt lat="52.989885" lon="-4.12276">
+    <ele>520.0</ele>
+    <name>Bryn Banog</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>3352</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.000696" lon="-4.139595">
+    <ele>783.7</ele>
+    <name>Moel Hebog</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>1992</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.008541" lon="-4.15328">
+    <ele>655.0</ele>
+    <name>Moel yr Ogof</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2018</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.01465" lon="-4.158519">
+    <ele>638.0</ele>
+    <name>Moel Lefn</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2024</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.028484" lon="-4.159672">
+    <ele>459.0</ele>
+    <name>Y Gyrn</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>14386</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.03161" lon="-4.16447">
+    <name>Mynydd-y-Ddwy-elor</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="53.042214" lon="-4.171965">
+    <ele>709.7</ele>
+    <name>Trum y Ddysgl</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2004</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.043888" lon="-4.165977">
+    <ele>695.0</ele>
+    <name>Mynydd Drws-y-coed</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2008</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.115691" lon="-4.047079">
+    <ele>947.0</ele>
+    <name>Y Garn</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>1972</rr:dobih_number>
+    </extensions>    
+  </wpt>
+  <wpt lat="53.05104" lon="-4.13411">
+    <name>Rhyd-Ddu</name>
+    <sym>Flag</sym>
+  </wpt>
+  <wpt lat="53.036462" lon="-4.093768">
+    <ele>604.9</ele>
+    <name>Craig Wen</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>3678</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.042769" lon="-4.083184">
+    <ele>747.2</ele>
+    <name>Yr Aran</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>1997</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.06185" lon="-4.08241">
+    <name>Cribau Tregalan</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="53.068496" lon="-4.076231">
+    <ele>1085.0</ele>
+    <name>Snowdon - Yr Wyddfa</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>1963</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.075519" lon="-4.07518">
+    <ele>1065.3</ele>
+    <name>Garnedd Ugain</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>1964</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.085982" lon="-4.112599">
+    <ele>674.0</ele>
+    <name>Moel Cynghorion</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2015</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.085122" lon="-4.13506">
+    <ele>604.5</ele>
+    <name>Foel Goch</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2035</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.089393" lon="-4.151043">
+    <ele>629.0</ele>
+    <name>Foel Gron</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2027</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.097055" lon="-4.158386">
+    <ele>726.0</ele>
+    <name>Moel Eilio</name>
+    <sym>Summit</sym>
+    <extensions>
+      <rr:dobih_number>2000</rr:dobih_number>
+    </extensions>
+  </wpt>
+  <wpt lat="53.11693" lon="-4.11944">
+    <name>Llanberis</name>
+    <sym>Flag</sym>
+  </wpt>  
+</gpx>

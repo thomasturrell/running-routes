@@ -296,7 +296,7 @@ def download_osm_graph(north, south, east, west, max_cache_age_days, force_refre
             return ox.load_graphml(cache_file)
 
     print("  ↳ No cache found. Downloading from OSM...")
-    graph = ox.graph.graph_from_bbox([west, south, east, north], network_type='walk')
+    graph = ox.graph.graph_from_bbox((west, south, east, north), network_type='walk')
     ox.save_graphml(graph, filepath=cache_file)
     print("  ↳ Graph downloaded with", len(graph.nodes), "nodes and", len(graph.edges), "edges")
     print(f"Graph has {len(graph.nodes)} nodes and {len(graph.edges)} edges.")

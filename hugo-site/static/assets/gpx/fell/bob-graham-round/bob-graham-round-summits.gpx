@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="Thomas Turrell-Croft">
+  <wpt lat="54.65137" lon="-3.14775">
+    <name>Skiddaw</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.67074" lon="-3.10121">
+    <name>Great Calva</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.63993" lon="-3.04979">
+    <name>Blencathra</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.59363" lon="-3.03236">
+    <name>Clough Head</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.5757" lon="-3.0193">
+    <name>Great Dodd</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.5669" lon="-3.0289">
+    <name>Watson's Dodd</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.56114" lon="-3.01764">
+    <name>Stybarrow Dodd</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.54768" lon="-3.01748">
+    <name>Raise</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.54089" lon="-3.02493">
+    <name>White Side</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.53081" lon="-3.02545">
+    <name>Helvellyn Lower Man</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.52686" lon="-3.01751">
+    <name>Helvellyn</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.519" lon="-3.01541">
+    <name>Nethermost Pike</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.50863" lon="-3.01126">
+    <name>Dollywaggon Pike</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.497" lon="-2.9917">
+    <name>Fairfield</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.49484" lon="-3.01404">
+    <name>Seat Sandal</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.49117" lon="-3.05214">
+    <name>Steel Fell</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.48431" lon="-3.07956">
+    <name>Calf Crag</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.47593" lon="-3.1113">
+    <name>High Raise (High White Stones)</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.47036" lon="-3.1026">
+    <name>Sergeant Man</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.46219" lon="-3.11262">
+    <name>Thunacar Knott</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.45686" lon="-3.10947">
+    <name>Harrison Stickle</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.45641" lon="-3.12146">
+    <name>Pike of Stickle</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.45794" lon="-3.15977">
+    <name>Rossett Pike</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.4478" lon="-3.1663">
+    <name>Bowfell</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.45712" lon="-3.1792">
+    <name>Esk Pike</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.46487" lon="-3.19602">
+    <name>Great End</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.4566" lon="-3.19964">
+    <name>Ill Crag</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.45746" lon="-3.20638">
+    <name>Broad Crag</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.45425" lon="-3.21165">
+    <name>Scafell Pike</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.44747" lon="-3.22473">
+    <name>Scafell</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.46482" lon="-3.27685">
+    <name>Yewbarrow</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.48386" lon="-3.28994">
+    <name>Red Pike (Wasdale)</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.49335" lon="-3.30226">
+    <name>Steeple</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.49746" lon="-3.28117">
+    <name>Pillar</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.48329" lon="-3.24411">
+    <name>Kirk Fell</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.48209" lon="-3.21917">
+    <name>Great Gable</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.48571" lon="-3.21369">
+    <name>Green Gable</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.49647" lon="-3.21373">
+    <name>Brandreth</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.50221" lon="-3.20975">
+    <name>Grey Knotts</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.52725" lon="-3.20228">
+    <name>Dale Head</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.5378" lon="-3.21367">
+    <name>Hindscarth</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="54.54083" lon="-3.23515">
+    <name>Robinson</name>
+    <sym>Summit</sym>
+  </wpt>
+</gpx>

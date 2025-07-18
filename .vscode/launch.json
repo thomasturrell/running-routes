@@ -13,6 +13,7 @@
             "args": [
                 "${workspaceFolder}/src/fell/bob-graham-round/bob-graham-round-waypoints.gpx",
                 "--max-waypoints", "60",
+                "--snap-threshold", "100.0",
             ]
         },
         {

@@ -15,14 +15,15 @@ Features:
 - Exports the calculated route to a GPX file and optionally plots it.
 
 Usage:
-    python plot2.py --input INPUT.gpx --gpx-output OUTPUT.gpx [options]
+    python plot_route_from_waypoints.py --input INPUT.gpx --output OUTPUT.gpx [options]
 
 Options:
-    --buffer FLOAT           Buffer around bounding box in degrees (default: 0.05)
-    --max-waypoints INT         Maximum number of waypoints (default: 50)
-    --max-distance FLOAT     Maximum allowed distance between waypoints in km (default: 20)
-    --max-cache-age-days INT Maximum number of days before cached graph expires (default: 7)
-    --force-refresh          Force refresh of cached graph even if not expired
+    --bounding-box-buffer FLOAT  Buffer around bounding box in degrees (default: 0.05)
+    --max-waypoints INT          Maximum number of waypoints (default: 50)
+    --max-distance FLOAT         Maximum allowed distance between waypoints in km (default: 20)
+    --max-cache-age-days INT     Maximum number of days before cached graph expires (default: 7)
+    --force-refresh              Force refresh of cached graph even if not expired
+    --snap-threshold FLOAT       Maximum distance in meters for snapping waypoints to paths (default: 5.0)
 """
 
 import argparse
@@ -35,8 +36,6 @@ import osmnx as ox
 from geopy.distance import geodesic
 import hashlib
 from pathlib import Path
-
-from plot_route_from_waypoints_chat import Waypoint
 
 CUSTOM_NS = "http://thomasturrell.github.io/running-routes/schema/v1"
 ET.register_namespace('rr', CUSTOM_NS)
@@ -150,17 +149,19 @@ def get_custom_section(waypoint):
                 return section_elem.text.strip()
         except ET.ParseError:
             pass
-        return None
+    return None
 
 def extract_waypoints(input: str, max_waypoints: int, max_distance: float):
     """
     Extract waypoints from a GPX file.
 
     Args:
-        gpx_file (str): Path to the GPX file.
+        input (str): Path to the GPX file.
+        max_waypoints (int): Maximum number of waypoints allowed.
+        max_distance (float): Maximum allowed distance between waypoints in km.
 
     Returns:
-        List[Waypoint]: List of Waypoint objects extracted from the GPX file.
+        list: List of waypoints as tuples (lat, lon, name, symbol, section).
     """
     try:
         with open(input, 'r') as gpx_file:
@@ -169,7 +170,6 @@ def extract_waypoints(input: str, max_waypoints: int, max_distance: float):
         waypoints = []
         for waypoint in gpx.waypoints:
             section = get_custom_section(waypoint)
-
             waypoints.append((waypoint.latitude, waypoint.longitude, waypoint.name, waypoint.symbol, section))
 
         print(f"✅ Input GPX file validated: {input} ({len(waypoints)} waypoints found)")
@@ -192,6 +192,7 @@ def extract_waypoints(input: str, max_waypoints: int, max_distance: float):
 def group_waypoints(waypoints) -> dict:
     """
     Group waypoints by their section attribute.
+    
     Args:
         waypoints (list): List of waypoints as tuples (lat, lon, name, symbol, section).
 
@@ -205,15 +206,13 @@ def group_waypoints(waypoints) -> dict:
 
     return dict(grouped)
 
-
-
 def validate_waypoints(waypoints, max_waypoints, max_distance):
     """
     Validate waypoints for maximum count and distance constraints.
 
     Args:
-        waypoints (list): List of waypoints as tuples (latitude, longitude, name, symbol).
-        max_points (int): Maximum allowed number of waypoints.
+        waypoints (list): List of waypoints as tuples (latitude, longitude, name, symbol, section).
+        max_waypoints (int): Maximum allowed number of waypoints.
         max_distance (float): Maximum allowed distance between consecutive waypoints in km.
 
     Raises:
@@ -297,7 +296,7 @@ def download_osm_graph(north, south, east, west, max_cache_age_days, force_refre
             return ox.load_graphml(cache_file)
 
     print("  ↳ No cache found. Downloading from OSM...")
-    graph = ox.graph.graph_from_bbox((west, south, east, north))
+    graph = ox.graph.graph_from_bbox(north, south, east, west, network_type='walk')
     ox.save_graphml(graph, filepath=cache_file)
     print("  ↳ Graph downloaded with", len(graph.nodes), "nodes and", len(graph.edges), "edges")
     print(f"Graph has {len(graph.nodes)} nodes and {len(graph.edges)} edges.")
@@ -314,32 +313,39 @@ def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0) -> list:
 
     Args:
         graph (networkx.Graph): The OSM graph.
-        waypoints (list): List of waypoints.
+        waypoints (list): List of waypoints as tuples (lat, lon, name, symbol).
         snap_threshold (float): Maximum distance in meters for snapping waypoints to paths.
 
     Returns:
-        tuple: (snapped_node_ids, filtered_waypoints) - only for waypoints within threshold.
+        list: List of snapped node IDs for waypoints within threshold.
     """
     print(f"[4/6] Snapping waypoints to nearest graph edges (threshold: {snap_threshold}m)...")
     import shapely.geometry
     from shapely.ops import split
-    import networkx as nx
 
     snapped_nodes = []
-    filtered_waypoints = []
     skipped_waypoints = []
     next_node_id = max(graph.nodes) + 1
 
-    for lat, lon, name, sym in waypoints:
+    for wpt in waypoints:
+        lat, lon, name, sym = wpt[:4]  # Safe unpacking
+        
         # First check distance threshold
         try:
             edge_info, distance = ox.distance.nearest_edges(graph, lon, lat, return_dist=True)
             u, v, key = edge_info
             
+            # Convert distance to meters if in degrees
+            if distance < 1:  # Likely in degrees
+                # Approximate conversion for small distances
+                distance_meters = distance * 111000  # Rough conversion from degrees to meters
+            else:
+                distance_meters = distance
+            
             # Check if waypoint is within threshold
-            if distance > snap_threshold:
-                print(f"⚠️ Waypoint '{name}' is {distance:.1f}m from nearest path (>{snap_threshold}m threshold) - skipping")
-                skipped_waypoints.append((name, distance))
+            if distance_meters > snap_threshold:
+                print(f"⚠️ Waypoint '{name}' is {distance_meters:.1f}m from nearest path (>{snap_threshold}m threshold) - skipping")
+                skipped_waypoints.append((name, distance_meters))
                 continue
         except Exception as e:
             print(f"⚠️ Failed getting distance for waypoint '{name}' — {e}")
@@ -348,7 +354,9 @@ def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0) -> list:
             
         # If we get here, waypoint is within threshold for edge snapping
         try:
-            edge_data = graph.get_edge_data(u, v)[key]
+            edge_data = graph.get_edge_data(u, v)
+            if isinstance(edge_data, dict):
+                edge_data = edge_data.get(key, edge_data[next(iter(edge_data))])
 
             # Get geometry
             if 'geometry' in edge_data:
@@ -377,8 +385,6 @@ def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0) -> list:
                 raise ValueError(f"Expected 2 LineStrings after split, got {len(split_lines)} — likely projected at edge endpoint")
 
             geom1, geom2 = split_lines
-
-            geom1, geom2 = split_result[0], split_result[1]
             weight1 = geom1.length
             weight2 = geom2.length
 
@@ -392,31 +398,33 @@ def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0) -> list:
             graph.add_edge(u, new_node_id, length=weight1, weight=weight1, geometry=geom1)
             graph.add_edge(new_node_id, v, length=weight2, weight=weight2, geometry=geom2)
 
-            print(f"waypoint: {name} (lat={lat:.6f}, lon={lon:.6f}) - distance: {distance:.1f}m")
+            print(f"waypoint: {name} (lat={lat:.6f}, lon={lon:.6f}) - distance: {distance_meters:.1f}m")
             print(f" projected to edge {u} → {v}")
             print(f" inserted node {new_node_id} at lat={proj_lat:.6f}, lon={proj_lon:.6f}")
             print(f" edge split: {weight1:.1f} m + {weight2:.1f} m = {total_length:.1f} m")
 
             snapped_nodes.append(new_node_id)
-            filtered_waypoints.append((lat, lon, name, sym))
 
         except Exception as e:           
             print(f"⚠️ Failed snapping waypoint '{name}' — {e}")
             print("  ↳ Falling back to nearest node snapping")
 
             # Fallback to nearest node with distance validation
-            nearest_node = ox.distance.nearest_nodes(graph, lon, lat)
-            nearest_node_coords = (graph.nodes[nearest_node]['y'], graph.nodes[nearest_node]['x'])
-            fallback_distance = geodesic((lat, lon), nearest_node_coords).meters
+            try:
+                nearest_node = ox.distance.nearest_nodes(graph, lon, lat)
+                nearest_node_coords = (graph.nodes[nearest_node]['y'], graph.nodes[nearest_node]['x'])
+                fallback_distance = geodesic((lat, lon), nearest_node_coords).meters
 
-            if fallback_distance > snap_threshold:
-                print(f"⚠️ Fallback node for waypoint '{name}' is {fallback_distance:.1f}m away (>{snap_threshold}m threshold) - skipping")
-                skipped_waypoints.append((name, fallback_distance))
+                if fallback_distance > snap_threshold:
+                    print(f"⚠️ Fallback node for waypoint '{name}' is {fallback_distance:.1f}m away (>{snap_threshold}m threshold) - skipping")
+                    skipped_waypoints.append((name, fallback_distance))
+                    continue
+
+                print(f"  ↳ Using fallback node {nearest_node} at {fallback_distance:.1f}m distance")
+                snapped_nodes.append(nearest_node)
+            except Exception as fallback_error:
+                print(f"⚠️ Fallback also failed for waypoint '{name}' — {fallback_error}")
                 continue
-
-            print(f"  ↳ Using fallback node {nearest_node} at {fallback_distance:.1f}m distance")
-            snapped_nodes.append(nearest_node)
-            filtered_waypoints.append((lat, lon, name, sym))
 
     if skipped_waypoints:
         print(f"\n⚠️ Summary: {len(skipped_waypoints)} waypoint(s) were skipped (beyond {snap_threshold}m threshold):")
@@ -448,127 +456,71 @@ def calculate_paths(graph, node_ids):
         paths.append(path)
     return paths
 
-# def plot_and_save_route(graph, routes, output_path):
-#     """
-#     Plot the route on a map and save it to a file.
-
-#     Args:
-#         graph (networkx.Graph): The OSM graph.
-#         routes (list): List of routes.
-#         output_path (str): Path to save the plot.
-#     """
-#     print(f"[6/7] Plotting route and saving to: {output_path}")
-#     fig, ax = ox.plot_graph_routes(graph, routes, route_linewidth=3, node_size=0, show=False, close=False, figsize=(16, 12))
-#     fig.savefig(output_path, dpi=300)
-#     print("  ↳ Plot saved")
-
 def export_routes_to_gpx(graph, routes, waypoints, output_path_gpx):
     """
-    Export the calculated route to a GPX file.
+    Export the calculated routes to a GPX file with separate tracks for each section.
 
     Args:
         graph (networkx.Graph): The OSM graph.
-        routes (list): List of routes.
+        routes (dict): Dictionary mapping route names to lists of paths.
         waypoints (list): List of original waypoints.
         output_path_gpx (str): Path to save the GPX file.
     """
-    print(f"Exporting route to GPX: {output_path_gpx}")
+    print(f"Exporting routes to GPX: {output_path_gpx}")
     import gpxpy.gpx
     gpx = gpxpy.gpx.GPX()
 
-    # Add input waypoints (e.g., summits)
-    for lat, lon, name, sym, _section in waypoints:
-        # TODO: deduplicate waypoints (somewhere)
+    # Add input waypoints - handle both 4 and 5 element tuples
+    for wpt in waypoints:
+        lat, lon, name, sym = wpt[:4]  # Safe unpacking
         gpx.waypoints.append(gpxpy.gpx.GPXWaypoint(latitude=lat, longitude=lon, name=name, symbol=sym))
 
     for route_name, route_paths in routes.items():
+        if not route_paths:  # Skip empty routes
+            continue
+            
         print(f"  ↳ Exporting route: {route_name} with {len(route_paths)} segments")
-        gpx_route = gpxpy.gpx.GPXRoute(name=route_name if route_name else "Unnamed Route")
+        
+        # Create a track for this section
+        track = gpxpy.gpx.GPXTrack()
+        track.name = route_name if route_name else "Unnamed Section"
+        
+        segment = gpxpy.gpx.GPXTrackSegment()
+        
         for path in route_paths:
             for u, v in zip(path[:-1], path[1:]):
                 edge_data = graph.get_edge_data(u, v)
                 if edge_data is None:
                     continue
-                edge = edge_data[0] if isinstance(edge_data, dict) else edge_data
+                    
+                # Handle MultiDiGraph edge data properly
+                if isinstance(edge_data, dict):
+                    edge = edge_data.get(0, edge_data[next(iter(edge_data))])
+                else:
+                    edge = edge_data
+                    
                 if 'geometry' in edge:
                     for x, y in edge['geometry'].coords:
-                        gpx_route.points.append(gpxpy.gpx.GPXRoutePoint(y, x))
+                        segment.points.append(gpxpy.gpx.GPXTrackPoint(y, x))
                 else:
-                    gpx_route.points.append(gpxpy.gpx.GPXRoutePoint(graph.nodes[u]['y'], graph.nodes[u]['x']))
-                    gpx_route.points.append(gpxpy.gpx.GPXRoutePoint(graph.nodes[v]['y'], graph.nodes[v]['x']))
-        gpx.routes.append(gpx_route)
+                    segment.points.append(gpxpy.gpx.GPXTrackPoint(graph.nodes[u]['y'], graph.nodes[u]['x']))
+                    segment.points.append(gpxpy.gpx.GPXTrackPoint(graph.nodes[v]['y'], graph.nodes[v]['x']))
+        
+        track.segments.append(segment)
+        gpx.tracks.append(track)
+
+    # Add custom namespace to GPX content
+    gpx_content = gpx.to_xml()
+    gpx_content = gpx_content.replace(
+        '<gpx xmlns="http://www.topografix.com/GPX/1/1"',
+        f'<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:rr="{CUSTOM_NS}"'
+    )
 
     with open(output_path_gpx, 'w') as f:
-        f.write(gpx.to_xml())
-    print(f"  ↳ GPX file written to: {output_path_gpx}")
-
-# def create_fallback_connection_graph(waypoints):
-#     """
-#     Create a fallback connection graph between waypoints.
-
-#     Args:
-#         waypoints (list): List of waypoints.
-
-#     Returns:
-#         networkx.Graph: The fallback connection graph.
-#     """
-#     print("[3.5/6] Creating fallback connection graph between waypoints...")
-#     #TODO I think this is not a good approach, consider using other people's GPX files to connect waypoints
-
-#     import networkx as nx
-#     fallback_graph = nx.Graph()
-#     for i in range(len(waypoints) - 1):
-#         lat1, lon1, name1, _ = waypoints[i]
-#         lat2, lon2, name2, _ = waypoints[i + 1]
-#         # Add edge with high cost
-#         fallback_graph.add_edge(
-#             (lat1, lon1), (lat2, lon2),
-#             weight=10000,  # High cost to discourage use
-#             length=geodesic((lat1, lon1), (lat2, lon2)).meters
-#         )
-#         print(f"  ↳ Added fallback connection edge: {name1} → {name2} (cost: 10000)")
-#     return fallback_graph
-
-
-# def merge_graphs(osm_graph, fallback_graph):
-#     """
-#     Merge the fallback connection graph with the OSM graph.
-
-#     Args:
-#         osm_graph (networkx.Graph): The OSM graph.
-#         fallback_graph (networkx.Graph): The fallback connection graph.
-
-#     Returns:
-#         networkx.Graph: The merged graph.
-#     """
-#     print("[4/6] Merging fallback connection graph with OSM graph...")
-#     for edge in fallback_graph.edges(data=True):
-#         (lat1, lon1), (lat2, lon2), edge_data = edge
-#         # Find nearest nodes in the OSM graph
-#         node1 = ox.distance.nearest_nodes(osm_graph, lon1, lat1)
-#         node2 = ox.distance.nearest_nodes(osm_graph, lon2, lat2)
-#         # Add edge to OSM graph with high cost
-#         osm_graph.add_edge(node1, node2, **edge_data)
-#         print(f"  ↳ Added edge to OSM graph: {node1} → {node2} (cost: {edge_data['weight']})")
-#     return osm_graph
-
-
-# def group_by_section(waypoints) -> dict:
-#     """
-#     Group waypoints by their section attribute.
-
-#     Args:
-#         waypoints (list): List of waypoints as tuples (lat, lon, name, symbol, section).
-
-#     Returns:
-#         dict: Dictionary mapping section names to lists of waypoints.
-#     """
-#     from collections import defaultdict
-#     groups = defaultdict(list)
-#     for wpt in waypoints:
-#         section = wpt[4] if len(wpt) > 4 else None
-#         groups[section].append([wpt.lat, wpt.lon, wpt.name, wpt.symbol])
-#     return dict(groups)
+        f.write(gpx_content)
+    print(f"  ↳ GPX file written with {len(gpx.tracks)} track(s)")
+    
+    return gpx
 
 def main():
     """
@@ -591,8 +543,12 @@ def main():
             print(f"⚠️ Route '{route_name}' has less than 2 waypoints, skipping routing")
             continue
 
-        # Snap waypoints to the graph
+        # Snap waypoints to the graph - fixed to return only node_ids
         node_ids = snap_waypoints_to_graph(graph, route_waypoints, args.snap_threshold)
+        
+        if len(node_ids) < 2:
+            print(f"⚠️ Route '{route_name}' has insufficient snapped waypoints, skipping routing")
+            continue
 
         # Calculate routes between snapped waypoints
         route = calculate_paths(graph, node_ids)

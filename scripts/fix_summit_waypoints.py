@@ -10,10 +10,11 @@ Features:
 - Saves the enriched GPX file with updated summit information.
 
 Usage:
-    python fix_summit_waypoints.py <path_to_gpx_file>
+    python fix_summit_waypoints.py <input_gpx_file> [--output <output_gpx_file>]
 
 Example:
-    python fix_summit_waypoints.py input=input.gpx
+    python fix_summit_waypoints.py waypoints.gpx
+    python fix_summit_waypoints.py waypoints.gpx --output enriched_waypoints.gpx
 
 Dependencies:
 - Python libraries: argparse, requests, zipfile, pandas, gpxpy, xml.etree.ElementTree
@@ -24,6 +25,7 @@ Output:
 '''
 
 import argparse
+import sys
 import requests
 import zipfile
 import pandas as pd
@@ -37,6 +39,85 @@ import xml.etree.ElementTree as ET
 HILL_ZIP_URL = "https://www.hills-database.co.uk/hillcsv.zip"
 CUSTOM_NS = "http://thomasturrell.github.io/running-routes/schema/v1"
 CUSTOM_PREFIX = "rr"
+
+def parse_arguments():
+    """
+    Parse command-line arguments.
+
+    Returns:
+        argparse.Namespace: Parsed arguments with output path determined.
+    """
+    if len(sys.argv) == 1:
+        print(__doc__)
+        sys.exit(0)
+    
+    parser = argparse.ArgumentParser(description="Enrich GPX summit waypoints with hill data.")
+    parser.add_argument('input', help='Path to input GPX file')
+
+    parser.add_argument(
+        '--output',
+        help='Path to save the enriched GPX file. Defaults to appending _enriched to the input file name.',
+        default=None
+    )
+    
+    args = parser.parse_args()
+    
+    # Determine the output path if not provided
+    if args.output is None:
+        args.output = os.path.splitext(args.input)[0] + '_enriched.gpx'
+    
+    return args
+
+def validate_inputs(args):
+    """
+    Validate all input files and directories.
+    
+    Args:
+        args (argparse.Namespace): Parsed command-line arguments.
+        
+    Raises:
+        SystemExit: If any validation fails.
+    """
+    # Validate input GPX file exists
+    if not os.path.exists(args.input):
+        print(f"❌ Error: Input GPX file not found: {args.input}")
+        sys.exit(1)
+    
+    # Validate input is actually a file (not a directory)
+    if not os.path.isfile(args.input):
+        print(f"❌ Error: Input path is not a file: {args.input}")
+        sys.exit(1)
+    
+    # Validate GPX file extension
+    if not args.input.lower().endswith('.gpx'):
+        print(f"❌ Error: Input file must be a GPX file: {args.input}")
+        sys.exit(1)
+    
+    # Validate output directory exists (if output path is specified)
+    if args.output:
+        output_dir = os.path.dirname(args.output)
+        if output_dir and not os.path.exists(output_dir):
+            print(f"❌ Error: Output directory does not exist: {output_dir}")
+            sys.exit(1)
+        
+        # Check if output file already exists and warn user
+        if os.path.exists(args.output):
+            print(f"⚠️  Warning: Output file already exists and will be overwritten: {args.output}")
+    
+    # Validate GPX file can be parsed
+    try:
+        with open(args.input, 'r', encoding='utf-8') as f:
+            gpxpy.parse(f)
+        print(f"✅ Input GPX file validated: {args.input}")
+    except FileNotFoundError:
+        print(f"❌ Error: Cannot read GPX file: {args.input}")
+        sys.exit(1)
+    except gpxpy.gpx.GPXException as e:
+        print(f"❌ Error: Invalid GPX file format: {e}")
+        sys.exit(1)
+    except Exception as e:
+        print(f"❌ Error: Unexpected error reading GPX file: {e}")
+        sys.exit(1)
 
 def download_and_extract_csv(download_url, extract_to):
     """
@@ -101,7 +182,7 @@ def get_custom_dobih_number(waypoint):
             pass
     return None
 
-def find_summits_by_name(hill_df, waypoint_name, max_results=5):
+def find_summits_by_name(hill_df, waypoint_name, max_results=5) -> pd.DataFrame:
     """
     Find summits by name in the hill database.
 
@@ -125,21 +206,11 @@ def find_summits_by_name(hill_df, waypoint_name, max_results=5):
     
     return matches.head(max_results)
 
-def enrich_gpx_with_hill_data(gpx_path, hill_df, output_path):
-    """
-    Enriches summit waypoints in a GPX file with hill data.
+def enrich_gpx_with_hill_data(input_path: str, hill_df: pd.DataFrame, output_path: str) -> None:
+    """Enriches summit waypoints in a GPX file with hill data."""
+    print(f"Processing GPX file: {input_path}")
 
-    Args:
-        gpx_path (str): Path to the input GPX file.
-        hill_df (pandas.DataFrame): DataFrame containing hill data.
-        output_path (str): Path to save the enriched GPX file.
-
-    Output:
-        Saves an enriched GPX file with updated summit information.
-    """
-    print(f"Processing GPX file: {gpx_path}")
-
-    with open(gpx_path, 'r', encoding='utf-8') as f:
+    with open(input_path, 'r', encoding='utf-8') as f:
         gpx = gpxpy.parse(f)
 
     updated = 0
@@ -176,7 +247,7 @@ def enrich_gpx_with_hill_data(gpx_path, hill_df, output_path):
                                   f"Height: {row['Metres']:>4.0f}m")
                         print("-" * 80)
                         print(f"💡 Add a DoBIH ID extension to waypoint '{waypoint.name}' using one of the IDs above.")
-                        print("   Example: <extensions><rr:dobih_number xmlns:rr=\"http://thomasturrell.github.io/running-routes/schema/v1\">12345</rr:dobih_number></extensions>")
+                        print("   Example: <extensions><rr:dobih_number>12345</rr:dobih_number></extensions>")
                     else:
                         print(f"❌ No summits found matching name: '{waypoint.name}'")
                         
@@ -200,22 +271,26 @@ def enrich_gpx_with_hill_data(gpx_path, hill_df, output_path):
 
     print(f"\n📁 Enriched GPX saved to: {output_path}")
 
+
 def main():
-    """
-    Main function to parse arguments and execute the script.
-    """
-    parser = argparse.ArgumentParser(description="Enrich GPX summit waypoints with hill data.")
-    parser.add_argument("input", help="Path to the input GPX file")
-    args = parser.parse_args()
+    """Main entry point of the script."""
+    args = parse_arguments()
+
+    # Validate inputs
+    validate_inputs(args)
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     working_dir = os.path.join(script_dir, "hillcsv_data")
     os.makedirs(working_dir, exist_ok=True)
 
-    csv_path = download_and_extract_csv(HILL_ZIP_URL, working_dir)
-    hill_df = load_hill_data(csv_path)
-    enrich_gpx_with_hill_data(args.input, hill_df, 
-                               os.path.splitext(args.input)[0] + "_enriched.gpx")
+    try:
+        csv_path = download_and_extract_csv(HILL_ZIP_URL, working_dir)
+        hill_df = load_hill_data(csv_path)
+    except Exception as e:
+        print(f"❌ Error downloading or processing hill data: {e}")
+        sys.exit(1)
+
+    enrich_gpx_with_hill_data(args.input, hill_df, args.output)
 
 if __name__ == "__main__":
     main()

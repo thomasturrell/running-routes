@@ -36,11 +36,24 @@ import osmnx as ox
 from geopy.distance import geodesic
 import hashlib
 from pathlib import Path
+from shapely.geometry import Point as ShapelyPoint
+import shapely.geometry
+from shapely.ops import split
+from shapely.geometry import Point as ShapelyPoint
+from osmnx.projection import project_geometry
+
 
 from shapely import Point
 
+from shapely.geometry import Point as ShapelyPoint
+from osmnx.projection import project_geometry
+
+
 CUSTOM_NS = "http://thomasturrell.github.io/running-routes/schema/v1"
 ET.register_namespace('rr', CUSTOM_NS)
+
+def to_latlon(pt_proj, graph_crs):
+    return project_geometry(pt_proj, crs=graph_crs, to_latlong=True)[0]
 
 def parse_arguments():
     """
@@ -299,6 +312,11 @@ def download_osm_graph(north, south, east, west, max_cache_age_days, force_refre
 
     print("  ↳ No cache found. Downloading from OSM...")
     graph = ox.graph.graph_from_bbox((west, south, east, north), network_type='all_public')
+    graph = ox.project_graph(graph)
+    print("Graph CRS:", graph.graph.get('crs', '❌ Not defined'))
+
+
+
     ox.save_graphml(graph, filepath=cache_file)
     print("  ↳ Graph downloaded with", len(graph.nodes), "nodes and", len(graph.edges), "edges")
     print(f"Graph has {len(graph.nodes)} nodes and {len(graph.edges)} edges.")
@@ -322,8 +340,7 @@ def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0) -> list:
         list: List of snapped node IDs for waypoints within threshold.
     """
     print(f"Snapping waypoints to nearest graph edges (threshold: {snap_threshold}m)...")
-    import shapely.geometry
-    from shapely.ops import split
+
 
     snapped_nodes = []
     skipped_waypoints = []
@@ -331,18 +348,20 @@ def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0) -> list:
 
     for wpt in waypoints:
         lat, lon, name, sym = wpt[:4]  # Safe unpacking
-        
+        # Project lat/lon once
+        point_wgs = ShapelyPoint(lon, lat)
+        point_proj = ox.projection.project_geometry(point_wgs, to_crs=graph.graph['crs'])[0]
+        x, y = point_proj.x, point_proj.y
+
+
+
         # First check distance threshold
         try:
-            edge_info, distance = ox.distance.nearest_edges(graph, lon, lat, return_dist=True)
+            edge_info, distance = ox.distance.nearest_edges(graph, x, y, return_dist=True)
             u, v, key = edge_info
             
-            # Convert distance to meters if in degrees
-            if distance < 1:  # Likely in degrees
-                # Approximate conversion for small distances
-                distance_meters = distance * 111000  # Rough conversion from degrees to meters
-            else:
-                distance_meters = distance
+
+            distance_meters = distance
             
             # Check if waypoint is within threshold
             if distance_meters > snap_threshold:
@@ -355,12 +374,7 @@ def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0) -> list:
             continue
             
         # If we get here, waypoint is within threshold for edge snapping
-        from shapely.geometry import Point as ShapelyPoint
         try:
-            # Project lat/lon point to graph CRS
-            point_wgs = ShapelyPoint(lon, lat)
-            point_proj = ox.projection.project_geometry(point_wgs, to_crs=graph.graph['crs'])[0]
-
             # Try inserting node with geometry-aware edge split
             insert_node_with_geometry_split(
                 graph=graph,
@@ -383,10 +397,21 @@ def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0) -> list:
 
             # Fallback to nearest node with distance validation
             try:
-                nearest_node = ox.distance.nearest_nodes(graph, lon, lat)
-                nearest_node_coords = (graph.nodes[nearest_node]['y'], graph.nodes[nearest_node]['x'])
-                fallback_distance = geodesic((lat, lon), nearest_node_coords).meters
 
+
+                nearest_node = ox.distance.nearest_nodes(graph, x, y)
+
+                # Get node's projected coordinates
+                node_x = graph.nodes[nearest_node]['x']
+                node_y = graph.nodes[nearest_node]['y']
+                fallback_point_proj = ShapelyPoint(node_x, node_y)
+
+                # Reproject to lat/lon
+                fallback_point_ll = project_geometry(fallback_point_proj, to_latlong=True)[0]
+                fallback_coords = (fallback_point_ll.y, fallback_point_ll.x)
+
+                # Accurate geodesic distance
+                fallback_distance = geodesic((lat, lon), fallback_coords).meters
                 if fallback_distance > snap_threshold:
                     print(f"⚠️ Fallback node for waypoint '{name}' is {fallback_distance:.1f}m away (>{snap_threshold}m threshold) - skipping")
                     skipped_waypoints.append((name, fallback_distance))
@@ -550,10 +575,15 @@ def export_routes_to_gpx(graph, routes, waypoints, output_path_gpx):
                     
                 if 'geometry' in edge:
                     for x, y in edge['geometry'].coords:
-                        segment.points.append(gpxpy.gpx.GPXTrackPoint(y, x))
+                        pt = ShapelyPoint(x, y)
+                        pt_latlon = to_latlon(pt, graph.graph['crs'])
+                        segment.points.append(gpxpy.gpx.GPXTrackPoint(pt_latlon.y, pt_latlon.x))
                 else:
-                    segment.points.append(gpxpy.gpx.GPXTrackPoint(graph.nodes[u]['y'], graph.nodes[u]['x']))
-                    segment.points.append(gpxpy.gpx.GPXTrackPoint(graph.nodes[v]['y'], graph.nodes[v]['x']))
+                    pt_u = to_latlon(ShapelyPoint(graph.nodes[u]['x'], graph.nodes[u]['y']), graph.graph['crs'])
+                    pt_v = to_latlon(ShapelyPoint(graph.nodes[v]['x'], graph.nodes[v]['y']), graph.graph['crs'])
+                    segment.points.append(gpxpy.gpx.GPXTrackPoint(pt_u.y, pt_u.x))
+                    segment.points.append(gpxpy.gpx.GPXTrackPoint(pt_v.y, pt_v.x))
+
         
         track.segments.append(segment)
         gpx.tracks.append(track)

@@ -37,6 +37,8 @@ from geopy.distance import geodesic
 import hashlib
 from pathlib import Path
 
+from shapely import Point
+
 CUSTOM_NS = "http://thomasturrell.github.io/running-routes/schema/v1"
 ET.register_namespace('rr', CUSTOM_NS)
 
@@ -296,7 +298,7 @@ def download_osm_graph(north, south, east, west, max_cache_age_days, force_refre
             return ox.load_graphml(cache_file)
 
     print("  ↳ No cache found. Downloading from OSM...")
-    graph = ox.graph.graph_from_bbox((west, south, east, north), network_type='walk')
+    graph = ox.graph.graph_from_bbox((west, south, east, north), network_type='all_public')
     ox.save_graphml(graph, filepath=cache_file)
     print("  ↳ Graph downloaded with", len(graph.nodes), "nodes and", len(graph.edges), "edges")
     print(f"Graph has {len(graph.nodes)} nodes and {len(graph.edges)} edges.")
@@ -319,7 +321,7 @@ def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0) -> list:
     Returns:
         list: List of snapped node IDs for waypoints within threshold.
     """
-    print(f"[4/6] Snapping waypoints to nearest graph edges (threshold: {snap_threshold}m)...")
+    print(f"Snapping waypoints to nearest graph edges (threshold: {snap_threshold}m)...")
     import shapely.geometry
     from shapely.ops import split
 
@@ -353,57 +355,27 @@ def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0) -> list:
             continue
             
         # If we get here, waypoint is within threshold for edge snapping
+        from shapely.geometry import Point as ShapelyPoint
         try:
-            edge_data = graph.get_edge_data(u, v)
-            if isinstance(edge_data, dict):
-                edge_data = edge_data.get(key, edge_data[next(iter(edge_data))])
+            # Project lat/lon point to graph CRS
+            point_wgs = ShapelyPoint(lon, lat)
+            point_proj = ox.projection.project_geometry(point_wgs, to_crs=graph.graph['crs'])[0]
 
-            # Get geometry
-            if 'geometry' in edge_data:
-                line = edge_data['geometry']
-            else:
-                point_u = shapely.geometry.Point((graph.nodes[u]['x'], graph.nodes[u]['y']))
-                point_v = shapely.geometry.Point((graph.nodes[v]['x'], graph.nodes[v]['y']))
-                line = shapely.geometry.LineString([point_u, point_v])
+            # Try inserting node with geometry-aware edge split
+            insert_node_with_geometry_split(
+                graph=graph,
+                u=u,
+                v=v,
+                key=key,
+                snapped_point=point_proj,  # projected!
+                new_node_id=next_node_id
+            )
 
-            total_length = line.length
-            if total_length == 0:
-                raise ValueError(f"Zero-length edge: {u} → {v}")
-
-            # Project the waypoint onto the edge geometry
-            point = shapely.geometry.Point((lon, lat))
-            projected_point = line.interpolate(line.project(point))
-            proj_lon, proj_lat = projected_point.x, projected_point.y
-
-            # Split geometry at projection point
-            split_result = split(line, projected_point)
-
-            # Extract only LineStrings from the result
-            split_lines = [geom for geom in split_result.geoms if isinstance(geom, shapely.geometry.LineString)]
-
-            if len(split_lines) != 2:
-                raise ValueError(f"Expected 2 LineStrings after split, got {len(split_lines)} — likely projected at edge endpoint")
-
-            geom1, geom2 = split_lines
-            weight1 = geom1.length
-            weight2 = geom2.length
-
-            # Insert the new node
-            new_node_id = next_node_id
+            print(f"✅ Inserted node {next_node_id} for '{name}'")
+            snapped_nodes.append(next_node_id)
             next_node_id += 1
-            graph.add_node(new_node_id, x=proj_lon, y=proj_lat)
 
-            # Remove old edge and insert two new ones
-            graph.remove_edge(u, v, key=key)
-            graph.add_edge(u, new_node_id, length=weight1, weight=weight1, geometry=geom1)
-            graph.add_edge(new_node_id, v, length=weight2, weight=weight2, geometry=geom2)
 
-            print(f"waypoint: {name} (lat={lat:.6f}, lon={lon:.6f}) - distance: {distance_meters:.1f}m")
-            print(f" projected to edge {u} → {v}")
-            print(f" inserted node {new_node_id} at lat={proj_lat:.6f}, lon={proj_lon:.6f}")
-            print(f" edge split: {weight1:.1f} m + {weight2:.1f} m = {total_length:.1f} m")
-
-            snapped_nodes.append(new_node_id)
 
         except Exception as e:           
             print(f"⚠️ Failed snapping waypoint '{name}' — {e}")
@@ -432,6 +404,83 @@ def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0) -> list:
             print(f"  - {name}: {distance:.1f}m")
 
     return snapped_nodes
+
+from shapely.geometry import LineString, Point
+
+def insert_node_with_geometry_split(graph, u, v, key, snapped_point, new_node_id):
+    """
+    Insert a new node into the edge (u, v, key) at the given snapped_point,
+    splitting the edge into two curved LineStrings that preserve the original geometry.
+
+    Parameters:
+    - graph: networkx.MultiDiGraph (projected)
+    - u, v: node IDs for the edge to split
+    - key: edge key for (u, v)
+    - snapped_point: shapely.geometry.Point in projected CRS
+    - new_node_id: ID to assign to the new node
+
+    Returns:
+    - new_node_id (int) if successful
+
+    Raises:
+    - ValueError if the snapped point is too close to an endpoint or splitting fails
+    """
+    # Get original edge geometry
+    edge_data = graph.get_edge_data(u, v)
+    if isinstance(edge_data, dict):
+        edge_data = edge_data.get(key, edge_data[next(iter(edge_data))])
+
+    if 'geometry' in edge_data:
+        line = edge_data['geometry']
+    else:
+        line = LineString([
+            (graph.nodes[u]['x'], graph.nodes[u]['y']),
+            (graph.nodes[v]['x'], graph.nodes[v]['y'])
+        ])
+
+    # Avoid splitting if too close to the endpoints
+    if snapped_point.distance(Point(line.coords[0])) < 1e-6 or \
+       snapped_point.distance(Point(line.coords[-1])) < 1e-6:
+        raise ValueError("Snapped point is too close to an endpoint")
+
+    # Determine distance along line
+    distance_along_line = line.project(snapped_point)
+    snapped_point = line.interpolate(distance_along_line)
+
+    # Interpolate and split coordinates manually (more robust than Shapely split)
+    coords = list(line.coords)
+    cum_dist = [0.0]
+    for i in range(1, len(coords)):
+        seg = LineString([coords[i - 1], coords[i]])
+        cum_dist.append(cum_dist[-1] + seg.length)
+
+    for i in range(1, len(cum_dist)):
+        if cum_dist[i] >= distance_along_line:
+            break
+
+    seg = LineString([coords[i - 1], coords[i]])
+    ratio = (distance_along_line - cum_dist[i - 1]) / seg.length
+    interp_point = seg.interpolate(ratio * seg.length)
+
+    # Slice the coordinates to create two new geometries
+    coords1 = coords[:i] + [(interp_point.x, interp_point.y)]
+    coords2 = [(interp_point.x, interp_point.y)] + coords[i:]
+
+    geom1 = LineString(coords1)
+    geom2 = LineString(coords2)
+
+    # Insert the new node at the interpolated point
+    graph.add_node(new_node_id, x=interp_point.x, y=interp_point.y)
+
+    # Remove the original edge
+    graph.remove_edge(u, v, key=key)
+
+    # Add two new edges with correct geometry and weights
+    graph.add_edge(u, new_node_id, geometry=geom1, length=geom1.length, weight=geom1.length)
+    graph.add_edge(new_node_id, v, geometry=geom2, length=geom2.length, weight=geom2.length)
+
+    return new_node_id
+
 
 def calculate_paths(graph, node_ids):
     """

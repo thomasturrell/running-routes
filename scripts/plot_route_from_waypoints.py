@@ -36,11 +36,20 @@ import osmnx as ox
 from geopy.distance import geodesic
 import hashlib
 from pathlib import Path
-
+from shapely.geometry import Point as ShapelyPoint
+from shapely.ops import split
+from shapely.geometry import Point as ShapelyPoint
+from osmnx.projection import project_geometry
+from datetime import datetime, timedelta
 from shapely import Point
+from shapely.geometry import Point as ShapelyPoint
+from osmnx.projection import project_geometry
 
 CUSTOM_NS = "http://thomasturrell.github.io/running-routes/schema/v1"
 ET.register_namespace('rr', CUSTOM_NS)
+
+def to_latlon(pt_proj, graph_crs):
+    return project_geometry(pt_proj, crs=graph_crs, to_latlong=True)[0]
 
 def parse_arguments():
     """
@@ -60,7 +69,6 @@ def parse_arguments():
         help='Path to save the calculated route as a GPX file. Defaults to appending _route to the input file name.',
         default=None
     )
-    parser.add_argument('--bounding-box-buffer', type=float, default=0.05, help='Buffer in degrees to expand the bounding box (default: 0.05)')
     parser.add_argument('--max-waypoints', type=int, default=50, help='Maximum number of waypoints allowed (default: 50)')
     parser.add_argument('--max-distance', type=float, default=20, help='Maximum allowed distance between waypoints in km (default: 20)')
     parser.add_argument('--max-cache-age-days', type=int, default=7, help='Max age of cached graph in days (default: 7)')
@@ -112,10 +120,6 @@ def validate_arguments(args):
             print(f"⚠️  Warning: Output file already exists and will be overwritten: {args.output}")
     
     # Validate numeric arguments
-    if args.bounding_box_buffer < 0:
-        print(f"❌ Error: Bounding box buffer must be non-negative: {args.bounding_box_buffer}")
-        sys.exit(1)
-
     if args.max_waypoints <= 0:
         print(f"❌ Error: Max waypoints must be positive: {args.max_waypoints}")
         sys.exit(1)
@@ -240,29 +244,28 @@ def validate_waypoints(waypoints, max_waypoints, max_distance):
             print(f"❌ Distance between waypoint {i+1} and {i+2} is {dist:.2f} km, exceeding limit of {max_distance} km")
             sys.exit(1)
 
-def calculate_bounding_box(waypoints, buffer):
+def calculate_bounding_box(waypoints):
     """
-    Calculate a bounding box around the waypoints with a buffer.
+    Calculate a bounding box around the waypoints.
 
     Args:
         waypoints (list): List of waypoints.
-        buffer (float): Buffer in degrees to expand the bounding box.
 
     Returns:
         tuple: Bounding box as (north, south, east, west).
     """
-    print(f"Calculating bounding box with buffer: {buffer}°")
-    
+    print(f"Calculating bounding box ")
+
     if not waypoints:
         raise ValueError("No waypoints provided")
-    
+
     lats = [w[0] for w in waypoints]
     lons = [w[1] for w in waypoints]
 
-    north = max(lats) + buffer
-    south = min(lats) - buffer
-    east = max(lons) + buffer
-    west = min(lons) - buffer
+    north = max(lats)
+    south = min(lats)
+    east = max(lons)
+    west = min(lons)
 
     print(f"  ↳ Bounding box (lat, lon): North={north}, South={south}, East={east}, West={west}")
     return north, south, east, west
@@ -289,7 +292,6 @@ def download_osm_graph(north, south, east, west, max_cache_age_days, force_refre
     cache_file = cache_dir / f"graph_{hash_id}.graphml"
 
     if cache_file.exists():
-        from datetime import datetime, timedelta
         file_age = datetime.now() - datetime.fromtimestamp(cache_file.stat().st_ctime)
         if force_refresh or file_age > timedelta(days=max_cache_age_days):
             print(f"  ↳ Cache found but expired (age: {file_age.days} days), re-downloading...")
@@ -298,7 +300,10 @@ def download_osm_graph(north, south, east, west, max_cache_age_days, force_refre
             return ox.load_graphml(cache_file)
 
     print("  ↳ No cache found. Downloading from OSM...")
-    graph = ox.graph.graph_from_bbox((west, south, east, north), network_type='all_public')
+    graph = ox.graph.graph_from_bbox((west, south, east, north), network_type='all', simplify=False, truncate_by_edge=True)
+    graph = ox.project_graph(graph)
+    print("Graph CRS:", graph.graph.get('crs', '❌ Not defined'))
+
     ox.save_graphml(graph, filepath=cache_file)
     print("  ↳ Graph downloaded with", len(graph.nodes), "nodes and", len(graph.edges), "edges")
     print(f"Graph has {len(graph.nodes)} nodes and {len(graph.edges)} edges.")
@@ -322,84 +327,30 @@ def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0) -> list:
         list: List of snapped node IDs for waypoints within threshold.
     """
     print(f"Snapping waypoints to nearest graph edges (threshold: {snap_threshold}m)...")
-    import shapely.geometry
-    from shapely.ops import split
+
 
     snapped_nodes = []
     skipped_waypoints = []
-    next_node_id = max(graph.nodes) + 1
+    #next_node_id = max(graph.nodes) + 1
 
     for wpt in waypoints:
         lat, lon, name, sym = wpt[:4]  # Safe unpacking
-        
-        # First check distance threshold
-        try:
-            edge_info, distance = ox.distance.nearest_edges(graph, lon, lat, return_dist=True)
-            u, v, key = edge_info
-            
-            # Convert distance to meters if in degrees
-            if distance < 1:  # Likely in degrees
-                # Approximate conversion for small distances
-                distance_meters = distance * 111000  # Rough conversion from degrees to meters
-            else:
-                distance_meters = distance
-            
-            # Check if waypoint is within threshold
-            if distance_meters > snap_threshold:
-                print(f"⚠️ Waypoint '{name}' is {distance_meters:.1f}m from nearest path (>{snap_threshold}m threshold) - skipping")
-                skipped_waypoints.append((name, distance_meters))
-                continue
-        except Exception as e:
-            print(f"⚠️ Failed getting distance for waypoint '{name}' — {e}")
-            print("  ↳ Skipping due to inability to check threshold")
-            continue
-            
-        # If we get here, waypoint is within threshold for edge snapping
-        from shapely.geometry import Point as ShapelyPoint
-        try:
-            # Project lat/lon point to graph CRS
-            point_wgs = ShapelyPoint(lon, lat)
-            point_proj = ox.projection.project_geometry(point_wgs, to_crs=graph.graph['crs'])[0]
+        # Project lat/lon once
+        point_wgs = ShapelyPoint(lon, lat)
+        point_proj = ox.projection.project_geometry(point_wgs, to_crs=graph.graph['crs'])[0]
+        x, y = point_proj.x, point_proj.y
 
-            # Try inserting node with geometry-aware edge split
-            insert_node_with_geometry_split(
-                graph=graph,
-                u=u,
-                v=v,
-                key=key,
-                snapped_point=point_proj,  # projected!
-                new_node_id=next_node_id
-            )
+        nearest_node, distance = ox.distance.nearest_nodes(graph, x, y, return_dist=True)
 
-            print(f"✅ Inserted node {next_node_id} for '{name}'")
-            snapped_nodes.append(next_node_id)
-            next_node_id += 1
-
-
-
-        except Exception as e:           
-            print(f"⚠️ Failed snapping waypoint '{name}' — {e}")
-            print("  ↳ Falling back to nearest node snapping")
-
-            # Fallback to nearest node with distance validation
-            try:
-                nearest_node = ox.distance.nearest_nodes(graph, lon, lat)
-                nearest_node_coords = (graph.nodes[nearest_node]['y'], graph.nodes[nearest_node]['x'])
-                fallback_distance = geodesic((lat, lon), nearest_node_coords).meters
-
-                if fallback_distance > snap_threshold:
-                    print(f"⚠️ Fallback node for waypoint '{name}' is {fallback_distance:.1f}m away (>{snap_threshold}m threshold) - skipping")
-                    skipped_waypoints.append((name, fallback_distance))
-                    continue
-
-                print(f"  ↳ Using fallback node {nearest_node} at {fallback_distance:.1f}m distance")
-                snapped_nodes.append(nearest_node)
-            except Exception as fallback_error:
-                print(f"⚠️ Fallback also failed for waypoint '{name}' — {fallback_error}")
-                continue
+        if distance > snap_threshold:
+            print(f"⚠️ Node for waypoint '{name}' is {distance:.1f}m away (>{snap_threshold}m threshold) - skipping")
+            skipped_waypoints.append((name, distance))
+        else:
+            snapped_nodes.append(nearest_node)
+            print(f"  ↳ Snapped waypoint '{name}' to node {nearest_node} ({distance:.1f}m)")
 
     if skipped_waypoints:
-        print(f"\n⚠️ Summary: {len(skipped_waypoints)} waypoint(s) were skipped (beyond {snap_threshold}m threshold):")
+        print(f"⚠️ Summary: {len(skipped_waypoints)} waypoint(s) were skipped (beyond {snap_threshold}m threshold):")
         for name, distance in skipped_waypoints:
             print(f"  - {name}: {distance:.1f}m")
 
@@ -550,10 +501,15 @@ def export_routes_to_gpx(graph, routes, waypoints, output_path_gpx):
                     
                 if 'geometry' in edge:
                     for x, y in edge['geometry'].coords:
-                        segment.points.append(gpxpy.gpx.GPXTrackPoint(y, x))
+                        pt = ShapelyPoint(x, y)
+                        pt_latlon = to_latlon(pt, graph.graph['crs'])
+                        segment.points.append(gpxpy.gpx.GPXTrackPoint(pt_latlon.y, pt_latlon.x))
                 else:
-                    segment.points.append(gpxpy.gpx.GPXTrackPoint(graph.nodes[u]['y'], graph.nodes[u]['x']))
-                    segment.points.append(gpxpy.gpx.GPXTrackPoint(graph.nodes[v]['y'], graph.nodes[v]['x']))
+                    pt_u = to_latlon(ShapelyPoint(graph.nodes[u]['x'], graph.nodes[u]['y']), graph.graph['crs'])
+                    pt_v = to_latlon(ShapelyPoint(graph.nodes[v]['x'], graph.nodes[v]['y']), graph.graph['crs'])
+                    segment.points.append(gpxpy.gpx.GPXTrackPoint(pt_u.y, pt_u.x))
+                    segment.points.append(gpxpy.gpx.GPXTrackPoint(pt_v.y, pt_v.x))
+
         
         track.segments.append(segment)
         gpx.tracks.append(track)
@@ -579,7 +535,7 @@ def main():
     validate_arguments(args)
 
     waypoints = extract_waypoints(args.input, args.max_waypoints, args.max_distance)
-    north, south, east, west = calculate_bounding_box(waypoints, args.bounding_box_buffer)
+    north, south, east, west = calculate_bounding_box(waypoints)
     graph = download_osm_graph(north, south, east, west, args.max_cache_age_days, args.force_refresh)
    
     groups = group_waypoints(waypoints)

@@ -45,8 +45,12 @@ from shapely import Point
 from shapely.geometry import Point as ShapelyPoint
 from osmnx.projection import project_geometry
 
+# GPX Style namespace
+import xml.etree.ElementTree as ET
+
+GPX_STYLE_NS = "http://www.topografix.com/GPX/gpx_style/0/2"
+
 CUSTOM_NS = "http://thomasturrell.github.io/running-routes/schema/v1"
-ET.register_namespace('rr', CUSTOM_NS)
 
 def to_latlon(pt_proj, graph_crs):
     return project_geometry(pt_proj, crs=graph_crs, to_latlong=True)[0]
@@ -328,7 +332,6 @@ def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0) -> list:
     """
     print(f"Snapping waypoints to nearest graph edges (threshold: {snap_threshold}m)...")
 
-
     snapped_nodes = []
     skipped_waypoints = []
     #next_node_id = max(graph.nodes) + 1
@@ -356,83 +359,6 @@ def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0) -> list:
 
     return snapped_nodes
 
-from shapely.geometry import LineString, Point
-
-def insert_node_with_geometry_split(graph, u, v, key, snapped_point, new_node_id):
-    """
-    Insert a new node into the edge (u, v, key) at the given snapped_point,
-    splitting the edge into two curved LineStrings that preserve the original geometry.
-
-    Parameters:
-    - graph: networkx.MultiDiGraph (projected)
-    - u, v: node IDs for the edge to split
-    - key: edge key for (u, v)
-    - snapped_point: shapely.geometry.Point in projected CRS
-    - new_node_id: ID to assign to the new node
-
-    Returns:
-    - new_node_id (int) if successful
-
-    Raises:
-    - ValueError if the snapped point is too close to an endpoint or splitting fails
-    """
-    # Get original edge geometry
-    edge_data = graph.get_edge_data(u, v)
-    if isinstance(edge_data, dict):
-        edge_data = edge_data.get(key, edge_data[next(iter(edge_data))])
-
-    if 'geometry' in edge_data:
-        line = edge_data['geometry']
-    else:
-        line = LineString([
-            (graph.nodes[u]['x'], graph.nodes[u]['y']),
-            (graph.nodes[v]['x'], graph.nodes[v]['y'])
-        ])
-
-    # Avoid splitting if too close to the endpoints
-    if snapped_point.distance(Point(line.coords[0])) < 1e-6 or \
-       snapped_point.distance(Point(line.coords[-1])) < 1e-6:
-        raise ValueError("Snapped point is too close to an endpoint")
-
-    # Determine distance along line
-    distance_along_line = line.project(snapped_point)
-    snapped_point = line.interpolate(distance_along_line)
-
-    # Interpolate and split coordinates manually (more robust than Shapely split)
-    coords = list(line.coords)
-    cum_dist = [0.0]
-    for i in range(1, len(coords)):
-        seg = LineString([coords[i - 1], coords[i]])
-        cum_dist.append(cum_dist[-1] + seg.length)
-
-    for i in range(1, len(cum_dist)):
-        if cum_dist[i] >= distance_along_line:
-            break
-
-    seg = LineString([coords[i - 1], coords[i]])
-    ratio = (distance_along_line - cum_dist[i - 1]) / seg.length
-    interp_point = seg.interpolate(ratio * seg.length)
-
-    # Slice the coordinates to create two new geometries
-    coords1 = coords[:i] + [(interp_point.x, interp_point.y)]
-    coords2 = [(interp_point.x, interp_point.y)] + coords[i:]
-
-    geom1 = LineString(coords1)
-    geom2 = LineString(coords2)
-
-    # Insert the new node at the interpolated point
-    graph.add_node(new_node_id, x=interp_point.x, y=interp_point.y)
-
-    # Remove the original edge
-    graph.remove_edge(u, v, key=key)
-
-    # Add two new edges with correct geometry and weights
-    graph.add_edge(u, new_node_id, geometry=geom1, length=geom1.length, weight=geom1.length)
-    graph.add_edge(new_node_id, v, geometry=geom2, length=geom2.length, weight=geom2.length)
-
-    return new_node_id
-
-
 def calculate_paths(graph, node_ids):
     """
     Calculate paths between nodes using the shortest path algorithm.
@@ -455,6 +381,19 @@ def calculate_paths(graph, node_ids):
             path = [node_ids[i], node_ids[i+1]]
         paths.append(path)
     return paths
+
+def calculate_track_color(route_name):
+    """
+    Assign a color hex code to a route based on its name for GPX track coloring.
+    """
+    import hashlib
+    # Generate a color from the hash of the route name
+    if not route_name:
+        return "3388ff"  # Default blue
+    hash_bytes = hashlib.md5(route_name.encode()).digest()
+    # Use first three bytes for RGB, keep it bright
+    r, g, b = [128 + (x % 128) for x in hash_bytes[:3]]
+    return f"{r:02x}{g:02x}{b:02x}"
 
 def export_routes_to_gpx(graph, routes, waypoints, output_path_gpx):
     """
@@ -484,7 +423,17 @@ def export_routes_to_gpx(graph, routes, waypoints, output_path_gpx):
         # Create a track for this section
         track = gpxpy.gpx.GPXTrack()
         track.name = route_name if route_name else "Unnamed Section"
-        
+
+        # Build <line> element under the GPX Style namespace
+        line_elem = ET.Element(f"{{{GPX_STYLE_NS}}}line")
+        ET.SubElement(line_elem, f"{{{GPX_STYLE_NS}}}color").text = calculate_track_color(route_name)
+        #ET.SubElement(line_elem, f"{{{GPX_STYLE_NS}}}opacity").text = "0.8"
+        #ET.SubElement(line_elem, f"{{{GPX_STYLE_NS}}}width").text = "4"
+
+
+        # Attach it as an extension to the track
+        track.extensions = [line_elem]
+
         segment = gpxpy.gpx.GPXTrackSegment()
         
         for path in route_paths:
@@ -515,11 +464,12 @@ def export_routes_to_gpx(graph, routes, waypoints, output_path_gpx):
         gpx.tracks.append(track)
 
     # Add custom namespace to GPX content
+    gpx.nsmap["gpxstyle"] = GPX_STYLE_NS
+    gpx.nsmap["rr"] = CUSTOM_NS
+    gpx.creator = "Running Routes Script v1.0"
+
     gpx_content = gpx.to_xml()
-    gpx_content = gpx_content.replace(
-        '<gpx xmlns="http://www.topografix.com/GPX/1/1"',
-        f'<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:rr="{CUSTOM_NS}"'
-    )
+
 
     with open(output_path_gpx, 'w') as f:
         f.write(gpx_content)

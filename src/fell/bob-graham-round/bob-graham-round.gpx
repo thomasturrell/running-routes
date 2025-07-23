@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:rr="http://thomasturrell.github.io/running-routes/schema/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="gpx.py -- https://github.com/tkrajina/gpxpy">
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxstyle="http://www.topografix.com/GPX/gpx_style/0/2" xmlns:rr="http://thomasturrell.github.io/running-routes/schema/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="Running Routes Script v1.0">
   <wpt lat="54.60073" lon="-3.1373">
     <name>Moot Hall</name>
     <sym>Flag</sym>
@@ -210,6 +210,11 @@
   </wpt>
   <trk>
     <name>Leg 1</name>
+    <extensions>
+      <gpxstyle:line>
+        <gpxstyle:color>f4f9b4</gpxstyle:color>
+      </gpxstyle:line>
+    </extensions>
     <trkseg>
       <trkpt lat="54.60072629999999" lon="-3.1372813">
       </trkpt>
@@ -4443,6 +4448,11 @@
   </trk>
   <trk>
     <name>Leg 2</name>
+    <extensions>
+      <gpxstyle:line>
+        <gpxstyle:color>c3c4e7</gpxstyle:color>
+      </gpxstyle:line>
+    </extensions>
     <trkseg>
       <trkpt lat="54.61867099999999" lon="-3.0471597">
       </trkpt>
@@ -8916,6 +8926,11 @@
   </trk>
   <trk>
     <name>Leg 3</name>
+    <extensions>
+      <gpxstyle:line>
+        <gpxstyle:color>80f1d7</gpxstyle:color>
+      </gpxstyle:line>
+    </extensions>
     <trkseg>
       <trkpt lat="54.49531189999999" lon="-3.0400657">
       </trkpt>
@@ -16569,6 +16584,11 @@
   </trk>
   <trk>
     <name>Leg 4</name>
+    <extensions>
+      <gpxstyle:line>
+        <gpxstyle:color>e6e6cc</gpxstyle:color>
+      </gpxstyle:line>
+    </extensions>
     <trkseg>
       <trkpt lat="54.4556577" lon="-3.2622379999999995">
       </trkpt>
@@ -20430,6 +20450,11 @@
   </trk>
   <trk>
     <name>Leg 5</name>
+    <extensions>
+      <gpxstyle:line>
+        <gpxstyle:color>d6e1ec</gpxstyle:color>
+      </gpxstyle:line>
+    </extensions>
     <trkseg>
       <trkpt lat="54.5114622" lon="-3.1991755000000004">
       </trkpt>

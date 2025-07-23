@@ -248,17 +248,19 @@ def validate_waypoints(waypoints, max_waypoints, max_distance):
             print(f"❌ Distance between waypoint {i+1} and {i+2} is {dist:.2f} km, exceeding limit of {max_distance} km")
             sys.exit(1)
 
+import math
+
 def calculate_bounding_box(waypoints):
     """
-    Calculate a bounding box around the waypoints.
+    Calculate a bounding box around the waypoints with a 500m buffer.
 
     Args:
-        waypoints (list): List of waypoints.
+        waypoints (list): List of waypoints as (lat, lon, ...)
 
     Returns:
         tuple: Bounding box as (north, south, east, west).
     """
-    print(f"Calculating bounding box ")
+    print(f"Calculating bounding box with 500m buffer")
 
     if not waypoints:
         raise ValueError("No waypoints provided")
@@ -266,13 +268,18 @@ def calculate_bounding_box(waypoints):
     lats = [w[0] for w in waypoints]
     lons = [w[1] for w in waypoints]
 
-    north = max(lats)
-    south = min(lats)
-    east = max(lons)
-    west = min(lons)
+    avg_lat = sum(lats) / len(lats)
+    lat_buffer = 500 / 111_000  # ~0.0045 degrees
+    lon_buffer = 500 / (111_320 * math.cos(math.radians(avg_lat)))  # longitude degrees vary with latitude
+
+    north = max(lats) + lat_buffer
+    south = min(lats) - lat_buffer
+    east = max(lons) + lon_buffer
+    west = min(lons) - lon_buffer
 
     print(f"  ↳ Bounding box (lat, lon): North={north}, South={south}, East={east}, West={west}")
     return north, south, east, west
+
 
 def download_osm_graph(north, south, east, west, max_cache_age_days, force_refresh):
     """
@@ -384,16 +391,28 @@ def calculate_paths(graph, node_ids):
 
 def calculate_track_color(route_name):
     """
-    Assign a color hex code to a route based on its name for GPX track coloring.
+    Assign a bold, vivid color hex code to a route based on its name.
+    Uses a curated palette of strong colors.
     """
     import hashlib
-    # Generate a color from the hash of the route name
+
+    palette = [
+        "e6194b",  # red
+        "3cb44b",  # green
+        "ffe119",  # yellow
+        "0082c8",  # blue
+        "f58231",  # orange
+        "911eb4",  # purple
+        "46f0f0",  # cyan
+        "f032e6",  # magenta
+        "d2f53c",  # lime
+        "fabebe",  # pink
+    ]
     if not route_name:
-        return "3388ff"  # Default blue
-    hash_bytes = hashlib.md5(route_name.encode()).digest()
-    # Use first three bytes for RGB, keep it bright
-    r, g, b = [128 + (x % 128) for x in hash_bytes[:3]]
-    return f"{r:02x}{g:02x}{b:02x}"
+        return "0082c8"  # default blue
+    h = int(hashlib.md5(route_name.encode()).hexdigest(), 16)
+    return palette[h % len(palette)]
+
 
 def export_routes_to_gpx(graph, routes, waypoints, output_path_gpx):
     """

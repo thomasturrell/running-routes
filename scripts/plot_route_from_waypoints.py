@@ -281,6 +281,50 @@ def calculate_bounding_box(waypoints):
     return north, south, east, west
 
 
+
+
+import math
+from typing import List, Tuple
+
+def _srtm_tile_name(lat_deg: int, lon_deg: int) -> str:
+    """Return SRTM tile name for the integer SW-corner (lat, lon)."""
+    lat_prefix = 'N' if lat_deg >= 0 else 'S'
+    lon_prefix = 'E' if lon_deg >= 0 else 'W'
+    return f"{lat_prefix}{abs(lat_deg):02d}{lon_prefix}{abs(lon_deg):03d}"
+
+def srtm_tiles_for_bbox(north: float, south: float, east: float, west: float) -> List[str]:
+    """
+    Compute the set of SRTM 1-arcsecond (1x1 degree) tile names that cover a bbox.
+    SRTM tiles are named by the SW corner integer degrees: e.g. N55W003 covers
+    lat [55,56) and lon [-3,-2).
+    """
+    if south > north:
+        south, north = north, south
+    if west > east:
+        west, east = east, west
+
+    # SRTM tiles are 1° squares, indexed by the integer (floor) of the SW corner.
+    # Iterate over all integer degree cells that intersect the bbox.
+    lat_start = math.floor(south)
+    lat_end_exclusive = math.ceil(north)  # exclusive upper bound
+    lon_start = math.floor(west)
+    lon_end_exclusive = math.ceil(east)   # exclusive upper bound
+
+    tiles = []
+    for lat in range(lat_start, lat_end_exclusive):
+        for lon in range(lon_start, lon_end_exclusive):
+            tiles.append(_srtm_tile_name(lat, lon))
+
+    # De-duplicate and sort for stability
+    return sorted(set(tiles))
+
+def print_required_dem_tiles(north: float, south: float, east: float, west: float):
+    tiles = srtm_tiles_for_bbox(north, south, east, west)
+    print("📦 DEM tiles required (SRTM 1-arcsecond, 1×1°):")
+    for t in tiles:
+        print(f"  - {t}")
+
+
 def download_osm_graph(north, south, east, west, max_cache_age_days, force_refresh):
     """
     Download or load a cached OSM graph for the specified bounding box.

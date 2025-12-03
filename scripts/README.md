@@ -13,6 +13,7 @@ Processes a GPX file containing waypoints and calculates a route between them us
 
 * Validates waypoints for count and separation distance.
 * Downloads and caches OSM graph data.
+* Enriches the graph with Shuttle Radar Topography Mission (SRTM) elevation and incorporates ascent/descent into routing costs.
 * Snaps waypoints to paths with optional fallback handling.
 * Generates a shortest-path route using the OSM network.
 * Optionally saves a PNG plot of the route.
@@ -31,6 +32,8 @@ python plot_route_from_waypoints.py input.gpx --output output.gpx [options]
 * `--max-cache-age-days` – Maximum graph cache age in days (default: 7)
 * `--force-refresh` – Force redownload of OSM graph
 * `--snap-threshold` – Maximum distance (in metres) to snap waypoints to a path (default: 5.0)
+* `--gain-penalty` – Horizontal metres added per metre climbed when computing least-cost paths (default: 10.0)
+* `--loss-penalty` – Horizontal metres added per metre descended (default: 2.0)
 
 ---
 

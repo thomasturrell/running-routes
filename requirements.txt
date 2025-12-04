@@ -1,0 +1,6 @@
+smnx
+shapely
+geopy
+networkx
+requests
+gpxpy

@@ -1,29 +1,26 @@
-import pytest
-import networkx as nx
-from unittest.mock import patch
-from plot_route_from_waypoints import (
-    snap_waypoints_to_graph,
-    calculate_routes,
-    export_route_to_gpx,
-)
+import os
 from pathlib import Path
 import shutil
-import pytest
-import networkx as nx
-from shapely.geometry import LineString
-
-
-import pytest
-import networkx as nx
-from shapely.geometry import LineString
-import tempfile
-import os
 import sys
-from plot_route_from_waypoints import extract_waypoints
+import tempfile
+
 import gpxpy
 import gpxpy.gpx
+import networkx as nx
+import pytest
 from geopy.distance import geodesic
-from scripts.plot_route_from_waypoints import validate_waypoints
+from shapely.geometry import LineString
+
+from plot_route_from_waypoints import (
+    add_elevation_costs,
+    calculate_routes,
+    export_route_to_gpx,
+    fetch_srtm_elevations,
+    extract_waypoints,
+    select_weight_attribute,
+    snap_waypoints_to_graph,
+    validate_waypoints,
+)
 
 @pytest.fixture
 def osm_like_grid_graph():
@@ -169,10 +166,85 @@ def test_snap_waypoints_no_threshold_filtering(osm_like_grid_graph, near_waypoin
     """Test snapping waypoints with very high threshold (no filtering)."""
     # Test with very high threshold so no waypoints are filtered
     snapped_nodes, filtered_waypoints = snap_waypoints_to_graph(osm_like_grid_graph, near_waypoints, snap_threshold=10000.0)
-    
+
     # All waypoints should be included with high threshold
     assert len(snapped_nodes) == len(near_waypoints)
     assert len(filtered_waypoints) == len(near_waypoints)
+
+
+def test_add_elevation_costs_sets_cost_and_gain():
+    graph = nx.MultiDiGraph()
+    graph.add_node(1, x=0, y=0, elevation=100)
+    graph.add_node(2, x=1, y=1, elevation=115)
+    graph.add_edge(1, 2, key=0, length=200)
+
+    add_elevation_costs(graph, gain_penalty=10.0, loss_penalty=2.0)
+    edge_data = graph.get_edge_data(1, 2)[0]
+
+    assert edge_data['elevation_gain'] == 15
+    assert edge_data['elevation_loss'] == 0
+    assert edge_data['cost'] == 200 + (15 * 10.0)
+    assert select_weight_attribute(graph) == 'cost'
+
+
+def test_add_elevation_costs_handles_descent():
+    graph = nx.MultiDiGraph()
+    graph.add_node(1, x=0, y=0, elevation=200)
+    graph.add_node(2, x=1, y=1, elevation=180)
+    graph.add_edge(1, 2, key=0, length=100)
+
+    add_elevation_costs(graph, gain_penalty=10.0, loss_penalty=1.5)
+    edge_data = graph.get_edge_data(1, 2)[0]
+
+    assert edge_data['elevation_gain'] == 0
+    assert edge_data['elevation_loss'] == 20
+    assert edge_data['cost'] == 100 + (20 * 1.5)
+
+
+def test_fetch_srtm_elevations_uses_cache(monkeypatch, tmp_path, mock_graph):
+    cache_file = tmp_path / "cache.json"
+    cache_file.write_text('{"55.89286,-3.20344": 123.4, "55.8825,-3.21407": 200.0, "55.88266,-3.22357": 250.0}')
+
+    import plot_route_from_waypoints as module
+
+    monkeypatch.setattr(module, "ELEVATION_CACHE_FILE", cache_file)
+
+    def fail_request(*args, **kwargs):
+        raise AssertionError("Network should not be called when cache is warm")
+
+    monkeypatch.setattr(module.requests, "get", fail_request)
+
+    elevations = fetch_srtm_elevations(mock_graph)
+
+    assert all(val in (123.4, 200.0, 250.0) for val in elevations.values())
+
+
+def test_fetch_srtm_elevations_includes_api_key(monkeypatch, mock_graph):
+    import plot_route_from_waypoints as module
+
+    called_params = {}
+
+    def fake_get(url, params=None, timeout=None):
+        called_params.update(params or {})
+
+        class Response:
+            def raise_for_status(self):
+                return None
+
+            def json(self):
+                locations = (params or {}).get("locations", "").split("|")
+                return {"results": [{"location": loc, "elevation": 100} for loc in locations if loc]}
+
+        return Response()
+
+    monkeypatch.setenv("OPENTOPO_API_KEY", "secret-key")
+    monkeypatch.setattr(module, "requests", type("Requests", (), {"get": staticmethod(fake_get)}))
+
+    elevations = fetch_srtm_elevations(mock_graph, nodes=list(mock_graph.nodes))
+
+    assert called_params.get("API_Key") == "secret-key"
+    assert elevations
+
 
 def test_calculate_routes(mock_graph):
     """Test route calculation between nodes."""

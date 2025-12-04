@@ -58,11 +58,15 @@ Thanks for your interest in contributing! Whether you're submitting a route, imp
 
 ---
 
-## 🌐 Running the Site Locally (Jekyll)
+## 🌐 Running the Site Locally
+
+The site is currently built using Jekyll but is being migrated to Hugo. Both setups are documented below.
+
+### Jekyll (Current Production)
 
 The GitHub Pages site is built using Jekyll from the `docs/` folder. To preview it locally:
 
-### 1. Install dependencies
+#### 1. Install dependencies
 
 ```bash
 gem install bundler
@@ -71,13 +75,48 @@ bundle install
 
 If you don't have Ruby installed, see [https://www.ruby-lang.org/en/documentation/installation/](https://www.ruby-lang.org/en/documentation/installation/)
 
-### 2. Serve the site locally
+#### 2. Serve the site locally
 
 ```bash
 bundle exec jekyll serve --source docs
 ```
 
 Visit `http://localhost:4000` in your browser.
+
+### Hugo (In Development)
+
+We're migrating to Hugo for improved performance. To preview the new Hugo site:
+
+#### 1. Install Hugo
+
+Follow the installation guide at [https://gohugo.io/installation/](https://gohugo.io/installation/) or:
+
+```bash
+# macOS
+brew install hugo
+
+# Ubuntu/Debian
+sudo snap install hugo --channel=extended
+```
+
+#### 2. Generate GPX files and copy assets
+
+```bash
+python3 scripts/generate_gpx_files.py
+cp -r docs/assets hugo-site/static/
+cp docs/favicon.ico hugo-site/static/
+```
+
+#### 3. Serve the site locally
+
+```bash
+cd hugo-site
+hugo server -D
+```
+
+Visit `http://localhost:1313` in your browser.
+
+See [DEVELOPMENT.md](DEVELOPMENT.md) for more detailed setup instructions.
 
 ---
 

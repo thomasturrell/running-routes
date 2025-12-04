@@ -22,3 +22,6 @@ cache/
 /docs/.sass-cache/
 /docs/.jekyll-cache/
 /docs/*.gem
+# Hugo build files
+hugo-site/public/
+hugo-site/resources/_gen/

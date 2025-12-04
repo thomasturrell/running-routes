@@ -1,0 +1,70 @@
+baseURL = 'https://thomasturrell.github.io/running-routes'
+languageCode = 'en-us'
+title = 'Running Routes'
+theme = 'ananke'
+
+[params]
+  author = 'Thomas Turrell-Croft'
+  description = 'GPX files for road, trail, and fell running routes'
+  github = 'https://github.com/thomasturrell/running-routes'
+  twitter = ''
+  facebook = ''
+  background_color_class = "bg-black"
+  featured_image = "/images/hero-bg.jpg"
+  recent_posts_number = 3
+
+# Google Analytics (add your tracking ID when ready)
+# googleAnalytics = "G-XXXXXXXXXX"
+
+# Privacy settings
+[privacy]
+  [privacy.googleAnalytics]
+    anonymizeIP = true
+    disable = false
+    respectDoNotTrack = true
+    useSessionStorage = true
+
+[menu]
+  [[menu.main]]
+    identifier = "fell"
+    name = "Fell Running"
+    url = "/fell/"
+    weight = 10
+  [[menu.main]]
+    identifier = "trail"
+    name = "Trail Running"
+    url = "/trail/"
+    weight = 20
+  [[menu.main]]
+    identifier = "road"
+    name = "Road Running"
+    url = "/road/"
+    weight = 30
+  [[menu.main]]
+    identifier = "about"
+    name = "About"
+    url = "/about/"
+    weight = 40
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+# Performance and SEO optimizations
+[minify]
+  disableCSS = false
+  disableHTML = false
+  disableJS = false
+  disableJSON = false
+  disableSVG = false
+  disableXML = false
+
+[outputFormats]
+  [outputFormats.RSS]
+    mediatype = "application/rss"
+    baseName = "feed"
+
+[sitemap]
+  changefreq = "weekly"
+  priority = 0.5

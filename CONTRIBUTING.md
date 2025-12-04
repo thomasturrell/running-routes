@@ -38,6 +38,7 @@ Thanks for your interest in contributing! Whether you're submitting a route, imp
 * 🧽 **New routes** – Add GPX files in `src/` with relevant metadata.
 * 🐛 **Bug fixes** – Fix issues in the scripts or data.
 * 🧼 **Improvements** – Refactor code, simplify workflows, or improve documentation.
+* 🚀 **Enhanced features** – Elevation data improvements, Strava integration, analytics
 
 ---
 
@@ -46,6 +47,7 @@ Thanks for your interest in contributing! Whether you're submitting a route, imp
 * `src/` – Source data (raw GPX files)
 * `scripts/` – Python tools for building and processing GPX
 * `docs/` – GitHub Pages site content (auto-published)
+* `requirements.txt` – Python dependencies for enhanced features
 
 ---
 
@@ -55,6 +57,7 @@ Thanks for your interest in contributing! Whether you're submitting a route, imp
 * Test your scripts locally before submitting.
 * Use clear, descriptive commit messages.
 * For significant changes, open an issue first to discuss.
+* Follow existing code style and documentation patterns.
 
 ---
 
@@ -78,6 +81,43 @@ bundle exec jekyll serve --source docs
 ```
 
 Visit `http://localhost:4000` in your browser.
+
+---
+
+## 🔧 Enhanced Features Setup
+
+### Python Dependencies
+
+For enhanced elevation processing and Strava integration:
+
+```bash
+pip install -r requirements.txt
+```
+
+### Environment Variables
+
+Create a `.env` file for development (not committed):
+
+```bash
+# Strava API (optional)
+STRAVA_CLIENT_ID=your_client_id
+STRAVA_CLIENT_SECRET=your_client_secret
+STRAVA_ACCESS_TOKEN=your_access_token
+STRAVA_REFRESH_TOKEN=your_refresh_token
+
+# Google Analytics (optional)
+GOOGLE_ANALYTICS_ID=GA_MEASUREMENT_ID
+```
+
+### Testing Enhanced Features
+
+```bash
+# Test elevation enhancement
+python scripts/enhance_elevation.py src/fell/ramsay-round/ramsay-round.gpx test_output.gpx
+
+# Test existing GPX generation
+python scripts/generate_gpx_files.py
+```
 
 ---
 
@@ -126,5 +166,24 @@ You should now be able to view the site at `http://localhost:4000`.
 ## 📬 Need Help?
 
 Open an [issue](https://github.com/thomasturrell/running-routes/issues) and we’ll be happy to assist.
+
+Thanks again for contributing!
+
+## 📈 Performance and Accessibility
+
+When contributing to the site:
+
+* **Performance**: Optimize images, minify assets, consider caching
+* **Accessibility**: Use semantic HTML, ARIA labels, keyboard navigation
+* **Analytics**: Privacy-conscious tracking, user consent
+* **Mobile**: Responsive design, touch-friendly interfaces
+
+---
+
+## 📬 Need Help?
+
+Open an [issue](https://github.com/thomasturrell/running-routes/issues) and we'll be happy to assist.
+
+For enhanced features documentation, see [ENHANCED_FEATURES.md](docs/ENHANCED_FEATURES.md).
 
 Thanks again for contributing!

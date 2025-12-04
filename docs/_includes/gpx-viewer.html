@@ -10,7 +10,10 @@
   integrity="sha512-i9cfK7mcbURqnNfNFYqNhB4/Ae5xAgrrGFPgRnVB5Ws6Xac3BbYqFwtMbyf3QZW8Nq+F7gcWGsM0HUyoA/RVIw==" 
   crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-<div class="gpx-map" id="{{ include.map_id }}" style="height: 500px;"></div>
+<div class="gpx-map" id="{{ include.map_id }}" style="height: 500px;" 
+     role="img" 
+     aria-label="Interactive map showing the GPX route"
+     tabindex="0"></div>
 
 <script type="module">
   window.addEventListener('DOMContentLoaded', () => {
@@ -19,7 +22,11 @@
     const mapId = '{{ include.map_id }}';
     const gpxUrl = '{{ include.gpx_file }}';
 
-    const map = L.map(mapId);
+    const map = L.map(mapId, {
+      // Accessibility improvements
+      keyboard: true,
+      keyboardPanDelta: 80
+    });
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
@@ -28,9 +35,32 @@
 
     new L.GPX(gpxUrl, {
       async: true,
-      polyline_options: { color: 'red' }
+      polyline_options: { 
+        color: 'red',
+        weight: 4,
+        opacity: 0.8
+      },
+      marker_options: {
+        startIconUrl: null,
+        endIconUrl: null,
+        shadowUrl: null
+      }
     }).on('loaded', (e) => {
       map.fitBounds(e.target.getBounds());
+      
+      // Add summary for screen readers
+      const bounds = e.target.getBounds();
+      const distance = e.target.get_distance();
+      const elevation = e.target.get_elevation_gain();
+      
+      const mapElement = document.getElementById(mapId);
+      mapElement.setAttribute('aria-label', 
+        `Interactive map showing GPX route. Distance: ${(distance/1000).toFixed(1)}km, ` +
+        `Elevation gain: ${elevation.toFixed(0)}m. Use arrow keys to navigate the map.`);
+    }).on('error', (e) => {
+      console.error('Failed to load GPX file:', e);
+      const mapElement = document.getElementById(mapId);
+      mapElement.innerHTML = '<p>Failed to load route map. Please try downloading the GPX file directly.</p>';
     }).addTo(map);
   });
 </script>

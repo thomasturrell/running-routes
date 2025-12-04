@@ -22,3 +22,21 @@ cache/
 /docs/.sass-cache/
 /docs/.jekyll-cache/
 /docs/*.gem
+
+# Enhanced features cache
+cache/
+
+# Environment variables
+.env
+
+# Temporary test files
+/tmp/
+test_output.*
+
+# Hugo site (if used)
+hugo-site/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo

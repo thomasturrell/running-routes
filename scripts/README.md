@@ -13,9 +13,15 @@ Processes a GPX file containing waypoints and calculates a route between them us
 
 * Validates waypoints for count and separation distance.
 * Downloads and caches OSM graph data.
+* Enriches the graph with OpenTopography Global DEM (SRTMGL3) elevation and incorporates ascent/descent into routing costs.
+* Caches OpenTopography elevation lookups to avoid repeat API calls between runs.
 * Snaps waypoints to paths with optional fallback handling.
 * Generates a shortest-path route using the OSM network.
 * Optionally saves a PNG plot of the route.
+
+**OpenTopography API key**
+
+Set the `OPENTOPO_API_KEY` environment variable so elevation downloads include your key (recommended to avoid rate limits).
 
 **Usage**
 
@@ -31,6 +37,8 @@ python plot_route_from_waypoints.py input.gpx --output output.gpx [options]
 * `--max-cache-age-days` – Maximum graph cache age in days (default: 7)
 * `--force-refresh` – Force redownload of OSM graph
 * `--snap-threshold` – Maximum distance (in metres) to snap waypoints to a path (default: 5.0)
+* `--gain-penalty` – Horizontal metres added per metre climbed when computing least-cost paths (default: 10.0)
+* `--loss-penalty` – Horizontal metres added per metre descended (default: 2.0)
 
 ---
 

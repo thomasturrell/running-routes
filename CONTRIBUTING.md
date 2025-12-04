@@ -12,8 +12,6 @@ The fastest way to get started is using **GitHub Codespaces** or **VS Code Dev C
 
 1. **Open in Codespaces**: Click the green "Code" button on this repository and select "Open with Codespaces", or use the badge below:
 
-   [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/thomasturrell/running-routes)
-
 2. **Wait for setup**: The Codespace will automatically:
    - Use the Python 3.12 container defined in [`.devcontainer/devcontainer.json`](.devcontainer/devcontainer.json)
    - Install all Python dependencies via `pip install .` (using [`pyproject.toml`](pyproject.toml))
@@ -70,14 +68,6 @@ Install the project in editable mode with all dependencies:
 pip install -e .
 ```
 
-This installs the following packages defined in `pyproject.toml`:
-- `osmnx` – OpenStreetMap network analysis
-- `shapely` – Geometric operations
-- `geopy` – Distance calculations
-- `networkx` – Graph algorithms
-- `requests` – HTTP requests
-- `gpxpy` – GPX file parsing
-
 ### 4. Create a branch and start contributing
 
 ```bash
@@ -133,15 +123,6 @@ python scripts/plot_route_from_waypoints.py src/fell/bob-graham-round/bob-graham
     --force-refresh
 ```
 
-**Full Bob Graham Round example:**
-
-```bash
-# Generate the Bob Graham Round route from waypoints
-python scripts/plot_route_from_waypoints.py \
-    src/fell/bob-graham-round/bob-graham-round-waypoints.gpx \
-    --output src/fell/bob-graham-round/bob-graham-round.gpx
-```
-
 ### `fix_summit_waypoints.py`
 
 Enriches summit waypoints with accurate coordinates from the Database of British and Irish Hills (DoBIH):
@@ -188,42 +169,6 @@ pytest tests/test_plot_route_from_waypoints.py
 * Test your scripts before submitting (`pytest`).
 * Use clear, descriptive commit messages.
 * For significant changes, open an issue first to discuss.
-
----
-
-## 🔧 Development Environment
-
-### Dev Container Configuration
-
-The [`.devcontainer/devcontainer.json`](.devcontainer/devcontainer.json) defines the development environment:
-
-```json
-{
-  "name": "Running Routes",
-  "image": "mcr.microsoft.com/devcontainers/python:3.12",
-  "postCreateCommand": "pip install .",
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "ms-python.python",
-        "ms-python.debugpy"
-      ]
-    }
-  }
-}
-```
-
-This ensures:
-- **Python 3.12** environment
-- **Automatic dependency installation** via `pip install .`
-- **VS Code extensions** for Python development and debugging
-
-### VS Code Settings
-
-The [`.vscode/settings.json`](.vscode/settings.json) configures:
-- **Pytest** as the test framework
-- **Python analysis paths** to include the `scripts/` directory
-- **Spell-check dictionary** for project-specific terms
 
 ---
 

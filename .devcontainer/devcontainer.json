@@ -1,7 +1,7 @@
 {
   "name": "Running Routes",
   "image": "mcr.microsoft.com/devcontainers/python:3.12",
-  "postCreateCommand": "pip install -r requirements.txt",
+  "postCreateCommand": "pip install .",
   "customizations": {
     "vscode": {
       "extensions": [

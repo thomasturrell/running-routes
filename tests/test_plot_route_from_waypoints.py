@@ -15,6 +15,7 @@ from plot_route_from_waypoints import (
     add_elevation_costs,
     calculate_routes,
     export_route_to_gpx,
+    fetch_srtm_elevations,
     extract_waypoints,
     select_weight_attribute,
     snap_waypoints_to_graph,
@@ -198,6 +199,25 @@ def test_add_elevation_costs_handles_descent():
     assert edge_data['elevation_gain'] == 0
     assert edge_data['elevation_loss'] == 20
     assert edge_data['cost'] == 100 + (20 * 1.5)
+
+
+def test_fetch_srtm_elevations_uses_cache(monkeypatch, tmp_path, mock_graph):
+    cache_file = tmp_path / "cache.json"
+    cache_file.write_text('{"55.89286,-3.20344": 123.4, "55.8825,-3.21407": 200.0, "55.88266,-3.22357": 250.0}')
+
+    import plot_route_from_waypoints as module
+
+    monkeypatch.setattr(module, "ELEVATION_CACHE_FILE", cache_file)
+
+    def fail_request(*args, **kwargs):
+        raise AssertionError("Network should not be called when cache is warm")
+
+    monkeypatch.setattr(module.requests, "get", fail_request)
+
+    elevations = fetch_srtm_elevations(mock_graph)
+
+    assert all(val in (123.4, 200.0, 250.0) for val in elevations.values())
+
 
 def test_calculate_routes(mock_graph):
     """Test route calculation between nodes."""

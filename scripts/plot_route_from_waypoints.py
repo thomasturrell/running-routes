@@ -34,6 +34,7 @@ import argparse
 from collections import defaultdict
 from datetime import datetime, timedelta
 import hashlib
+import json
 from pathlib import Path
 import sys
 import os
@@ -52,6 +53,8 @@ GPX_STYLE_NS = "http://www.topografix.com/GPX/gpx_style/0/2"
 
 CUSTOM_NS = "http://thomasturrell.github.io/running-routes/schema/v1"
 SRTM_ENDPOINT = "https://api.opentopodata.org/v1/srtm90m"
+ELEVATION_CACHE_DIR = Path(".elevation_cache")
+ELEVATION_CACHE_FILE = ELEVATION_CACHE_DIR / "srtm_cache.json"
 
 def to_latlon(pt_proj, graph_crs):
     return project_geometry(pt_proj, crs=graph_crs, to_latlong=True)[0]
@@ -336,6 +339,31 @@ def _batched(iterable, batch_size):
         yield iterable[i:i + batch_size]
 
 
+def _round_lat_lon(pt_latlon, precision=5):
+    return (round(pt_latlon.y, precision), round(pt_latlon.x, precision))
+
+
+def _load_elevation_cache(cache_file=None):
+    cache_file = cache_file or ELEVATION_CACHE_FILE
+    try:
+        if cache_file.exists():
+            with cache_file.open() as f:
+                return json.load(f)
+    except (OSError, json.JSONDecodeError):
+        pass
+    return {}
+
+
+def _save_elevation_cache(cache, cache_file=None):
+    cache_file = cache_file or ELEVATION_CACHE_FILE
+    try:
+        cache_file.parent.mkdir(exist_ok=True)
+        with cache_file.open('w') as f:
+            json.dump(cache, f)
+    except OSError:
+        print("⚠️ Failed to save elevation cache")
+
+
 def fetch_srtm_elevations(graph, nodes=None, batch_size=90):
     """
     Fetch elevation for a list of graph nodes using Shuttle Radar Topography Mission (SRTM) data.
@@ -352,27 +380,40 @@ def fetch_srtm_elevations(graph, nodes=None, batch_size=90):
     if not nodes:
         return {}
 
-    print("Downloading SRTM elevation data for routing costs")
-    elevations = {}
+    cache = _load_elevation_cache()
+    node_keys = {}
+    missing_keys = set()
 
-    for batch in _batched(nodes, batch_size):
-        locations = []
-        for node in batch:
-            pt_latlon = to_latlon(ShapelyPoint(graph.nodes[node]['x'], graph.nodes[node]['y']), graph.graph['crs'])
-            locations.append(f"{pt_latlon.y},{pt_latlon.x}")
+    for node in nodes:
+        pt_latlon = to_latlon(ShapelyPoint(graph.nodes[node]['x'], graph.nodes[node]['y']), graph.graph['crs'])
+        lat, lon = _round_lat_lon(pt_latlon)
+        coord_key = f"{lat},{lon}"
+        node_keys[node] = coord_key
+        if coord_key not in cache:
+            missing_keys.add(coord_key)
 
-        try:
-            response = requests.get(SRTM_ENDPOINT, params={"locations": "|".join(locations)}, timeout=20)
-            response.raise_for_status()
-            payload = response.json()
-            for idx, result in enumerate(payload.get('results', [])):
-                elevation = result.get('elevation')
-                if elevation is not None:
-                    elevations[batch[idx]] = elevation
-        except requests.RequestException as exc:
-            print(f"⚠️ Failed to fetch SRTM elevations: {exc}")
-            return {}
+    if missing_keys:
+        print(f"Downloading SRTM elevation data for routing costs (missing {len(missing_keys)} nodes)")
+        updated = False
+        for batch in _batched(sorted(missing_keys), batch_size):
+            try:
+                response = requests.get(SRTM_ENDPOINT, params={"locations": "|".join(batch)}, timeout=20)
+                response.raise_for_status()
+                payload = response.json()
+                for idx, result in enumerate(payload.get('results', [])):
+                    elevation = result.get('elevation')
+                    if elevation is not None:
+                        cache[batch[idx]] = elevation
+                        updated = True
+            except requests.RequestException as exc:
+                print(f"⚠️ Failed to fetch SRTM elevations: {exc}")
+                break
+        if updated:
+            _save_elevation_cache(cache)
+    else:
+        print("Using cached SRTM elevations")
 
+    elevations = {node: cache[key] for node, key in node_keys.items() if key in cache}
     print(f"  ↳ Retrieved elevation for {len(elevations)}/{len(nodes)} nodes")
     return elevations
 

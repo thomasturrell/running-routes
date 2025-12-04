@@ -14,6 +14,7 @@ Processes a GPX file containing waypoints and calculates a route between them us
 * Validates waypoints for count and separation distance.
 * Downloads and caches OSM graph data.
 * Enriches the graph with Shuttle Radar Topography Mission (SRTM) elevation and incorporates ascent/descent into routing costs.
+* Caches SRTM elevation lookups to avoid repeat API calls between runs.
 * Snaps waypoints to paths with optional fallback handling.
 * Generates a shortest-path route using the OSM network.
 * Optionally saves a PNG plot of the route.

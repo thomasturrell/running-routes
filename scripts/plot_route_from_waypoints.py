@@ -452,7 +452,7 @@ def add_elevation_costs(graph, gain_penalty=10.0, loss_penalty=2.0):
 
 def add_srtm_elevation_to_graph(graph, gain_penalty=10.0, loss_penalty=2.0):
     """
-    Annotate the graph with elevation data from OpenTopography and attach elevation-aware routing costs.
+    Annotate the graph with elevation data from NASA SRTM and attach elevation-aware routing costs.
 
     Args:
         graph (networkx.MultiDiGraph): Graph to annotate.

@@ -1,12 +1,17 @@
 {
-  "name": "Running Routes",
-  "image": "mcr.microsoft.com/devcontainers/python:3.12",
-  "postCreateCommand": "pip install .",
+  "name": "Python Dev",
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    }
+  },
+  "postCreateCommand": "python -m venv .venv && . .venv/bin/activate && pip install .",
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-python.python",
-        "ms-python.debugpy"
+        "ms-python.vscode-pylance",
+        "ms-vscode-remote.remote-containers"
       ]
     }
   }

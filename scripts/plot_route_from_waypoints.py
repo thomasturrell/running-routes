@@ -9,7 +9,7 @@ Features:
 - Parses GPX files to extract waypoints.
 - Validates waypoints for maximum count and distance constraints.
 - Downloads OSM data for walkable paths within a bounding box.
-- Adds OpenTopography Global DEM elevation (SRTMGL3) to graph nodes and factors elevation gain/loss into routing
+- Adds elevation data from the Open-Elevation API to graph nodes and factors elevation gain/loss into routing
   costs.
 - Snaps waypoints to the nearest nodes in the OSM graph.
 - Creates fallback connections between waypoints for routing when no OSM path exists.
@@ -52,9 +52,7 @@ import xml.etree.ElementTree as ET
 GPX_STYLE_NS = "http://www.topografix.com/GPX/gpx_style/0/2"
 
 CUSTOM_NS = "http://thomasturrell.github.io/running-routes/schema/v1"
-OPENTOPO_ENDPOINT = "https://portal.opentopography.org/API/globaldem"
-OPENTOPO_DEM_TYPE = "SRTMGL3"
-OPENTOPO_API_KEY = os.getenv("OPENTOPO_API_KEY")
+OPEN_ELEVATION_ENDPOINT = "https://api.open-elevation.com/api/v1/lookup"
 ELEVATION_CACHE_DIR = Path(".elevation_cache")
 ELEVATION_CACHE_FILE = ELEVATION_CACHE_DIR / "srtm_cache.json"
 
@@ -352,6 +350,7 @@ def _load_elevation_cache(cache_file=None):
             with cache_file.open() as f:
                 return json.load(f)
     except (OSError, json.JSONDecodeError):
+        # If the cache file cannot be loaded (missing, unreadable, or invalid JSON), return an empty cache.
         pass
     return {}
 
@@ -368,7 +367,7 @@ def _save_elevation_cache(cache, cache_file=None):
 
 def fetch_srtm_elevations(graph, nodes=None, batch_size=90):
     """
-    Fetch elevation for a list of graph nodes using OpenTopography's Global DEM API.
+    Fetch elevation for a list of graph nodes using the Open-Elevation API.
 
     Args:
         graph (networkx.Graph): Projected graph containing nodes with x/y coordinates.
@@ -385,7 +384,6 @@ def fetch_srtm_elevations(graph, nodes=None, batch_size=90):
     cache = _load_elevation_cache()
     node_keys = {}
     missing_keys = set()
-    api_key = os.getenv("OPENTOPO_API_KEY", OPENTOPO_API_KEY)
 
     for node in nodes:
         pt_latlon = to_latlon(ShapelyPoint(graph.nodes[node]['x'], graph.nodes[node]['y']), graph.graph['crs'])
@@ -396,46 +394,35 @@ def fetch_srtm_elevations(graph, nodes=None, batch_size=90):
             missing_keys.add(coord_key)
 
     if missing_keys:
-        print(f"Downloading elevation data from OpenTopography (missing {len(missing_keys)} nodes)")
+        print(f"Downloading elevation data from Open-Elevation API (missing {len(missing_keys)} nodes)")
         updated = False
         for batch in _batched(sorted(missing_keys), batch_size):
-            params = {
-                "locations": "|".join(batch),
-                "demtype": OPENTOPO_DEM_TYPE,
-                "outputFormat": "JSON",
-            }
-            if api_key:
-                params["API_Key"] = api_key
-            else:
-                print("⚠️ OPENTOPO_API_KEY not set; requests may be rate limited")
+            locations = []
+            for coord_key in batch:
+                lat_str, lon_str = coord_key.split(",")
+                locations.append({"latitude": float(lat_str), "longitude": float(lon_str)})
+            payload = {"locations": locations}
             try:
-                response = requests.get(OPENTOPO_ENDPOINT, params=params, timeout=30)
+                response = requests.post(OPEN_ELEVATION_ENDPOINT, json=payload, timeout=30)
                 response.raise_for_status()
-                payload = response.json()
-                results = payload.get('results') or payload.get('data') or []
-                for idx, result in enumerate(results):
-                    elevation = None
+                data = response.json()
+                results = data.get('results') or []
+                for result in results:
                     if isinstance(result, dict):
-                        elevation = result.get('elevation') or result.get('z') or result.get('height')
-                        coord = result.get('location') or result.get('coordinates')
-                    elif isinstance(result, (list, tuple)) and len(result) >= 3:
-                        elevation = result[2]
-                        coord = f"{result[1]},{result[0]}"
-                    else:
-                        coord = None
-
-                    key = coord or (batch[idx] if idx < len(batch) else None)
-                    if key is not None and elevation is not None:
-                        key = str(key).replace(" ", "")
-                        cache[key] = elevation
-                        updated = True
+                        elevation = result.get('elevation')
+                        lat = result.get('latitude')
+                        lon = result.get('longitude')
+                        if lat is not None and lon is not None and elevation is not None:
+                            key = f"{round(lat, 5)},{round(lon, 5)}"
+                            cache[key] = elevation
+                            updated = True
             except requests.RequestException as exc:
-                print(f"⚠️ Failed to fetch OpenTopography elevations: {exc}")
+                print(f"⚠️ Failed to fetch elevations: {exc}")
                 break
         if updated:
             _save_elevation_cache(cache)
     else:
-        print("Using cached OpenTopography elevations")
+        print("Using cached elevation data")
 
     elevations = {node: cache[key] for node, key in node_keys.items() if key in cache}
     print(f"  ↳ Retrieved elevation for {len(elevations)}/{len(nodes)} nodes")

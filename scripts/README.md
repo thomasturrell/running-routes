@@ -13,8 +13,8 @@ Processes a GPX file containing waypoints and calculates a route between them us
 
 * Validates waypoints for count and separation distance.
 * Downloads and caches OSM graph data.
-* Enriches the graph with elevation data from the Open-Elevation API and incorporates ascent/descent into routing costs.
-* Caches elevation lookups to avoid repeat API calls between runs.
+* Enriches the graph with NASA SRTM elevation data (downloaded automatically) and incorporates ascent/descent into routing costs.
+* Caches elevation lookups locally to avoid repeat downloads between runs.
 * Snaps waypoints to paths with optional fallback handling.
 * Generates a shortest-path route using the OSM network.
 * Optionally saves a PNG plot of the route.

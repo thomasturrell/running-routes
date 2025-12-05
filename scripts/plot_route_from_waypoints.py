@@ -9,8 +9,8 @@ Features:
 - Parses GPX files to extract waypoints.
 - Validates waypoints for maximum count and distance constraints.
 - Downloads OSM data for walkable paths within a bounding box.
-- Adds elevation data from the Open-Elevation API to graph nodes and factors elevation gain/loss into routing
-  costs.
+- Adds elevation data from NASA SRTM (downloaded automatically) to graph nodes and factors elevation gain/loss
+  into routing costs.
 - Snaps waypoints to the nearest nodes in the OSM graph.
 - Creates fallback connections between waypoints for routing when no OSM path exists.
 - Calculates routes between waypoints using the shortest path algorithm.
@@ -40,7 +40,7 @@ import sys
 import os
 import gpxpy
 import osmnx as ox
-import requests
+import srtm
 from geopy.distance import geodesic
 from shapely.geometry import Point as ShapelyPoint
 from shapely.ops import split
@@ -52,7 +52,6 @@ import xml.etree.ElementTree as ET
 GPX_STYLE_NS = "http://www.topografix.com/GPX/gpx_style/0/2"
 
 CUSTOM_NS = "http://thomasturrell.github.io/running-routes/schema/v1"
-OPEN_ELEVATION_ENDPOINT = "https://api.open-elevation.com/api/v1/lookup"
 ELEVATION_CACHE_DIR = Path(".elevation_cache")
 ELEVATION_CACHE_FILE = ELEVATION_CACHE_DIR / "srtm_cache.json"
 
@@ -334,11 +333,6 @@ def download_osm_graph(north, south, east, west, max_cache_age_days, force_refre
     return graph
 
 
-def _batched(iterable, batch_size):
-    for i in range(0, len(iterable), batch_size):
-        yield iterable[i:i + batch_size]
-
-
 def _round_lat_lon(pt_latlon, precision=5):
     return (round(pt_latlon.y, precision), round(pt_latlon.x, precision))
 
@@ -365,14 +359,17 @@ def _save_elevation_cache(cache, cache_file=None):
         print("⚠️ Failed to save elevation cache")
 
 
-def fetch_srtm_elevations(graph, nodes=None, batch_size=90):
+def fetch_srtm_elevations(graph, nodes=None):
     """
-    Fetch elevation for a list of graph nodes using the Open-Elevation API.
+    Fetch elevation for a list of graph nodes using locally downloaded SRTM data.
+
+    The SRTM library automatically downloads and caches the required .hgt tiles
+    from NASA's Shuttle Radar Topography Mission data. Files are stored in
+    ~/.cache/srtm/ by default.
 
     Args:
         graph (networkx.Graph): Projected graph containing nodes with x/y coordinates.
         nodes (list): Optional list of node IDs to fetch. Defaults to all nodes.
-        batch_size (int): Number of coordinates to include per request.
 
     Returns:
         dict: Mapping of node_id -> elevation in metres.
@@ -394,31 +391,19 @@ def fetch_srtm_elevations(graph, nodes=None, batch_size=90):
             missing_keys.add(coord_key)
 
     if missing_keys:
-        print(f"Downloading elevation data from Open-Elevation API (missing {len(missing_keys)} nodes)")
+        print(f"Fetching elevation from SRTM data (missing {len(missing_keys)} nodes)")
+        elevation_data = srtm.get_data()
         updated = False
-        for batch in _batched(sorted(missing_keys), batch_size):
-            locations = []
-            for coord_key in batch:
-                lat_str, lon_str = coord_key.split(",")
-                locations.append({"latitude": float(lat_str), "longitude": float(lon_str)})
-            payload = {"locations": locations}
+        for coord_key in missing_keys:
+            lat_str, lon_str = coord_key.split(",")
+            lat, lon = float(lat_str), float(lon_str)
             try:
-                response = requests.post(OPEN_ELEVATION_ENDPOINT, json=payload, timeout=30)
-                response.raise_for_status()
-                data = response.json()
-                results = data.get('results') or []
-                for result in results:
-                    if isinstance(result, dict):
-                        elevation = result.get('elevation')
-                        lat = result.get('latitude')
-                        lon = result.get('longitude')
-                        if lat is not None and lon is not None and elevation is not None:
-                            key = f"{round(lat, 5)},{round(lon, 5)}"
-                            cache[key] = elevation
-                            updated = True
-            except requests.RequestException as exc:
-                print(f"⚠️ Failed to fetch elevations: {exc}")
-                break
+                elevation = elevation_data.get_elevation(lat, lon)
+                if elevation is not None:
+                    cache[coord_key] = elevation
+                    updated = True
+            except Exception as exc:
+                print(f"⚠️ Failed to get elevation for {coord_key}: {exc}")
         if updated:
             _save_elevation_cache(cache)
     else:

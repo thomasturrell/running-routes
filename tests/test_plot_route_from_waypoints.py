@@ -206,44 +206,38 @@ def test_fetch_srtm_elevations_uses_cache(monkeypatch, tmp_path, mock_graph):
 
     monkeypatch.setattr(module, "ELEVATION_CACHE_FILE", cache_file)
 
-    def fail_request(*args, **kwargs):
-        raise AssertionError("Network should not be called when cache is warm")
+    # Mock srtm to fail if called (cache should be used)
+    class MockSrtmData:
+        def get_elevation(self, lat, lon):
+            raise AssertionError("SRTM should not be called when cache is warm")
 
-    monkeypatch.setattr(module.requests, "post", fail_request)
+    monkeypatch.setattr(module.srtm, "get_data", lambda: MockSrtmData())
 
     elevations = fetch_srtm_elevations(mock_graph)
 
     assert all(val in (123.4, 200.0, 250.0) for val in elevations.values())
 
 
-def test_fetch_srtm_elevations_calls_api(monkeypatch, mock_graph, tmp_path):
+def test_fetch_srtm_elevations_uses_srtm_library(monkeypatch, mock_graph, tmp_path):
     import plot_route_from_waypoints as module
 
-    # Use an empty cache file so the API is actually called
+    # Use an empty cache file so SRTM is actually called
     cache_file = tmp_path / "empty_cache.json"
     monkeypatch.setattr(module, "ELEVATION_CACHE_FILE", cache_file)
 
-    called_payload = {}
+    called_coords = []
 
-    def fake_post(url, json=None, timeout=None):
-        called_payload.update(json or {})
+    class MockSrtmData:
+        def get_elevation(self, lat, lon):
+            called_coords.append((lat, lon))
+            return 100.0
 
-        class Response:
-            def raise_for_status(self):
-                return None
-
-            def json(self):
-                locations = (json or {}).get("locations", [])
-                return {"results": [{"latitude": loc["latitude"], "longitude": loc["longitude"], "elevation": 100} for loc in locations]}
-
-        return Response()
-
-    monkeypatch.setattr(module, "requests", type("Requests", (), {"post": staticmethod(fake_post)}))
+    monkeypatch.setattr(module.srtm, "get_data", lambda: MockSrtmData())
 
     elevations = fetch_srtm_elevations(mock_graph, nodes=list(mock_graph.nodes))
 
-    assert "locations" in called_payload
-    assert elevations
+    assert len(called_coords) > 0  # SRTM was called
+    assert elevations  # We got elevations back
 
 
 def test_calculate_routes(mock_graph):

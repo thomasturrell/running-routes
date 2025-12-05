@@ -12,6 +12,10 @@ cache/
 
 .graph_cache/
 
+.elevation_cache/
+
+tests/output/
+
 # Ignore Jekyll build artifacts
 /docs/vendor/
 /docs/_site/

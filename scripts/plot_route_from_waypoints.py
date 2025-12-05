@@ -9,8 +9,8 @@ Features:
 - Parses GPX files to extract waypoints.
 - Validates waypoints for maximum count and distance constraints.
 - Downloads OSM data for walkable paths within a bounding box.
-- Adds OpenTopography Global DEM elevation (SRTMGL3) to graph nodes and factors elevation gain/loss into routing
-  costs.
+- Adds elevation data from NASA SRTM (downloaded automatically) to graph nodes and factors elevation gain/loss
+  into routing costs.
 - Snaps waypoints to the nearest nodes in the OSM graph.
 - Creates fallback connections between waypoints for routing when no OSM path exists.
 - Calculates routes between waypoints using the shortest path algorithm.
@@ -40,7 +40,7 @@ import sys
 import os
 import gpxpy
 import osmnx as ox
-import requests
+import srtm
 from geopy.distance import geodesic
 from shapely.geometry import Point as ShapelyPoint
 from shapely.ops import split
@@ -52,9 +52,6 @@ import xml.etree.ElementTree as ET
 GPX_STYLE_NS = "http://www.topografix.com/GPX/gpx_style/0/2"
 
 CUSTOM_NS = "http://thomasturrell.github.io/running-routes/schema/v1"
-OPENTOPO_ENDPOINT = "https://portal.opentopography.org/API/globaldem"
-OPENTOPO_DEM_TYPE = "SRTMGL3"
-OPENTOPO_API_KEY = os.getenv("OPENTOPO_API_KEY")
 ELEVATION_CACHE_DIR = Path(".elevation_cache")
 ELEVATION_CACHE_FILE = ELEVATION_CACHE_DIR / "srtm_cache.json"
 
@@ -336,11 +333,6 @@ def download_osm_graph(north, south, east, west, max_cache_age_days, force_refre
     return graph
 
 
-def _batched(iterable, batch_size):
-    for i in range(0, len(iterable), batch_size):
-        yield iterable[i:i + batch_size]
-
-
 def _round_lat_lon(pt_latlon, precision=5):
     return (round(pt_latlon.y, precision), round(pt_latlon.x, precision))
 
@@ -352,6 +344,7 @@ def _load_elevation_cache(cache_file=None):
             with cache_file.open() as f:
                 return json.load(f)
     except (OSError, json.JSONDecodeError):
+        # If the cache file cannot be loaded (missing, unreadable, or invalid JSON), return an empty cache.
         pass
     return {}
 
@@ -366,14 +359,17 @@ def _save_elevation_cache(cache, cache_file=None):
         print("⚠️ Failed to save elevation cache")
 
 
-def fetch_srtm_elevations(graph, nodes=None, batch_size=90):
+def fetch_srtm_elevations(graph, nodes=None):
     """
-    Fetch elevation for a list of graph nodes using OpenTopography's Global DEM API.
+    Fetch elevation for a list of graph nodes using locally downloaded SRTM data.
+
+    The SRTM library automatically downloads and caches the required .hgt tiles
+    from NASA's Shuttle Radar Topography Mission data. Files are stored in
+    ~/.cache/srtm/ by default.
 
     Args:
         graph (networkx.Graph): Projected graph containing nodes with x/y coordinates.
         nodes (list): Optional list of node IDs to fetch. Defaults to all nodes.
-        batch_size (int): Number of coordinates to include per request.
 
     Returns:
         dict: Mapping of node_id -> elevation in metres.
@@ -385,7 +381,6 @@ def fetch_srtm_elevations(graph, nodes=None, batch_size=90):
     cache = _load_elevation_cache()
     node_keys = {}
     missing_keys = set()
-    api_key = os.getenv("OPENTOPO_API_KEY", OPENTOPO_API_KEY)
 
     for node in nodes:
         pt_latlon = to_latlon(ShapelyPoint(graph.nodes[node]['x'], graph.nodes[node]['y']), graph.graph['crs'])
@@ -396,46 +391,23 @@ def fetch_srtm_elevations(graph, nodes=None, batch_size=90):
             missing_keys.add(coord_key)
 
     if missing_keys:
-        print(f"Downloading elevation data from OpenTopography (missing {len(missing_keys)} nodes)")
+        print(f"Fetching elevation from SRTM data (missing {len(missing_keys)} nodes)")
+        elevation_data = srtm.get_data()
         updated = False
-        for batch in _batched(sorted(missing_keys), batch_size):
-            params = {
-                "locations": "|".join(batch),
-                "demtype": OPENTOPO_DEM_TYPE,
-                "outputFormat": "JSON",
-            }
-            if api_key:
-                params["API_Key"] = api_key
-            else:
-                print("⚠️ OPENTOPO_API_KEY not set; requests may be rate limited")
+        for coord_key in missing_keys:
+            lat_str, lon_str = coord_key.split(",")
+            lat, lon = float(lat_str), float(lon_str)
             try:
-                response = requests.get(OPENTOPO_ENDPOINT, params=params, timeout=30)
-                response.raise_for_status()
-                payload = response.json()
-                results = payload.get('results') or payload.get('data') or []
-                for idx, result in enumerate(results):
-                    elevation = None
-                    if isinstance(result, dict):
-                        elevation = result.get('elevation') or result.get('z') or result.get('height')
-                        coord = result.get('location') or result.get('coordinates')
-                    elif isinstance(result, (list, tuple)) and len(result) >= 3:
-                        elevation = result[2]
-                        coord = f"{result[1]},{result[0]}"
-                    else:
-                        coord = None
-
-                    key = coord or (batch[idx] if idx < len(batch) else None)
-                    if key is not None and elevation is not None:
-                        key = str(key).replace(" ", "")
-                        cache[key] = elevation
-                        updated = True
-            except requests.RequestException as exc:
-                print(f"⚠️ Failed to fetch OpenTopography elevations: {exc}")
-                break
+                elevation = elevation_data.get_elevation(lat, lon)
+                if elevation is not None:
+                    cache[coord_key] = elevation
+                    updated = True
+            except Exception as exc:
+                print(f"⚠️ Failed to get elevation for {coord_key}: {exc}")
         if updated:
             _save_elevation_cache(cache)
     else:
-        print("Using cached OpenTopography elevations")
+        print("Using cached elevation data")
 
     elevations = {node: cache[key] for node, key in node_keys.items() if key in cache}
     print(f"  ↳ Retrieved elevation for {len(elevations)}/{len(nodes)} nodes")
@@ -480,7 +452,7 @@ def add_elevation_costs(graph, gain_penalty=10.0, loss_penalty=2.0):
 
 def add_srtm_elevation_to_graph(graph, gain_penalty=10.0, loss_penalty=2.0):
     """
-    Annotate the graph with elevation data from OpenTopography and attach elevation-aware routing costs.
+    Annotate the graph with elevation data from NASA SRTM and attach elevation-aware routing costs.
 
     Args:
         graph (networkx.MultiDiGraph): Graph to annotate.

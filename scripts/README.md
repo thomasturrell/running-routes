@@ -13,15 +13,11 @@ Processes a GPX file containing waypoints and calculates a route between them us
 
 * Validates waypoints for count and separation distance.
 * Downloads and caches OSM graph data.
-* Enriches the graph with OpenTopography Global DEM (SRTMGL3) elevation and incorporates ascent/descent into routing costs.
-* Caches OpenTopography elevation lookups to avoid repeat API calls between runs.
+* Enriches the graph with NASA SRTM elevation data (downloaded automatically) and incorporates ascent/descent into routing costs.
+* Caches elevation lookups locally to avoid repeat downloads between runs.
 * Snaps waypoints to paths with optional fallback handling.
 * Generates a shortest-path route using the OSM network.
 * Optionally saves a PNG plot of the route.
-
-**OpenTopography API key**
-
-Set the `OPENTOPO_API_KEY` environment variable so elevation downloads include your key (recommended to avoid rate limits).
 
 **Usage**
 

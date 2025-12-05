@@ -1,7 +1,7 @@
 {
   "name": "Python Dev",
   "image": "mcr.microsoft.com/devcontainers/python:3.12",
-  "postCreateCommand": "python -m venv .venv && . .venv/bin/activate && pip install .",
+  "postCreateCommand": "python -m venv .venv && .venv/bin/pip install .",
   "customizations": {
     "vscode": {
       "extensions": [

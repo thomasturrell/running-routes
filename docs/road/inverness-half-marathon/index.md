@@ -4,10 +4,11 @@ title: Inverness Half Marathon
 permalink: /road/inverness-half-marathon/
 ---
 
-The **Inverness Half Marathon** is a fast road race in Inverness, Scotland.
+The **Inverness Half Marathon 2026** route is a fast road race in Inverness, Scotland.
 
 - **Distance:** 21.1 km
 - **Route type:** Road race
+- **Official website:** https://invernesshalfmarathon.co.uk
 
 ## 🛰️ Interactive Route Preview
 

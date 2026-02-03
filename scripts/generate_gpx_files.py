@@ -35,6 +35,12 @@ ROUTES = [
         "source": Path("src/fell/wicklow-round/wicklow-round.gpx"),
         "output": Path("docs/assets/gpx/fell/wicklow-round"),
         "prefix": "wicklow-round",
+    },
+    {
+        "name": "Inverness Half Marathon",
+        "source": Path("src/road/inverness-half-marathon/inverness-half-marathon.gpx"),
+        "output": Path("docs/assets/gpx/road/inverness-half-marathon"),
+        "prefix": "inverness-half-marathon",
     }
 ]
 

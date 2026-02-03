@@ -3,6 +3,21 @@
   <metadata>
     <name>Inverness Half Marathon</name>
   </metadata>
+  <wpt lat="57.45088" lon="-4.22382">
+    <name>Water Station</name>
+    <sym>Water Source</sym>
+    <type>Water Source</type>
+  </wpt>
+  <wpt lat="57.45157" lon="-4.24934">
+    <name>Water Station</name>
+    <sym>Water Source</sym>
+    <type>Water Source</type>
+  </wpt>
+  <wpt lat="57.47409" lon="-4.22856">
+    <name>Water Station</name>
+    <sym>Water Source</sym>
+    <type>Water Source</type>
+  </wpt>
   <trk>
     <name>Inverness Half Marathon</name>
     <type>running</type>

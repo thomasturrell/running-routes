@@ -5,18 +5,18 @@
   </metadata>
   <wpt lat="57.45088" lon="-4.22382">
     <name>Water Station</name>
-    <sym>Water Source</sym>
-    <type>Water Source</type>
+    <sym>Drinking Water</sym>
+    <type>Water</type>
   </wpt>
   <wpt lat="57.45157" lon="-4.24934">
     <name>Water Station</name>
-    <sym>Water Source</sym>
-    <type>Water Source</type>
+    <sym>Drinking Water</sym>
+    <type>Water</type>
   </wpt>
   <wpt lat="57.47409" lon="-4.22856">
     <name>Water Station</name>
-    <sym>Water Source</sym>
-    <type>Water Source</type>
+    <sym>Drinking Water</sym>
+    <type>Water</type>
   </wpt>
   <trk>
     <name>Inverness Half Marathon</name>

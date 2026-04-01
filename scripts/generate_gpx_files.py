@@ -42,6 +42,12 @@ ROUTES = [
         "output": Path("docs/assets/gpx/road/inverness-half-marathon"),
         "prefix": "inverness-half-marathon",
     },
+    {
+        "name": "Manchester Marathon 2026",
+        "source": Path("src/road/manchester-marathon-2026/manchester-marathon-2026.gpx"),
+        "output": Path("docs/assets/gpx/road/manchester-marathon-2026"),
+        "prefix": "manchester-marathon-2026",
+    },
 ]
 
 def load_gpx(path: Path) -> gpxpy.gpx.GPX:

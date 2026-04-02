@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gpx creator="StravaGPX" version="1.1" schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/PowerExtension/v1 http://www.garmin.com/xmlschemas/PowerExtensionv1.xsd http://www.topografix.com/GPX/gpx_style/0/2 http://www.topografix.com/GPX/gpx_style/0/2/gpx_style.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxpx="http://www.garmin.com/xmlschemas/PowerExtension/v1" xmlns:gpx_style="http://www.topografix.com/GPX/gpx_style/0/2">
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxstyle="http://www.topografix.com/GPX/gpx_style/0/2" xmlns:rr="http://thomasturrell.github.io/running-routes/schema/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="Running Routes Script v1.0">
   <metadata>
     <name>Manchester Marathon 2026</name>
-    <author>
-      <name>gpx.studio</name>
-      <link href="https://gpx.studio"/>
-    </author>
   </metadata>
   <trk>
     <name>Manchester Marathon 2026</name>
     <type>running</type>
-    <extensions>
-      <gpx_style:line>
-        <gpx_style:color>ff2600</gpx_style:color>
-      </gpx_style:line>
-    </extensions>
     <trkseg>
       <trkpt lat="53.464602" lon="-2.277782">
         <ele>28.8</ele>

@@ -8,8 +8,9 @@ The **Manchester Marathon 2026** route is a road marathon in Manchester, England
 
 - **Distance:** 42.2 km
 - **Route type:** Road race
-- **Terrain:** Road and paved paths
-- **Start/Finish:** Old Trafford, Manchester
+- **Terrain:** Road
+- **Start:** Old Trafford
+- ** Finish:** Oxford Road, outside The University of Manchester
 
 Multiple formats are available to suit different devices and use cases. If unsure, start with the **Simplified Route**, which is compatible with most GPS watches and mobile apps (e.g. Garmin Connect, Strava).
 

@@ -1,14 +1,16 @@
 """
 plot_route_from_waypoint.py
 
-This script processes a GPX file containing waypoints, calculates routes between them using OpenStreetMap (OSM) data, 
-and generates a new GPX file with the calculated route. It also supports plotting the route and overlaying fallback 
+This script processes a GPX file containing waypoints, calculates routes between them using OpenStreetMap (OSM) data,
+and generates a new GPX file with the calculated route. It also supports plotting the route and overlaying fallback
 connections between waypoints.
 
 Features:
 - Parses GPX files to extract waypoints.
 - Validates waypoints for maximum count and distance constraints.
 - Downloads OSM data for walkable paths within a bounding box.
+- Adds OpenTopography Global DEM elevation (SRTMGL3) to graph nodes and factors elevation gain/loss into routing
+  costs.
 - Snaps waypoints to the nearest nodes in the OSM graph.
 - Creates fallback connections between waypoints for routing when no OSM path exists.
 - Calculates routes between waypoints using the shortest path algorithm.
@@ -24,25 +26,24 @@ Options:
     --max-cache-age-days INT     Maximum number of days before cached graph expires (default: 7)
     --force-refresh              Force refresh of cached graph even if not expired
     --snap-threshold FLOAT       Maximum distance in meters for snapping waypoints to paths (default: 5.0)
+    --gain-penalty FLOAT         Metres of horizontal cost added per metre climbed (default: 10.0)
+    --loss-penalty FLOAT         Metres of horizontal cost added per metre descended (default: 2.0)
 """
 
 import argparse
 from collections import defaultdict
+from datetime import datetime, timedelta
+import hashlib
+import json
+from pathlib import Path
 import sys
 import os
 import gpxpy
-import xml.etree.ElementTree as ET
 import osmnx as ox
+import requests
 from geopy.distance import geodesic
-import hashlib
-from pathlib import Path
 from shapely.geometry import Point as ShapelyPoint
 from shapely.ops import split
-from shapely.geometry import Point as ShapelyPoint
-from osmnx.projection import project_geometry
-from datetime import datetime, timedelta
-from shapely import Point
-from shapely.geometry import Point as ShapelyPoint
 from osmnx.projection import project_geometry
 
 # GPX Style namespace
@@ -51,6 +52,11 @@ import xml.etree.ElementTree as ET
 GPX_STYLE_NS = "http://www.topografix.com/GPX/gpx_style/0/2"
 
 CUSTOM_NS = "http://thomasturrell.github.io/running-routes/schema/v1"
+OPENTOPO_ENDPOINT = "https://portal.opentopography.org/API/globaldem"
+OPENTOPO_DEM_TYPE = "SRTMGL3"
+OPENTOPO_API_KEY = os.getenv("OPENTOPO_API_KEY")
+ELEVATION_CACHE_DIR = Path(".elevation_cache")
+ELEVATION_CACHE_FILE = ELEVATION_CACHE_DIR / "srtm_cache.json"
 
 def to_latlon(pt_proj, graph_crs):
     return project_geometry(pt_proj, crs=graph_crs, to_latlong=True)[0]
@@ -78,7 +84,9 @@ def parse_arguments():
     parser.add_argument('--max-cache-age-days', type=int, default=7, help='Max age of cached graph in days (default: 7)')
     parser.add_argument('--force-refresh', action='store_true', help='Force refresh of cached graph even if cache is valid')
     parser.add_argument('--snap-threshold', type=float, default=5.0, help='Maximum distance in meters for snapping waypoints to paths (default: 5.0)')
-    
+    parser.add_argument('--gain-penalty', type=float, default=10.0, help='Horizontal metres added per metre of climb (default: 10.0)')
+    parser.add_argument('--loss-penalty', type=float, default=2.0, help='Horizontal metres added per metre of descent (default: 2.0)')
+
     args = parser.parse_args()
     
     # Determine the output path if not provided
@@ -135,9 +143,13 @@ def validate_arguments(args):
     if args.max_cache_age_days < 0:
         print(f"❌ Error: Max cache age must be non-negative: {args.max_cache_age_days}")
         sys.exit(1)
-    
+
     if args.snap_threshold < 0:
         print(f"❌ Error: Snap threshold must be non-negative: {args.snap_threshold}")
+        sys.exit(1)
+
+    if args.gain_penalty < 0 or args.loss_penalty < 0:
+        print("❌ Error: Elevation penalties must be non-negative values")
         sys.exit(1)
 
 def get_custom_section(waypoint):
@@ -323,7 +335,178 @@ def download_osm_graph(north, south, east, west, max_cache_age_days, force_refre
         print("⚠️ The graph is not fully connected. Some nodes may be isolated.")
     return graph
 
-def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0) -> list:
+
+def _batched(iterable, batch_size):
+    for i in range(0, len(iterable), batch_size):
+        yield iterable[i:i + batch_size]
+
+
+def _round_lat_lon(pt_latlon, precision=5):
+    return (round(pt_latlon.y, precision), round(pt_latlon.x, precision))
+
+
+def _load_elevation_cache(cache_file=None):
+    cache_file = cache_file or ELEVATION_CACHE_FILE
+    try:
+        if cache_file.exists():
+            with cache_file.open() as f:
+                return json.load(f)
+    except (OSError, json.JSONDecodeError):
+        pass
+    return {}
+
+
+def _save_elevation_cache(cache, cache_file=None):
+    cache_file = cache_file or ELEVATION_CACHE_FILE
+    try:
+        cache_file.parent.mkdir(exist_ok=True)
+        with cache_file.open('w') as f:
+            json.dump(cache, f)
+    except OSError:
+        print("⚠️ Failed to save elevation cache")
+
+
+def fetch_srtm_elevations(graph, nodes=None, batch_size=90):
+    """
+    Fetch elevation for a list of graph nodes using OpenTopography's Global DEM API.
+
+    Args:
+        graph (networkx.Graph): Projected graph containing nodes with x/y coordinates.
+        nodes (list): Optional list of node IDs to fetch. Defaults to all nodes.
+        batch_size (int): Number of coordinates to include per request.
+
+    Returns:
+        dict: Mapping of node_id -> elevation in metres.
+    """
+    nodes = nodes or list(graph.nodes)
+    if not nodes:
+        return {}
+
+    cache = _load_elevation_cache()
+    node_keys = {}
+    missing_keys = set()
+    api_key = os.getenv("OPENTOPO_API_KEY", OPENTOPO_API_KEY)
+
+    for node in nodes:
+        pt_latlon = to_latlon(ShapelyPoint(graph.nodes[node]['x'], graph.nodes[node]['y']), graph.graph['crs'])
+        lat, lon = _round_lat_lon(pt_latlon)
+        coord_key = f"{lat},{lon}"
+        node_keys[node] = coord_key
+        if coord_key not in cache:
+            missing_keys.add(coord_key)
+
+    if missing_keys:
+        print(f"Downloading elevation data from OpenTopography (missing {len(missing_keys)} nodes)")
+        updated = False
+        for batch in _batched(sorted(missing_keys), batch_size):
+            params = {
+                "locations": "|".join(batch),
+                "demtype": OPENTOPO_DEM_TYPE,
+                "outputFormat": "JSON",
+            }
+            if api_key:
+                params["API_Key"] = api_key
+            else:
+                print("⚠️ OPENTOPO_API_KEY not set; requests may be rate limited")
+            try:
+                response = requests.get(OPENTOPO_ENDPOINT, params=params, timeout=30)
+                response.raise_for_status()
+                payload = response.json()
+                results = payload.get('results') or payload.get('data') or []
+                for idx, result in enumerate(results):
+                    elevation = None
+                    if isinstance(result, dict):
+                        elevation = result.get('elevation') or result.get('z') or result.get('height')
+                        coord = result.get('location') or result.get('coordinates')
+                    elif isinstance(result, (list, tuple)) and len(result) >= 3:
+                        elevation = result[2]
+                        coord = f"{result[1]},{result[0]}"
+                    else:
+                        coord = None
+
+                    key = coord or (batch[idx] if idx < len(batch) else None)
+                    if key is not None and elevation is not None:
+                        key = str(key).replace(" ", "")
+                        cache[key] = elevation
+                        updated = True
+            except requests.RequestException as exc:
+                print(f"⚠️ Failed to fetch OpenTopography elevations: {exc}")
+                break
+        if updated:
+            _save_elevation_cache(cache)
+    else:
+        print("Using cached OpenTopography elevations")
+
+    elevations = {node: cache[key] for node, key in node_keys.items() if key in cache}
+    print(f"  ↳ Retrieved elevation for {len(elevations)}/{len(nodes)} nodes")
+    return elevations
+
+
+def _edge_length(graph, u, v, data):
+    if data.get('length') is not None:
+        return data['length']
+    if 'geometry' in data:
+        return data['geometry'].length
+    try:
+        return geodesic((graph.nodes[u]['y'], graph.nodes[u]['x']), (graph.nodes[v]['y'], graph.nodes[v]['x'])).m
+    except Exception:
+        return 0
+
+
+def add_elevation_costs(graph, gain_penalty=10.0, loss_penalty=2.0):
+    """
+    Add elevation gain/loss aware cost to each edge using pre-populated node elevations.
+
+    Args:
+        graph (networkx.MultiDiGraph): Graph with node elevations in metres.
+        gain_penalty (float): Horizontal metre cost per metre climbed.
+        loss_penalty (float): Horizontal metre cost per metre descended.
+    """
+    for u, v, key, data in graph.edges(keys=True, data=True):
+        elev_u = graph.nodes[u].get('elevation')
+        elev_v = graph.nodes[v].get('elevation')
+
+        gain = loss = 0
+        if elev_u is not None and elev_v is not None:
+            gain = max(0, elev_v - elev_u)
+            loss = max(0, elev_u - elev_v)
+
+        length = _edge_length(graph, u, v, data)
+        data['length'] = length
+        data['elevation_gain'] = gain
+        data['elevation_loss'] = loss
+        data['cost'] = length + gain_penalty * gain + loss_penalty * loss
+
+
+def add_srtm_elevation_to_graph(graph, gain_penalty=10.0, loss_penalty=2.0):
+    """
+    Annotate the graph with elevation data from OpenTopography and attach elevation-aware routing costs.
+
+    Args:
+        graph (networkx.MultiDiGraph): Graph to annotate.
+        gain_penalty (float): Horizontal metre cost per metre climbed.
+        loss_penalty (float): Horizontal metre cost per metre descended.
+
+    Returns:
+        networkx.MultiDiGraph: Graph with elevation metadata and cost weights.
+    """
+    elevations = fetch_srtm_elevations(graph)
+    if not elevations:
+        print("⚠️ Elevation data could not be fetched; routing will use distance only")
+        return graph
+
+    print("Applying elevation data to graph nodes and edges")
+    ox.utils_graph.set_node_attributes(graph, elevations, name='elevation')
+    add_elevation_costs(graph, gain_penalty=gain_penalty, loss_penalty=loss_penalty)
+    return graph
+
+
+def select_weight_attribute(graph):
+    """Choose the best weight attribute for routing."""
+    has_cost = any('cost' in data for _, _, data in graph.edges(data=True))
+    return 'cost' if has_cost else 'length'
+
+def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0):
     """
     Snap waypoints to the nearest edge in the OSM graph by inserting a new node at the projection point.
     Splits the original edge into two with accurate geometry and weights.
@@ -335,17 +518,16 @@ def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0) -> list:
         snap_threshold (float): Maximum distance in meters for snapping waypoints to paths.
 
     Returns:
-        list: List of snapped node IDs for waypoints within threshold.
+        tuple[list, list]: List of snapped node IDs and the filtered waypoints kept within the threshold.
     """
     print(f"Snapping waypoints to nearest graph edges (threshold: {snap_threshold}m)...")
 
     snapped_nodes = []
+    kept_waypoints = []
     skipped_waypoints = []
-    #next_node_id = max(graph.nodes) + 1
 
     for wpt in waypoints:
         lat, lon, name, sym = wpt[:4]  # Safe unpacking
-        # Project lat/lon once
         point_wgs = ShapelyPoint(lon, lat)
         point_proj = ox.projection.project_geometry(point_wgs, to_crs=graph.graph['crs'])[0]
         x, y = point_proj.x, point_proj.y
@@ -357,6 +539,7 @@ def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0) -> list:
             skipped_waypoints.append((name, distance))
         else:
             snapped_nodes.append(nearest_node)
+            kept_waypoints.append(wpt)
             print(f"  ↳ Snapped waypoint '{name}' to node {nearest_node} ({distance:.1f}m)")
 
     if skipped_waypoints:
@@ -364,7 +547,7 @@ def snap_waypoints_to_graph(graph, waypoints, snap_threshold=5.0) -> list:
         for name, distance in skipped_waypoints:
             print(f"  - {name}: {distance:.1f}m")
 
-    return snapped_nodes
+    return snapped_nodes, kept_waypoints
 
 def calculate_paths(graph, node_ids):
     """
@@ -380,14 +563,20 @@ def calculate_paths(graph, node_ids):
     print("Calculating paths between nodes...")
     import networkx as nx
     paths = []
+    weight_attr = select_weight_attribute(graph)
     for i in range(len(node_ids) - 1):
         try:
-            path = nx.shortest_path(graph, node_ids[i], node_ids[i+1], weight='length')
+            path = nx.shortest_path(graph, node_ids[i], node_ids[i+1], weight=weight_attr)
         except nx.NetworkXNoPath:
             print(f"  ⚠️ No path found between node {i+1} and {i+2}, inserting fallback path")
             path = [node_ids[i], node_ids[i+1]]
         paths.append(path)
     return paths
+
+
+def calculate_routes(graph, node_ids):
+    """Backward compatible wrapper used by tests."""
+    return calculate_paths(graph, node_ids)
 
 def calculate_track_color(route_name):
     """
@@ -466,17 +655,23 @@ def export_routes_to_gpx(graph, routes, waypoints, output_path_gpx):
                     edge = edge_data.get(0, edge_data[next(iter(edge_data))])
                 else:
                     edge = edge_data
-                    
+
                 if 'geometry' in edge:
-                    for x, y in edge['geometry'].coords:
+                    coords = list(edge['geometry'].coords)
+                    for idx, (x, y) in enumerate(coords):
                         pt = ShapelyPoint(x, y)
                         pt_latlon = to_latlon(pt, graph.graph['crs'])
-                        segment.points.append(gpxpy.gpx.GPXTrackPoint(pt_latlon.y, pt_latlon.x))
+                        elevation = None
+                        if idx == 0:
+                            elevation = graph.nodes[u].get('elevation')
+                        elif idx == len(coords) - 1:
+                            elevation = graph.nodes[v].get('elevation')
+                        segment.points.append(gpxpy.gpx.GPXTrackPoint(pt_latlon.y, pt_latlon.x, elevation=elevation))
                 else:
                     pt_u = to_latlon(ShapelyPoint(graph.nodes[u]['x'], graph.nodes[u]['y']), graph.graph['crs'])
                     pt_v = to_latlon(ShapelyPoint(graph.nodes[v]['x'], graph.nodes[v]['y']), graph.graph['crs'])
-                    segment.points.append(gpxpy.gpx.GPXTrackPoint(pt_u.y, pt_u.x))
-                    segment.points.append(gpxpy.gpx.GPXTrackPoint(pt_v.y, pt_v.x))
+                    segment.points.append(gpxpy.gpx.GPXTrackPoint(pt_u.y, pt_u.x, elevation=graph.nodes[u].get('elevation')))
+                    segment.points.append(gpxpy.gpx.GPXTrackPoint(pt_v.y, pt_v.x, elevation=graph.nodes[v].get('elevation')))
 
         
         track.segments.append(segment)
@@ -493,8 +688,13 @@ def export_routes_to_gpx(graph, routes, waypoints, output_path_gpx):
     with open(output_path_gpx, 'w') as f:
         f.write(gpx_content)
     print(f"  ↳ GPX file written with {len(gpx.tracks)} track(s)")
-    
+
     return gpx
+
+
+def export_route_to_gpx(graph, routes, waypoints, output_path_gpx):
+    """Wrapper to export a single unnamed route list (backwards compatibility)."""
+    return export_routes_to_gpx(graph, {None: routes}, waypoints, output_path_gpx)
 
 def main():
     """
@@ -506,7 +706,8 @@ def main():
     waypoints = extract_waypoints(args.input, args.max_waypoints, args.max_distance)
     north, south, east, west = calculate_bounding_box(waypoints)
     graph = download_osm_graph(north, south, east, west, args.max_cache_age_days, args.force_refresh)
-   
+    graph = add_srtm_elevation_to_graph(graph, gain_penalty=args.gain_penalty, loss_penalty=args.loss_penalty)
+
     groups = group_waypoints(waypoints)
 
     routes = defaultdict(list)
@@ -517,9 +718,8 @@ def main():
             print(f"⚠️ Route '{route_name}' has less than 2 waypoints, skipping routing")
             continue
 
-        # Snap waypoints to the graph - fixed to return only node_ids
-        node_ids = snap_waypoints_to_graph(graph, route_waypoints, args.snap_threshold)
-        
+        node_ids, filtered_waypoints = snap_waypoints_to_graph(graph, route_waypoints, args.snap_threshold)
+
         if len(node_ids) < 2:
             print(f"⚠️ Route '{route_name}' has insufficient snapped waypoints, skipping routing")
             continue

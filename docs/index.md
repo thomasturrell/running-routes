@@ -51,6 +51,11 @@ _Fast, paved routes for tempo runs, intervals, and race preparation_
 A fast, scenic half marathon route through Inverness, Scotland.  
 [🔗 View GPX Files →](/running-routes/road/inverness-half-marathon/)
 
+#### [Manchester Marathon 2026](/running-routes/road/manchester-marathon-2026/)
+
+A road marathon route through Manchester, England.  
+[🔗 View GPX Files →](/running-routes/road/manchester-marathon-2026/)
+
 ## 🗺️ Data Sources & Attribution
 
 - **Route planning:** Created using the [Ordnance Survey (OS) Maps](https://explore.osmaps.com/) online planner

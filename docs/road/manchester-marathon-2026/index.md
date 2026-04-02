@@ -6,7 +6,7 @@ permalink: /road/manchester-marathon-2026/
 
 The **Manchester Marathon 2026** route is a road marathon in Manchester, England. See the [official race website](https://manchestermarathon.com) for event details.
 
-- **Distance:** 42.2 km
+- **Distance:** 42.2 km
 - **Route type:** Road race
 - **Terrain:** Road
 - **Start:** Old Trafford
